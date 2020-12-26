@@ -1,12 +1,21 @@
 "use strict";
 
-const sprite_width = 100;
+
+const sprite_width = 50;
 const tile_height = 0.58 * sprite_width;
 const tile_width = 0.98 * sprite_width;
 const div_height = tile_height * 20.75;
 const div_width = tile_width * 20;
 
-function test (){
+let isMenuOpen = false;
+let selectedMenu = "Terrain";
+let selectedTribe = "Bardur";
+
+onload = function() {
+    onLoadFunction();
+  };
+
+function onLoadFunction (){
     document.getElementById("map_div").style.height = div_height + "px";
     document.getElementById("map_div").style.width = div_width + "px";
 
@@ -24,7 +33,7 @@ function test (){
     console.log(map[2].index);
 }
 
-function test2 (){
+function test (){
     document.getElementById(getIndex(1, 2)).src = "Images/Miscellaneous/Deep water.png";
     document.getElementById(getIndex(1, 4)).src = "Images/Miscellaneous/Deep water.png";
     document.getElementById(getIndex(1, 6)).src = "Images/Miscellaneous/Deep water.png";
@@ -33,10 +42,6 @@ function test2 (){
     document.getElementById(getIndex(5, 1)).src = "Images/Miscellaneous/Deep water.png";
     document.getElementById(getIndex(4, 1)).src = "Images/Miscellaneous/Deep water.png";
     document.getElementById(getIndex(3, 1)).src = "Images/Miscellaneous/Deep water.png";
-}
-
-function test3 (){
-    
 }
 
 class Tile {
@@ -75,7 +80,7 @@ document.getElementById("map_div").onclick = function clickEvent(e) {
     let Ytile = Math.ceil(rotateY(x, y) / (sprite_width / 2));
 
     if(Xtile >= 1 && Xtile <= 20 && Ytile >= 1 && Ytile <= 20){
-        document.getElementById(getIndex(Xtile, Ytile)).src = "Images/Miscellaneous/Deep water.png";
+        document.getElementById(getIndex(Xtile, Ytile)).src = "Images/Miscellaneous/Shallow water.png";
     }
     console.log("X: " + x + " Y: " + y);
     console.log("Xr: " + rotateX(x, y) + " Yr: " + rotateY(x, y));
@@ -113,4 +118,82 @@ function getTop (x , y) {
 }
 function getLeft (x , y) {
     return (tile_width / 2) * (0 + (x-1) + (y-1));
+}
+
+function menuClick() {
+    if(isMenuOpen){
+        document.getElementById("menu").style.height = "0";
+        document.getElementById("menu_tribes").style.height = "0";
+        document.getElementById("menu_content").style.height = "0";
+        isMenuOpen = false;
+    }
+    else {
+        document.getElementById("menu").style.height = "10%";
+        isMenuOpen = true;
+    }
+  }
+
+function terrainClick() {
+    showSubMenu();
+
+    selectedMenu = "Terrain";
+
+    document.getElementById("terrainMenu").style.backgroundColor = "black";
+    document.getElementById("unitMenu").style.backgroundColor = "#111";
+    document.getElementById("miscMenu").style.backgroundColor = "#111";
+}
+
+function unitClick() {
+    showSubMenu();
+
+    selectedMenu = "Unit";
+
+    document.getElementById("terrainMenu").style.backgroundColor = "#111";
+    document.getElementById("unitMenu").style.backgroundColor = "black";
+    document.getElementById("miscMenu").style.backgroundColor = "#111";
+}
+
+function miscClick() {
+    showSubMenu();
+
+    selectedMenu = "Misc";
+
+    document.getElementById("terrainMenu").style.backgroundColor = "#111";
+    document.getElementById("unitMenu").style.backgroundColor = "#111";
+    document.getElementById("miscMenu").style.backgroundColor = "black";
+}
+
+function bardurClick() {
+    attSubMenu("Bardur");
+}
+
+function luxidoorClick() {
+    attSubMenu("Luxidoor");
+}
+
+function showSubMenu() {
+    document.getElementById("menu_tribes").style.height = "10%";
+    document.getElementById("menu_content").style.height = "10%";
+}
+
+function attSubMenu(tribe) {
+    selectedTribe = tribe;
+
+    document.getElementById("groundMenu").src = "Images/Tribes/" + tribe + "/" + tribe + " ground.png";
+    document.getElementById("mountainMenu").src = "Images/Tribes/" + tribe + "/" + tribe + " mountain.png";
+
+    switch(tribe){
+        case "Bardur": 
+            document.getElementById("bardurMenu").style.backgroundColor = "black";
+            document.getElementById("luxidoorMenu").style.backgroundColor = "#111";
+        break;
+        case "Luxidoor":
+            document.getElementById("bardurMenu").style.backgroundColor = "#111";
+            document.getElementById("luxidoorMenu").style.backgroundColor = "black";
+
+        break;
+        default:
+
+        break;
+    }
 }
