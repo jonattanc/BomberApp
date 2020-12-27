@@ -5,13 +5,10 @@
 
     <meta charset="UTF-8"/>
     <meta name="author" content="Jonattan C. (Jonc)" />
-    <meta name="description" content="Bomber Polytopia App">
+    <meta name="description" content="Bomber Polytopia Helper">
     <link rel="icon" href="Images/BomberLogo.png">
 
-    <meta property="og:title" content="Bomber App" />
-    <meta property="og:image" content="" />
-
-    <title>Bomber App</title>
+    <title>Bomber PolyHelper</title>
 
     <style>
         .buttons {
@@ -31,26 +28,23 @@
             left: 0;
             background-color: #111;
             overflow-y: hidden;
-            transition: 0.5s;
+            transition: 0.2s;
         }
 
         .menus img {
             padding: 1%;
             cursor:pointer;
         }
-
         .menus img:hover {
             background-color: #ddd;
         }
 
         #menu {
-            bottom: 0;
+            bottom: 0%;
         }
-
         #menu_tribes {
             bottom: 10%;
         }
-
         #menu_content {
             bottom: 20%;
         }
@@ -58,9 +52,7 @@
     </style>
 </head>
 <body>
-    <p><button onclick="test()">Don't you dare click me</button></p> 
-
-    <span class="buttons" onclick="menuClick()"> &#9776; Menu </span>
+    <span class="buttons" onclick="menuButtonClick()"> &#9776; </span>
 
     <div id="map_div" style = "position: relative; width: 1000px; height: 600px; background-color: black;"> </div>
 
@@ -72,8 +64,7 @@
     </div>
 
     <div id="menu_tribes" class="menus">
-        <img id="bardurMenu" height="80%" src="Images/Tribes/Bardur/Bardur head.png" onclick="bardurClick()"/>
-        <img id="luxidoorMenu" height="80%" src="Images/Tribes/Luxidoor/Luxidoor head.png" onclick="luxidoorClick()"/>
+        
     </div>
 
     <div id="menu_content" class="menus">
