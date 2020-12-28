@@ -15,7 +15,7 @@ let selectedMenu = "None";
 let selectedTribe = "Bardur";
 let selectedTerrain = "Clouds";
 let menus = ["terrain", "unit", "misc"];
-let tribes = ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "AiMo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"]
+let tribes = ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"]
 let terrains = ["Clouds", "DeepWater", "ShallowWater", "ground", "mountain"];
 let onterrain = ["game", "fruit", "crop", "farm"];
 
