@@ -26,7 +26,7 @@
             position: fixed;
             z-index: 1;
             left: 0;
-            background-color: #111;
+            background-color: #0e092c;
             overflow-y: hidden;
             transition: 0.2s;
         }
@@ -39,13 +39,13 @@
             background-color: #ddd;
         }
 
-        #menu {
+        #mainMenuDiv {
             bottom: 0%;
         }
-        #tribes {
+        #tribesDiv {
             bottom: 10%;
         }
-        #terrains {
+        .topmenus {
             bottom: 20%;
         }
 
@@ -54,20 +54,33 @@
 <body>
     <span class="buttons" onclick="menuButtonClick()"> &#9776; </span>
 
-    <div id="map_div" style = "position: relative; width: 1000px; height: 600px; background-color: black;"> </div>
+    <div id="mapDiv" style = "position: relative; width: 1000px; height: 600px; background-color: black;"> </div>
 
 
-    <div id="menu" class="menus">
-        <img id="terrainsMenu" height="80%" src="Images/Bardur/ground.png" onclick="terrainsClick()" ondragstart="return false"/>
-        <img id="unitsMenu" height="80%" src="Images/Symbols/capture.png" onclick="unitsClick()" ondragstart="return false"/>
-        <img id="miscsMenu" height="80%" src="Images/Symbols/Literacy.png" onclick="miscsClick()" ondragstart="return false"/>
+    <div id="mainMenuDiv" class="menus">
+        <img id="btnterrains" height="80%" src="Images/Bardur/ground.png" ondragstart="return false"/>
+        <img id="btnonterrains" height="80%" src="Images/Miscellaneous/Ruin.png" ondragstart="return false"/>
+        <img id="btnunits" height="80%" src="Images/Symbols/capture.png" ondragstart="return false"/>
+        <img id="btnmiscs" height="80%" src="Images/Symbols/Literacy.png" ondragstart="return false"/>
     </div>
 
-    <div id="tribes" class="menus">
+    <div id="tribesDiv" class="menus">
         
     </div>
 
-    <div id="terrains" class="menus">
+    <div id="terrainsDiv" class="menus topmenus">
+        
+    </div>
+
+    <div id="onterrainsDiv" class="menus topmenus">
+        
+    </div>
+
+    <div id="unitsDiv" class="menus topmenus">
+        
+    </div>
+
+    <div id="miscsDiv" class="menus topmenus">
         
     </div>
 
