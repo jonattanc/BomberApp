@@ -24,11 +24,11 @@ let terrainsFolder = ["misc", "misc", "misc", "selected.tribes", "selected.tribe
 let terrainsOffsetX = [0, 0, 0, 0, 0, 0];
 let terrainsOffsetY = [0, 0, 0, 0, 0, 0];
 let terrainsScale = [1, 1, 1, 1, 1, 1];
-let onterrains = ["animal", "fruit", "crop"];
-let onterrainsFolder = ["selected.tribes", "selected.tribes", "misc"];
-let onterrainsOffsetX = [0, 0, 0];
-let onterrainsOffsetY = [0, 0, 0];
-let onterrainsScale = [1, 1, 1];
+let onterrains = ["Ruin", "Village", "Fish", "Port", "Whale", "animal", "Lumber hut", "fruit", "Crop", "Farm", "Metal", "Mine", "Outpost"];
+let onterrainsFolder = ["misc", "misc", "misc", "misc", "misc", "selected.tribes", "misc", "selected.tribes", "misc", "misc", "misc", "misc", "misc"];
+let onterrainsOffsetX = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+let onterrainsOffsetY = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+let onterrainsScale = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 let mousePos = { };
 let marginPos = { };
 let mouseScrollListeners = [];
@@ -58,13 +58,18 @@ onload = function() {
         createButton("onterrains", item, index, onterrainsFolder);
     });
 
+    document.getElementById(`btnterrains`).addEventListener('click', function(){ selectMenu("terrains"); });
+    document.getElementById(`btnonterrains`).addEventListener('click', function(){ selectMenu("onterrains"); });
+    document.getElementById(`btnunits`).addEventListener('click', function(){ selectMenu("units"); });
+    document.getElementById(`btnmiscs`).addEventListener('click', function(){ selectMenu("miscs"); });
+
     if(isMenuOpen) {
         isMenuOpen = false;
         menuButtonClick();
     }
     if(isSubMenuOpen) {
         isSubMenuOpen = false;
-        terrainsClick();
+        document.getElementById(`btnterrains`).click();
         if(selected.tribes != "None"){
             document.getElementById(`btn${selected.terrains}`).click();
         }
@@ -77,10 +82,6 @@ onload = function() {
     addMenuScrollHandlers("onterrainsDiv");
     addMenuScrollHandlers("unitsDiv");
     addMenuScrollHandlers("miscsDiv");
-    document.getElementById(`btnterrains`).addEventListener('click', function(){ selectMenu("terrains"); });
-    document.getElementById(`btnonterrains`).addEventListener('click', function(){ selectMenu("onterrains"); });
-    document.getElementById(`btnunits`).addEventListener('click', function(){ selectMenu("units"); });
-    document.getElementById(`btnmiscs`).addEventListener('click', function(){ selectMenu("miscs"); });
 
     onmouseup = function clickEvent(e) {
         mouseScrollListeners.forEach(function (item, index){
@@ -251,26 +252,16 @@ function selectMenu(newMenuSelection) {
     }
 }
 
-function terrainsClick() {
-    selectMenu("terrains");
-}
-
-function onterrainsClick() {
-    selectMenu("onterrains");
-}
-
-function unitsClick() {
-    selectMenu("units");
-}
-
-function miscsClick() {
-    selectMenu("miscs");
-}
-
 function attTribes(tribe) {
-    document.getElementById("btnground").src = `Images/${tribe}/ground.png`;
-    document.getElementById("btnforestground").src = `Images/${tribe}/forestground.png`;
-    document.getElementById("btnmountain").src = `Images/${tribe}/mountain.png`;
-    document.getElementById("btnanimal").src = `Images/${tribe}/animal.png`;
-    document.getElementById("btnfruit").src = `Images/${tribe}/fruit.png`;
+
+    terrains.forEach(function (item, index){
+        if(terrainsFolder[index] == "selected.tribes"){
+            document.getElementById(`btn${item}`).src = `Images/${tribe}/${item}.png`;
+        }
+    });
+    onterrains.forEach(function (item, index){
+        if(onterrainsFolder[index] == "selected.tribes"){
+            document.getElementById(`btn${item}`).src = `Images/${tribe}/${item}.png`;
+        }
+    });
 }
