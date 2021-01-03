@@ -23,7 +23,10 @@ let Buttons = {
     ShallowWater: ["ShallowWater", "Fish", "Port"],
     Ground: ["Ground", "Ruin", "Village", "Fruit", "Crop", "Farm", "Outpost"],
     Forest: ["Forest", "Ruin", "Animal", "Lumber hut"],
-    Mountain: ["Mountain", "Ruin", "Metal", "Mine"]
+    Mountain: ["Mountain", "Ruin", "Metal", "Mine"],
+    WaterUnits: ["boat", "ship", "battleship", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
+    LandUnits: ["warrior", "archer", "rider", "knight", "defender", "catapult", "swordsman", "mindbender", "giant", "polytaur", "dragonegg", 
+                "mooni", "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"]
 }
 let Folders = {
     tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
@@ -33,7 +36,13 @@ let Folders = {
     ShallowWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous"], 
     Ground: ["selected.tribes", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous"], 
     Forest: ["selected.tribes", "Miscellaneous", "selected.tribes", "Miscellaneous"], 
-    Mountain: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous"]
+    Mountain: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous"],
+    WaterUnits: ["selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
+                "selected.tribes", "selected.tribes"],
+    LandUnits: ["selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
+                "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
+                "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
+                "selected.tribes"]
 }
 let OffsetX = {
     tribes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -43,7 +52,9 @@ let OffsetX = {
     ShallowWater: [0, 0, 0], 
     Ground: [0, 0, 0, 0, 0, 0, 0], 
     Forest: [0, 0, 0, 0], 
-    Mountain: [0, 0, 0, 0]
+    Mountain: [0, 0, 0, 0],
+    WaterUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    LandUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 }
 let OffsetY = {
     tribes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -53,7 +64,9 @@ let OffsetY = {
     ShallowWater: [0, 0, 0], 
     Ground: [0, 0, 0, 0, 0, 0, 0], 
     Forest: [0, 0, 0, 0], 
-    Mountain: [0, 0, 0, 0]
+    Mountain: [0, 0, 0, 0],
+    WaterUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    LandUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 }
 let Scales = {
     tribes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -63,7 +76,9 @@ let Scales = {
     ShallowWater: [1, 1, 1], 
     Ground: [1, 1, 1, 1, 1, 1, 1], 
     Forest: [1, 1, 1, 1], 
-    Mountain: [1, 1, 1, 1]
+    Mountain: [1, 1, 1, 1],
+    WaterUnits: [1, 1, 1, 1, 1, 1, 1, 1, 1],
+    LandUnits: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 }
 
 let mousePos = { };
@@ -102,7 +117,7 @@ onload = function() {
     // Set main menu click events
     document.getElementById(`btnterrains`).addEventListener('click', function(){ selectMainMenu("terrains"); });
     document.getElementById(`btnonterrains`).addEventListener('click', function(){ selectMainMenu("onterrains"); });
-    document.getElementById(`btnunits`).addEventListener('click', function(){ selectMainMenu("units"); });
+    document.getElementById(`btnUnits`).addEventListener('click', function(){ selectMainMenu("Units"); });
     document.getElementById(`btnmiscs`).addEventListener('click', function(){ selectMainMenu("miscs"); });
 
     onmouseup = function clickEvent(e) {
@@ -113,7 +128,8 @@ onload = function() {
 
     // Add horizontal scroll to divs
     addMenuScrollHandlers("mainMenuDiv");
-    addMenuScrollHandlers("unitsDiv");
+    addMenuScrollHandlers("WaterUnitsDiv");
+    addMenuScrollHandlers("LandUnitsDiv");
     addMenuScrollHandlers("miscsDiv");
     for (let i = 0; i < Object.keys(Buttons).length; i++) { 
         addMenuScrollHandlers(Object.keys(Buttons)[i] + "Div");
@@ -260,7 +276,6 @@ function getLeft (x , y) {
 function menuButtonClick() {
     if(isMenuOpen){
         document.getElementById("mainMenuDiv").style.height = "0%";
-        document.getElementById("unitsDiv").style.height = "0%";
         document.getElementById("miscsDiv").style.height = "0%";
         for (let i = 0; i < Object.keys(Buttons).length; i++) { 
             document.getElementById(Object.keys(Buttons)[i] + "Div").style.height = "0%";
@@ -280,6 +295,14 @@ function selectMainMenu(newMenuSelection) {
         if(selected.menu == "onterrains"){
             document.getElementById(`${selected.terrains}Div`).style.height = "0%";
         }
+        else if (selected.menu == "Units") {
+            if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){
+                document.getElementById(`WaterUnitsDiv`).style.height = "0%";
+            }
+            else if (selected.terrains != "Clouds"){
+                document.getElementById(`LandUnitsDiv`).style.height = "0%";
+            }
+        }
         else{
             document.getElementById(`${selected.menu}Div`).style.height = "0%";
         }
@@ -293,6 +316,14 @@ function selectMainMenu(newMenuSelection) {
             if(selected.menu == "onterrains"){
                 document.getElementById(`${selected.terrains}Div`).style.height = "0%";
             }
+            else if (selected.menu == "Units") {
+                if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){
+                    document.getElementById(`WaterUnitsDiv`).style.height = "0%";
+                }
+                else if (selected.terrains != "Clouds"){
+                    document.getElementById(`LandUnitsDiv`).style.height = "0%";
+                }
+            }
             else{
                 document.getElementById(`${selected.menu}Div`).style.height = "0%";
             }
@@ -302,6 +333,14 @@ function selectMainMenu(newMenuSelection) {
         document.getElementById("tribesDiv").style.height = "10%";
         if(newMenuSelection == "onterrains"){
             document.getElementById(`${selected.terrains}Div`).style.height = "10%";
+        }
+        else if (newMenuSelection == "Units") {
+            if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){
+                document.getElementById(`WaterUnitsDiv`).style.height = "10%";
+            }
+            else if (selected.terrains != "Clouds"){
+                document.getElementById(`LandUnitsDiv`).style.height = "10%";
+            }
         }
         else{
             document.getElementById(`${newMenuSelection}Div`).style.height = "10%";
