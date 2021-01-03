@@ -9,26 +9,63 @@ const div_width = tile_width * 20;
 const MENU_BG_COLOR = "#0e092c";
 const MENU_SELECT_COLOR = "black";
 
-let isMenuOpen = true;
-let isSubMenuOpen = true;
-let selected = {menu: "None", tribes: "Bardur", terrains: "Clouds", onterrains: "animal"};
+let isMenuOpen = false;
+let isSubMenuOpen = false;
+let selected = {menu: "None"};
 let misc = "Miscellaneous";
-let menus = ["terrain", "unit", "misc"];
-let tribes = ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"]
-let tribesFolder = ["item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item", "item"]
-let tribesOffsetX = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-let tribesOffsetY = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-let tribesScale = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-let terrains = ["Clouds", "DeepWater", "ShallowWater", "ground", "forestground", "mountain"];
-let terrainsFolder = ["misc", "misc", "misc", "selected.tribes", "selected.tribes", "selected.tribes"];
-let terrainsOffsetX = [0, 0, 0, 0, 0, 0];
-let terrainsOffsetY = [0, 0, 0, 0, 0, 0];
-let terrainsScale = [1, 1, 1, 1, 1, 1];
-let onterrains = ["Ruin", "Village", "Fish", "Port", "Whale", "animal", "Lumber hut", "fruit", "Crop", "Farm", "Metal", "Mine", "Outpost"];
-let onterrainsFolder = ["misc", "misc", "misc", "misc", "misc", "selected.tribes", "misc", "selected.tribes", "misc", "misc", "misc", "misc", "misc"];
-let onterrainsOffsetX = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-let onterrainsOffsetY = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-let onterrainsScale = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+let mainMenuBtns = ["terrains", "onterrains", "units", "miscs"];
+
+let Buttons = {
+    tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
+    terrains: ["Clouds", "DeepWater", "ShallowWater", "Ground", "Forest", "Mountain"],
+    Clouds: ["Clouds", "Rainbow"],
+    DeepWater: ["DeepWater", "Ruin", "Whale"],
+    ShallowWater: ["ShallowWater", "Fish", "Port"],
+    Ground: ["Ground", "Ruin", "Village", "Fruit", "Crop", "Farm", "Outpost"],
+    Forest: ["Forest", "Ruin", "Animal", "Lumber hut"],
+    Mountain: ["Mountain", "Ruin", "Metal", "Mine"]
+}
+let Folders = {
+    tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
+    terrains: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "selected.tribes", "selected.tribes", "selected.tribes"],
+    Clouds: ["Miscellaneous", "Miscellaneous"], 
+    DeepWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous"], 
+    ShallowWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous"], 
+    Ground: ["selected.tribes", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous"], 
+    Forest: ["selected.tribes", "Miscellaneous", "selected.tribes", "Miscellaneous"], 
+    Mountain: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous"]
+}
+let OffsetX = {
+    tribes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    terrains: [0, 0, 0, 0, 0, 0],
+    Clouds: [0, 0], 
+    DeepWater: [0, 0, 0], 
+    ShallowWater: [0, 0, 0], 
+    Ground: [0, 0, 0, 0, 0, 0, 0], 
+    Forest: [0, 0, 0, 0], 
+    Mountain: [0, 0, 0, 0]
+}
+let OffsetY = {
+    tribes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    terrains: [0, 0, 0, 0, 0, 0],
+    Clouds: [0, 0], 
+    DeepWater: [0, 0, 0], 
+    ShallowWater: [0, 0, 0], 
+    Ground: [0, 0, 0, 0, 0, 0, 0], 
+    Forest: [0, 0, 0, 0], 
+    Mountain: [0, 0, 0, 0]
+}
+let Scales = {
+    tribes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    terrains: [1, 1, 1, 1, 1, 1],
+    Clouds: [1, 1], 
+    DeepWater: [1, 1, 1], 
+    ShallowWater: [1, 1, 1], 
+    Ground: [1, 1, 1, 1, 1, 1, 1], 
+    Forest: [1, 1, 1, 1], 
+    Mountain: [1, 1, 1, 1]
+}
+
 let mousePos = { };
 let marginPos = { };
 let mouseScrollListeners = [];
@@ -38,6 +75,7 @@ onload = function() {
     document.getElementById("mapDiv").style.height = `${div_height}px`;
     document.getElementById("mapDiv").style.width = `${div_width}px`;
 
+    // Create map as array of tiles
     let map = new Array(400);
     for (let x = 20; x >= 1; x--) {
         for (let y = 1; y <= 20; y++) {
@@ -45,49 +83,47 @@ onload = function() {
         }
     }
 
-    tribes.forEach(function (item, index){
-        createButton("tribes", item, index, tribesFolder);
-        document.getElementById(`btn${item}`).addEventListener('click', function(){
+    // Create all buttons, except for main menu
+    for (let i = 0; i < Object.keys(Buttons).length; i++) { 
+        selected[Object.keys(Buttons)[i]] = Buttons[Object.keys(Buttons)[i]][0];
+
+        for (let j = 0; j < Buttons[Object.keys(Buttons)[i]].length; j++) {
+            createButton(Object.keys(Buttons)[i], Buttons[Object.keys(Buttons)[i]][j], j);
+        }
+    }
+
+    // Set tribe buttons click events
+    Buttons.tribes.forEach(function (item, index){
+        document.getElementById(`btntribes${item}`).addEventListener('click', function(){
             attTribes(selected.tribes);
         });
     });
-    terrains.forEach(function (item, index){
-        createButton("terrains", item, index, terrainsFolder);
-    });
-    onterrains.forEach(function (item, index){
-        createButton("onterrains", item, index, onterrainsFolder);
-    });
 
-    document.getElementById(`btnterrains`).addEventListener('click', function(){ selectMenu("terrains"); });
-    document.getElementById(`btnonterrains`).addEventListener('click', function(){ selectMenu("onterrains"); });
-    document.getElementById(`btnunits`).addEventListener('click', function(){ selectMenu("units"); });
-    document.getElementById(`btnmiscs`).addEventListener('click', function(){ selectMenu("miscs"); });
-
-    if(isMenuOpen) {
-        isMenuOpen = false;
-        menuButtonClick();
-    }
-    if(isSubMenuOpen) {
-        isSubMenuOpen = false;
-        document.getElementById(`btnterrains`).click();
-        if(selected.tribes != "None"){
-            document.getElementById(`btn${selected.terrains}`).click();
-        }
-    }
-    document.getElementById(`btn${selected.tribes}`).click();
-
-    addMenuScrollHandlers("mainMenuDiv");
-    addMenuScrollHandlers("tribesDiv");
-    addMenuScrollHandlers("terrainsDiv");
-    addMenuScrollHandlers("onterrainsDiv");
-    addMenuScrollHandlers("unitsDiv");
-    addMenuScrollHandlers("miscsDiv");
+    // Set main menu click events
+    document.getElementById(`btnterrains`).addEventListener('click', function(){ selectMainMenu("terrains"); });
+    document.getElementById(`btnonterrains`).addEventListener('click', function(){ selectMainMenu("onterrains"); });
+    document.getElementById(`btnunits`).addEventListener('click', function(){ selectMainMenu("units"); });
+    document.getElementById(`btnmiscs`).addEventListener('click', function(){ selectMainMenu("miscs"); });
 
     onmouseup = function clickEvent(e) {
         mouseScrollListeners.forEach(function (item, index){
                 document.getElementById(item.targetMenu).removeEventListener('mousemove', item.handler);
         });
     }
+
+    // Add horizontal scroll to divs
+    addMenuScrollHandlers("mainMenuDiv");
+    addMenuScrollHandlers("unitsDiv");
+    addMenuScrollHandlers("miscsDiv");
+    for (let i = 0; i < Object.keys(Buttons).length; i++) { 
+        addMenuScrollHandlers(Object.keys(Buttons)[i] + "Div");
+    }
+
+    // Click on menus to open them
+    menuButtonClick();
+    document.getElementById(`btnterrains`).click();
+    document.getElementById(`btnterrains${selected.terrains}`).click();
+    document.getElementById(`btntribes${selected.tribes}`).click();
 };
 
 function addMenuScrollHandlers(menu) {
@@ -124,14 +160,20 @@ function addMenuScrollHandlers(menu) {
     };
 }
 
-function createButton(menu, item, index, folder){
+function createButton(menu, item, index){
     let img = document.createElement("img");
-    img.setAttribute("id", `btn${item}`);
-    img.setAttribute("src", `Images/${ eval(folder[index]) }/${item}.png`);
+    img.setAttribute("id", `btn${menu}${item}`);
+
+    if(Folders[menu][index] == "selected.tribes"){
+        img.setAttribute("src", `Images/${selected.tribes}/${item}.png`);
+    }
+    else{
+        img.setAttribute("src", `Images/${Folders[menu][index]}/${item}.png`);
+    }
     img.setAttribute("height", "80%");
     img.addEventListener('click', function(){
-        document.getElementById(`btn${selected[menu]}`).style.backgroundColor = MENU_BG_COLOR;
-        document.getElementById(`btn${item}`).style.backgroundColor = MENU_SELECT_COLOR;
+        document.getElementById(`btn${menu}${selected[menu]}`).style.backgroundColor = MENU_BG_COLOR;
+        document.getElementById(`btn${menu}${item}`).style.backgroundColor = MENU_SELECT_COLOR;
         selected[menu] = item;
     });
     img.ondragstart = function() { return false; };
@@ -177,7 +219,7 @@ document.getElementById("mapDiv").onclick = function clickEvent(e) {
 
     if(Xtile >= 1 && Xtile <= 20 && Ytile >= 1 && Ytile <= 20){
         if(selected.menu == "terrains"){
-            if(selected.terrains == "ground" || selected.terrains == "forestground" || selected.terrains == "mountain"){
+            if(selected.terrains == "Ground" || selected.terrains == "Forest" || selected.terrains == "Mountain"){
                 document.getElementById(getIndex(Xtile, Ytile)).src = `Images/${selected.tribes}/${selected.terrains}.png`;
             }
             else{
@@ -218,11 +260,12 @@ function getLeft (x , y) {
 function menuButtonClick() {
     if(isMenuOpen){
         document.getElementById("mainMenuDiv").style.height = "0%";
-        document.getElementById("tribesDiv").style.height = "0%";
-        document.getElementById("terrainsDiv").style.height = "0%";
-        document.getElementById("onterrainsDiv").style.height = "0%";
         document.getElementById("unitsDiv").style.height = "0%";
         document.getElementById("miscsDiv").style.height = "0%";
+        for (let i = 0; i < Object.keys(Buttons).length; i++) { 
+            document.getElementById(Object.keys(Buttons)[i] + "Div").style.height = "0%";
+        }
+
         isMenuOpen = false;
     }
     else {
@@ -231,37 +274,53 @@ function menuButtonClick() {
     }
 }
 
-function selectMenu(newMenuSelection) {
+function selectMainMenu(newMenuSelection) {
     if(selected.menu == newMenuSelection){
-        selected.menu = "None";
         document.getElementById("tribesDiv").style.height = "0%";
-        document.getElementById(`${newMenuSelection}Div`).style.height = "0%";
+        if(selected.menu == "onterrains"){
+            document.getElementById(`${selected.terrains}Div`).style.height = "0%";
+        }
+        else{
+            document.getElementById(`${selected.menu}Div`).style.height = "0%";
+        }
         document.getElementById(`btn${newMenuSelection}`).style.backgroundColor = MENU_BG_COLOR;
+
+        selected.menu = "None";
         isSubMenuOpen = false;
     }
     else {
         if(selected.menu != "None"){
-            document.getElementById(`${selected.menu}Div`).style.height = "0%";
+            if(selected.menu == "onterrains"){
+                document.getElementById(`${selected.terrains}Div`).style.height = "0%";
+            }
+            else{
+                document.getElementById(`${selected.menu}Div`).style.height = "0%";
+            }
             document.getElementById(`btn${selected.menu}`).style.backgroundColor = MENU_BG_COLOR;
         }
+
         document.getElementById("tribesDiv").style.height = "10%";
-        document.getElementById(`${newMenuSelection}Div`).style.height = "10%";
+        if(newMenuSelection == "onterrains"){
+            document.getElementById(`${selected.terrains}Div`).style.height = "10%";
+        }
+        else{
+            document.getElementById(`${newMenuSelection}Div`).style.height = "10%";
+        }
         document.getElementById(`btn${newMenuSelection}`).style.backgroundColor = MENU_SELECT_COLOR;
+
         selected.menu = newMenuSelection;
         isSubMenuOpen = true;
     }
 }
 
 function attTribes(tribe) {
-
-    terrains.forEach(function (item, index){
-        if(terrainsFolder[index] == "selected.tribes"){
-            document.getElementById(`btn${item}`).src = `Images/${tribe}/${item}.png`;
+    for (let i = 0; i < Object.keys(Buttons).length; i++) { 
+        if(Object.keys(Buttons)[i] != "tribes"){
+            for (let j = 0; j < Buttons[Object.keys(Buttons)[i]].length; j++) {
+                if(Folders[Object.keys(Buttons)[i]][j] == "selected.tribes"){
+                    document.getElementById(`btn${Object.keys(Buttons)[i]}${Buttons[Object.keys(Buttons)[i]][j]}`).src = `Images/${tribe}/${Buttons[Object.keys(Buttons)[i]][j]}.png`;
+                }
+            }
         }
-    });
-    onterrains.forEach(function (item, index){
-        if(onterrainsFolder[index] == "selected.tribes"){
-            document.getElementById(`btn${item}`).src = `Images/${tribe}/${item}.png`;
-        }
-    });
+    }
 }
