@@ -120,13 +120,19 @@ onload = function() {
     document.getElementById(`btnUnits`).addEventListener('click', function(){ selectMainMenu("Units"); });
     document.getElementById(`btnmiscs`).addEventListener('click', function(){ selectMainMenu("miscs"); });
 
+    // Add horizontal scroll to divs
     onmouseup = function clickEvent(e) {
         mouseScrollListeners.forEach(function (item, index){
                 document.getElementById(item.targetMenu).removeEventListener('mousemove', item.handler);
         });
     }
+    let fontouchend = function(e) {
+        mouseScrollListeners.forEach(function (item, index){
+                document.getElementById(item.targetMenu).removeEventListener('touchmove', item.handler);
+        });
+    }
+    addEventListener('touchend', fontouchend);
 
-    // Add horizontal scroll to divs
     addMenuScrollHandlers("mainMenuDiv");
     addMenuScrollHandlers("WaterUnitsDiv");
     addMenuScrollHandlers("LandUnitsDiv");
@@ -145,13 +151,31 @@ onload = function() {
 function addMenuScrollHandlers(menu) {
     document.getElementById(menu).onmousedown = function clickEvent(e) {
         mousePos[menu] = e.clientX;
+
         marginPos[menu] = document.getElementById(menu).children[0].style.marginLeft.replace("px",'')|0;
         document.getElementById(menu).addEventListener('mousemove', mouseMoveHandler);
         mouseScrollListeners.push({targetMenu: menu, handler: mouseMoveHandler});
     }
+    document.getElementById(menu).ontouchstart = function clickEvent(e) {
+        let evt = (typeof e.originalEvent === 'undefined') ? e : e.originalEvent;
+        let touch = evt.touches[0] || evt.changedTouches[0];
+        mousePos[menu] = touch.pageX;
+
+        marginPos[menu] = document.getElementById(menu).children[0].style.marginLeft.replace("px",'')|0;
+        document.getElementById(menu).addEventListener('touchmove', mouseMoveHandler);
+        mouseScrollListeners.push({targetMenu: menu, handler: mouseMoveHandler});
+    }
 
     let mouseMoveHandler = function(e) {
-        let mousePosDX = e.clientX - mousePos[menu];
+        let mousePosDX = 0;
+
+        if(e.type == 'touchmove'){
+            let evt = (typeof e.originalEvent === 'undefined') ? e : e.originalEvent;
+            let touch = evt.touches[0] || evt.changedTouches[0];
+            mousePosDX = touch.pageX - mousePos[menu];
+        } else {
+            mousePosDX = e.clientX - mousePos[menu];
+        }
 
         let elements = document.getElementById(menu).children;
         let elementsSize = 0;
@@ -292,63 +316,38 @@ function menuButtonClick() {
 function selectMainMenu(newMenuSelection) {
     if(selected.menu == newMenuSelection){
         document.getElementById("tribesDiv").style.height = "0%";
-        if(selected.menu == "onterrains"){
-            document.getElementById(`${selected.terrains}Div`).style.height = "0%";
-        }
-        else if (selected.menu == "Units") {
-            if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){
-                document.getElementById(`WaterUnitsDiv`).style.height = "0%";
-            }
-            else if (selected.terrains != "Clouds"){
-                document.getElementById(`LandUnitsDiv`).style.height = "0%";
-            }
-        }
-        else{
-            document.getElementById(`${selected.menu}Div`).style.height = "0%";
-        }
+        setMenuHeight("0%");
         document.getElementById(`btn${newMenuSelection}`).style.backgroundColor = MENU_BG_COLOR;
-
-        selected.menu = "None";
         isSubMenuOpen = false;
+        selected.menu = "None";
     }
     else {
         if(selected.menu != "None"){
-            if(selected.menu == "onterrains"){
-                document.getElementById(`${selected.terrains}Div`).style.height = "0%";
-            }
-            else if (selected.menu == "Units") {
-                if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){
-                    document.getElementById(`WaterUnitsDiv`).style.height = "0%";
-                }
-                else if (selected.terrains != "Clouds"){
-                    document.getElementById(`LandUnitsDiv`).style.height = "0%";
-                }
-            }
-            else{
-                document.getElementById(`${selected.menu}Div`).style.height = "0%";
-            }
+            setMenuHeight("0%");
             document.getElementById(`btn${selected.menu}`).style.backgroundColor = MENU_BG_COLOR;
         }
 
-        document.getElementById("tribesDiv").style.height = "10%";
-        if(newMenuSelection == "onterrains"){
-            document.getElementById(`${selected.terrains}Div`).style.height = "10%";
-        }
-        else if (newMenuSelection == "Units") {
-            if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){
-                document.getElementById(`WaterUnitsDiv`).style.height = "10%";
-            }
-            else if (selected.terrains != "Clouds"){
-                document.getElementById(`LandUnitsDiv`).style.height = "10%";
-            }
-        }
-        else{
-            document.getElementById(`${newMenuSelection}Div`).style.height = "10%";
-        }
-        document.getElementById(`btn${newMenuSelection}`).style.backgroundColor = MENU_SELECT_COLOR;
-
         selected.menu = newMenuSelection;
+        document.getElementById("tribesDiv").style.height = "10%";
+        setMenuHeight("10%");
+        document.getElementById(`btn${newMenuSelection}`).style.backgroundColor = MENU_SELECT_COLOR;
         isSubMenuOpen = true;
+    }
+}
+function setMenuHeight(newHeight){
+    if(selected.menu == "onterrains"){
+        document.getElementById(`${selected.terrains}Div`).style.height = newHeight;
+    }
+    else if (selected.menu == "Units") {
+        if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){
+            document.getElementById(`WaterUnitsDiv`).style.height = newHeight;
+        }
+        else if (selected.terrains != "Clouds"){
+            document.getElementById(`LandUnitsDiv`).style.height = newHeight;
+        }
+    }
+    else{
+        document.getElementById(`${selected.menu}Div`).style.height = newHeight;
     }
 }
 
