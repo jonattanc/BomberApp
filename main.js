@@ -9,9 +9,11 @@ const div_width = tile_width * 20;
 const MENU_BG_COLOR = "#0e092c";
 const MENU_SELECT_COLOR = "black";
 
+let map = new Array(400);
 let isMenuOpen = false;
 let isSubMenuOpen = false;
-let selected = {menu: "None"};
+let selected = {menu: "None", tile: 0};
+let selectedIndex = {};
 let misc = "Miscellaneous";
 let mainMenuBtns = ["terrains", "onterrains", "units", "miscs"];
 
@@ -62,7 +64,7 @@ let OffsetY = {
     Clouds: [0, 0], 
     DeepWater: [0, 0, 0], 
     ShallowWater: [0, 0, 0], 
-    Ground: [0, 0, 0, 0, 0, 0, 0], 
+    Ground: [0, 10, 0, 0, 0, 0, 0], 
     Forest: [0, 0, 0, 0], 
     Mountain: [0, 0, 0, 0],
     WaterUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -75,7 +77,7 @@ let Scales = {
     DeepWater: [1, 1, 1], 
     ShallowWater: [1, 1, 1], 
     Ground: [1, 1, 1, 1, 1, 1, 1], 
-    Forest: [1, 1, 1, 1], 
+    Forest: [1, 1, 0.5, 1], 
     Mountain: [1, 1, 1, 1],
     WaterUnits: [1, 1, 1, 1, 1, 1, 1, 1, 1],
     LandUnits: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
@@ -91,7 +93,6 @@ onload = function() {
     document.getElementById("mapDiv").style.width = `${div_width}px`;
 
     // Create map as array of tiles
-    let map = new Array(400);
     for (let x = 20; x >= 1; x--) {
         for (let y = 1; y <= 20; y++) {
             map[getIndex (x , y)] = new Tile(getIndex (x , y));
@@ -113,7 +114,7 @@ onload = function() {
             attTribes(selected.tribes);
         });
     });
-
+    
     // Set main menu click events
     document.getElementById(`btnterrains`).addEventListener('click', function(){ selectMainMenu("terrains"); });
     document.getElementById(`btnonterrains`).addEventListener('click', function(){ selectMainMenu("onterrains"); });
@@ -215,36 +216,48 @@ function createButton(menu, item, index){
         document.getElementById(`btn${menu}${selected[menu]}`).style.backgroundColor = MENU_BG_COLOR;
         document.getElementById(`btn${menu}${item}`).style.backgroundColor = MENU_SELECT_COLOR;
         selected[menu] = item;
+        selectedIndex[menu] = index;
     });
+    selectedIndex[menu] = 0;
     img.ondragstart = function() { return false; };
     document.getElementById(`${menu}Div`).appendChild(img);
-    sprites[item] = new Sprite(img.getAttribute("src"), 1, 0, 0);
 }
 
 class Tile {
     constructor(index) {
         this.index = index;
-        this.x = getX(index);
-        this.y = getY(index);
-        this.tribe = "Bardur";
-        this.sprite = new Sprite("Images/Miscellaneous/Clouds.png", 1, 0, 0);
-
-        this.terrain_img = document.createElement("img");
-        this.terrain_img.setAttribute("id", index);
-        this.terrain_img.setAttribute("src", "Images/Miscellaneous/Clouds.png");
-        this.terrain_img.setAttribute("width", sprite_width);
-        this.terrain_img.setAttribute("style", `position: absolute;  top: ${getTop(this.x , this.y)}px;  left: ${getLeft(this.x , this.y)}px;`);
-        this.terrain_img.ondragstart = function() { return false; };
-        document.getElementById("mapDiv").appendChild(this.terrain_img);
+        this.terrainSprite = new Sprite("Images/Miscellaneous/Clouds.png", index, "terrains", true);
+        this.onterrainSprite = new Sprite("Images/Miscellaneous/Clouds.png", index, "onterrains", false);
+        this.UnitSprite = new Sprite("Images/Miscellaneous/Clouds.png", index, "Units", false);
     }
 };
 
 class Sprite{
-    constructor(imgSrc, scale, offsetX, offsetY){
-        this.imgSrc = imgSrc;
-        this.scale = scale;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
+    constructor(imgSrc, index, type, visible){
+        this.posTop = getTop(getX(index) , getY(index));
+        this.posLeft = getLeft(getX(index) , getY(index));
+
+        this.imgElement = document.createElement("img");
+        this.imgElement.setAttribute("id", type + index);
+        this.imgElement.setAttribute("src", imgSrc);
+        this.imgElement.setAttribute("width", sprite_width);
+        this.imgElement.setAttribute("style", `position: absolute;  top: ${this.posTop}px;  left: ${this.posLeft}px;`);
+        this.imgElement.ondragstart = function() { return false; };
+        if(!visible){
+            this.imgElement.style.display = "none";
+        }
+        document.getElementById("mapDiv").appendChild(this.imgElement);
+    }
+    redraw(menu, index){
+        if(Folders[menu][index] == "selected.tribes"){
+            this.imgElement.setAttribute("src", `Images/${selected.tribes}/${Buttons[menu][index]}.png`);
+        }
+        else{
+            this.imgElement.setAttribute("src", `Images/${Folders[menu][index]}/${Buttons[menu][index]}.png`);
+        }
+        this.imgElement.setAttribute("width", sprite_width * Scales[menu][index]);
+        this.imgElement.style.top = `${this.posTop - OffsetY[menu][index]}px`;
+        this.imgElement.style.left = `${this.posLeft - OffsetX[menu][index]}px`;
     }
 }
 
@@ -258,18 +271,12 @@ document.getElementById("mapDiv").onclick = function clickEvent(e) {
     let Ytile = Math.ceil(rotateY(x, y) / (sprite_width / 2));
 
     if(Xtile >= 1 && Xtile <= 20 && Ytile >= 1 && Ytile <= 20){
-        if(selected.menu == "terrains"){
-            if(selected.terrains == "Ground" || selected.terrains == "Forest" || selected.terrains == "Mountain"){
-                document.getElementById(getIndex(Xtile, Ytile)).src = `Images/${selected.tribes}/${selected.terrains}.png`;
-            }
-            else{
-                document.getElementById(getIndex(Xtile, Ytile)).src = `Images/Miscellaneous/${selected.terrains}.png`;
-            }
-        }
+        selected.tile = getIndex(Xtile, Ytile);
+        attSelectedTile();
     }
-    console.log(`X: ${x} Y: ${y}`);
-    console.log(`Xr: ${rotateX(x, y)} Yr: ${rotateY(x, y)}`);
-    console.log(`Xtile: ${Xtile} Ytile: ${Ytile}`);
+    // console.log(`X: ${x} Y: ${y}`);
+    // console.log(`Xr: ${rotateX(x, y)} Yr: ${rotateY(x, y)}`);
+    // console.log(`Xtile: ${Xtile} Ytile: ${Ytile}`);
   }
 function rotateX (x, y) {
     let r = Math.sqrt(x**2 + y**2);
@@ -295,6 +302,33 @@ function getTop (x , y) {
 }
 function getLeft (x , y) {
     return (tile_width / 2) * (0 + (x-1) + (y-1));
+}
+
+function attSelectedTile(){
+    switch(selected.menu){
+    case "terrains":
+        map[selected.tile].terrainSprite.redraw("terrains", selectedIndex["terrains"]); // Update terrain
+        document.getElementById(`onterrains${selected.tile}`).style.display = 'none'; // Make what is on terrain invisible
+    break;
+    case "onterrains":
+        map[selected.tile].terrainSprite.redraw("terrains", selectedIndex["terrains"]); // Update terrain
+        map[selected.tile].onterrainSprite.redraw(selected["terrains"], selectedIndex[selected["terrains"]]); // Update what is on terrain
+        document.getElementById(`onterrains${selected.tile}`).style.display = 'inline'; // Make what is on terrain visible
+    break;
+    case "Units":
+        map[selected.tile].terrainSprite.redraw("terrains", selectedIndex["terrains"]); // Update terrain
+        if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){ // Check type of unit
+            map[selected.tile].UnitSprite.redraw("WaterUnits", selectedIndex["WaterUnits"]); // Update water unit
+        }
+        else{
+            map[selected.tile].UnitSprite.redraw("LandUnits", selectedIndex["LandUnits"]); // Update land unit
+        }
+        document.getElementById(`Units${selected.tile}`).style.display = 'inline'; // Make unit visible
+    break;
+    default:
+
+    break;
+    }
 }
 
 function menuButtonClick() {
