@@ -11,10 +11,15 @@
     <title>Bomber PolyHelper</title>
 
     <style>
+        body {
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+
         .buttons {
             font-size:30px; 
             cursor:pointer; 
-            color: white;
+            color: red;
             position: fixed;
             z-index: 1;
             left: 5%;
@@ -36,7 +41,7 @@
             cursor:pointer;
         }
         .menus img:hover {
-            background-color: #ddd;
+            background-color: #ddd !important;
         }
 
         #mainMenuDiv {
@@ -53,6 +58,8 @@
 </head>
 <body>
     <span class="buttons" onclick="menuButtonClick()"> &#9776; </span>
+    <div class="buttons" style="left: 10%;" onclick="ZoomIn()"> + </div>
+    <div class="buttons" style="left: 15%;"onclick="ZoomOut()"> - </div>
 
     <div id="mapDiv" style = "position: relative; width: 1000px; height: 600px; background-color: black;"> </div>
 

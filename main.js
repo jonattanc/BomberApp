@@ -9,6 +9,11 @@ const div_width = tile_width * 20;
 const MENU_BG_COLOR = "#0e092c";
 const MENU_SELECT_COLOR = "black";
 
+const ZOOM_INCREASE = 0.25;
+const ZOOM_WHEEL_FACTOR = 0.001;
+const ZOOM_MAX = 2;
+const ZOOM_MIN = 0.25;
+
 let map = new Array(400);
 let isMenuOpen = false;
 let isSubMenuOpen = false;
@@ -16,6 +21,8 @@ let selected = {menu: "None", tile: 0};
 let selectedIndex = {};
 let misc = "Miscellaneous";
 let mainMenuBtns = ["terrains", "onterrains", "units", "miscs"];
+
+let zoomScale = 1;
 
 let Buttons = {
     tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
@@ -64,7 +71,7 @@ let OffsetY = {
     Clouds: [0, 0], 
     DeepWater: [0, 0, 0], 
     ShallowWater: [0, 0, 0], 
-    Ground: [0, 10, 0, 0, 0, 0, 0], 
+    Ground: [0, 0.3, 0, 0, 0, 0, 0], 
     Forest: [0, 0, 0, 0], 
     Mountain: [0, 0, 0, 0],
     WaterUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -141,6 +148,8 @@ onload = function() {
     for (let i = 0; i < Object.keys(Buttons).length; i++) { 
         addMenuScrollHandlers(Object.keys(Buttons)[i] + "Div");
     }
+
+    document.getElementById("mapDiv").onwheel = zoomWheel;
 
     // Click on menus to open them
     menuButtonClick();
@@ -256,16 +265,16 @@ class Sprite{
             this.imgElement.setAttribute("src", `Images/${Folders[menu][index]}/${Buttons[menu][index]}.png`);
         }
         this.imgElement.setAttribute("width", sprite_width * Scales[menu][index]);
-        this.imgElement.style.top = `${this.posTop - OffsetY[menu][index]}px`;
-        this.imgElement.style.left = `${this.posLeft - OffsetX[menu][index]}px`;
+        this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY[menu][index]}px`;
+        this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX[menu][index]}px`;
     }
 }
 
 document.getElementById("mapDiv").onclick = function clickEvent(e) {
     let rect = e.currentTarget.getBoundingClientRect();
 
-    let x = e.clientX - rect.left;
-    let y = -(e.clientY - rect.top - tile_height * 10);
+    let x = (e.clientX - rect.left) / zoomScale;
+    let y = -(e.clientY - rect.top - tile_height * 10 * zoomScale) / zoomScale;
 
     let Xtile = Math.ceil(rotateX(x, y) / (sprite_width / 2));
     let Ytile = Math.ceil(rotateY(x, y) / (sprite_width / 2));
@@ -274,9 +283,9 @@ document.getElementById("mapDiv").onclick = function clickEvent(e) {
         selected.tile = getIndex(Xtile, Ytile);
         attSelectedTile();
     }
-    // console.log(`X: ${x} Y: ${y}`);
-    // console.log(`Xr: ${rotateX(x, y)} Yr: ${rotateY(x, y)}`);
-    // console.log(`Xtile: ${Xtile} Ytile: ${Ytile}`);
+    console.log(`X: ${x} Y: ${y}`);
+    console.log(`Xr: ${rotateX(x, y)} Yr: ${rotateY(x, y)}`);
+    console.log(`Xtile: ${Xtile} Ytile: ${Ytile}`);
   }
 function rotateX (x, y) {
     let r = Math.sqrt(x**2 + y**2);
@@ -396,3 +405,30 @@ function attTribes(tribe) {
         }
     }
 }
+
+function ZoomIn(){
+    if(zoomScale + ZOOM_INCREASE < ZOOM_MAX){
+        zoomScale += ZOOM_INCREASE;
+    }
+    else{
+        zoomScale = ZOOM_MAX;
+    }
+    document.getElementById("mapDiv").style.transform = `scale(${zoomScale})`;
+    console.log("in");
+}
+function ZoomOut(){
+    if(zoomScale - ZOOM_INCREASE > ZOOM_MIN){
+        zoomScale -= ZOOM_INCREASE;
+    }
+    else{
+        zoomScale = ZOOM_MIN;
+    }
+    document.getElementById("mapDiv").style.transform = `scale(${zoomScale})`;
+    console.log("out");
+}
+function zoomWheel(event) {
+    event.preventDefault();
+    let newZoomScale = zoomScale + event.deltaY * -ZOOM_WHEEL_FACTOR;
+    zoomScale = Math.min(Math.max(ZOOM_MIN, newZoomScale), ZOOM_MAX);
+    document.getElementById("mapDiv").style.transform = `scale(${zoomScale}, ${zoomScale})`;
+  }
