@@ -149,7 +149,71 @@ onload = function() {
         addMenuScrollHandlers(Object.keys(Buttons)[i] + "Div");
     }
 
+    // Add map zoom and scroll
     document.getElementById("mapDiv").onwheel = zoomWheel;
+
+    document.getElementById("mapDiv").onmousedown = function clickEvent(e) {
+        mousePos["mapDivX"] = e.clientX;
+        mousePos["mapDivY"] = e.clientY;
+
+        marginPos["mapDivX"] = document.getElementById("mapDiv").style.marginLeft.replace("px",'')|0;
+        marginPos["mapDivY"] = document.getElementById("mapDiv").style.marginTop.replace("px",'')|0;
+        document.getElementById("mapDiv").addEventListener('mousemove', mouseMoveMapHandler);
+        mouseScrollListeners.push({targetMenu: "mapDiv", handler: mouseMoveMapHandler});
+    }
+    document.getElementById("mapDiv").ontouchstart = function clickEvent(e) {
+        let evt = (typeof e.originalEvent === 'undefined') ? e : e.originalEvent;
+        let touch = evt.touches[0] || evt.changedTouches[0];
+        mousePos["mapDivX"] = touch.pageX;
+        mousePos["mapDivY"] = touch.pageY;
+
+        marginPos["mapDivX"] = document.getElementById("mapDiv").style.marginLeft.replace("px",'')|0;
+        marginPos["mapDivY"] = document.getElementById("mapDiv").style.marginTop.replace("px",'')|0;
+        document.getElementById("mapDiv").addEventListener('touchmove', mouseMoveMapHandler);
+        mouseScrollListeners.push({targetMenu: "mapDiv", handler: mouseMoveMapHandler});
+    }
+
+    let mouseMoveMapHandler = function(e) {
+        let mousePosDX = 0;
+        let mousePosDY = 0;
+
+        if(e.type == 'touchmove'){
+            let evt = (typeof e.originalEvent === 'undefined') ? e : e.originalEvent;
+            let touch = evt.touches[0] || evt.changedTouches[0];
+            mousePosDX = touch.pageX - mousePos["mapDivX"];
+            mousePosDY = touch.pageY - mousePos["mapDivY"];
+        } else {
+            mousePosDX = e.clientX - mousePos["mapDivX"];
+            mousePosDY = e.clientY - mousePos["mapDivY"];
+        }
+
+        let selectedPosX = marginPos["mapDivX"] + mousePosDX;
+        let selectedPosY = marginPos["mapDivY"] + mousePosDY;
+        let limInfX = window.innerWidth - div_width * (1 + zoomScale) / 2;
+        let limInfY = window.innerHeight - div_height * (1 + zoomScale) / 2;
+        let limSupX = - div_width * (1 - zoomScale) / 2;
+        let limSupY = - div_height * (1 - zoomScale) / 2;
+
+        if(selectedPosX >= limSupX || window.innerWidth > div_width * zoomScale){
+            document.getElementById("mapDiv").style.marginLeft = `${limSupX}px`;
+        }
+        else if (selectedPosX <= limInfX){
+            document.getElementById("mapDiv").style.marginLeft = `${limInfX}px`;
+        }
+        else{
+            document.getElementById("mapDiv").style.marginLeft = `${selectedPosX}px`;
+        }
+
+        if(selectedPosY >= limSupY || window.innerHeight > div_height * zoomScale){
+            document.getElementById("mapDiv").style.marginTop = `${limSupY}px`;
+        }
+        else if (selectedPosY <= limInfY){
+            document.getElementById("mapDiv").style.marginTop = `${limInfY}px`;
+        }
+        else{
+            document.getElementById("mapDiv").style.marginTop = `${selectedPosY}px`;
+        }
+    };
 
     // Click on menus to open them
     menuButtonClick();

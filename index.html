@@ -14,15 +14,27 @@
         body {
             overflow-x: hidden;
             overflow-y: hidden;
+            margin: 0;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            user-select: none;
         }
 
-        .buttons {
-            font-size:30px; 
+        #mapDiv {
+            position: relative; 
+            width: 1000px; 
+            height: 600px; 
+            background-color: black;
+        }
+
+        .topbuttons {
+            font-size:60px; 
             cursor:pointer; 
             color: red;
             position: fixed;
             z-index: 1;
-            left: 5%;
         }
 
         .menus {
@@ -32,6 +44,7 @@
             z-index: 1;
             left: 0;
             background-color: #0e092c;
+            overflow-x: hidden;
             overflow-y: hidden;
             transition: 0.2s;
         }
@@ -57,11 +70,11 @@
     </style>
 </head>
 <body>
-    <span class="buttons" onclick="menuButtonClick()"> &#9776; </span>
-    <div class="buttons" style="left: 10%;" onclick="ZoomIn()"> + </div>
-    <div class="buttons" style="left: 15%;"onclick="ZoomOut()"> - </div>
+    <span class="topbuttons" style="left: 5%;" onclick="menuButtonClick()"> &#9776; </span>
+    <div class="topbuttons" style="left: 10%;" onclick="ZoomIn()"> + </div>
+    <div class="topbuttons" style="left: 15%;"onclick="ZoomOut()"> - </div>
 
-    <div id="mapDiv" style = "position: relative; width: 1000px; height: 600px; background-color: black;"> </div>
+    <div id="mapDiv"> </div>
 
 
     <div id="mainMenuDiv" class="menus">
