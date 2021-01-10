@@ -29,6 +29,11 @@
             background-color: black;
         }
 
+        #FixedMenuDiv {
+            top: 0%;
+            height: 10%;
+        }
+
         .topbuttons {
             font-size:60px; 
             cursor:pointer; 
@@ -48,7 +53,6 @@
             overflow-y: hidden;
             transition: 0.2s;
         }
-
         .menus img {
             padding: 1vh;
             cursor:pointer;
@@ -70,12 +74,13 @@
     </style>
 </head>
 <body>
-    <span class="topbuttons" style="left: 5%;" onclick="menuButtonClick()"> &#9776; </span>
-    <div class="topbuttons" style="left: 10%;" onclick="ZoomIn()"> + </div>
-    <div class="topbuttons" style="left: 15%;"onclick="ZoomOut()"> - </div>
+    <div id="FixedMenuDiv" class="menus">
+        <img id="btnShowMenu" height="80%" src="Images/Others/Menu.png" ondragstart="return false" onclick="menuButtonClick()"/>
+        <img id="btnZoomIn" height="80%" src="Images/Others/ZoomIn.png" ondragstart="return false" onclick="ZoomIn()"/>
+        <img id="btnZoomOut" height="80%" src="Images/Others/ZoomOut.png" ondragstart="return false" onclick="ZoomOut()"/>
+    </div>
 
     <div id="mapDiv"> </div>
-
 
     <div id="mainMenuDiv" class="menus">
         <img id="btnterrains" height="80%" src="Images/Bardur/Ground.png" ondragstart="return false"/>

@@ -141,6 +141,7 @@ onload = function() {
     }
     addEventListener('touchend', fontouchend);
 
+    addMenuScrollHandlers("FixedMenuDiv");
     addMenuScrollHandlers("mainMenuDiv");
     addMenuScrollHandlers("WaterUnitsDiv");
     addMenuScrollHandlers("LandUnitsDiv");
