@@ -98,6 +98,7 @@ let sprites = [];
 onload = function() {
     document.getElementById("mapDiv").style.height = `${div_height}px`;
     document.getElementById("mapDiv").style.width = `${div_width}px`;
+    document.getElementById("mapDiv").style.marginTop = `${window.innerHeight * 0.1}px`;
 
     // Create map as array of tiles
     for (let x = 20; x >= 1; x--) {
@@ -191,7 +192,7 @@ onload = function() {
         let selectedPosX = marginPos["mapDivX"] + mousePosDX;
         let selectedPosY = marginPos["mapDivY"] + mousePosDY;
         let limInfX = window.innerWidth - div_width * (1 + zoomScale) / 2;
-        let limInfY = window.innerHeight - div_height * (1 + zoomScale) / 2;
+        let limInfY = window.innerHeight * 0.6 - div_height * (1 + zoomScale) / 2;
         let limSupX = - div_width * (1 - zoomScale) / 2;
         let limSupY = - div_height * (1 - zoomScale) / 2;
 
@@ -205,14 +206,14 @@ onload = function() {
             document.getElementById("mapDiv").style.marginLeft = `${selectedPosX}px`;
         }
 
-        if(selectedPosY >= limSupY || window.innerHeight > div_height * zoomScale){
-            document.getElementById("mapDiv").style.marginTop = `${limSupY}px`;
+        if(selectedPosY >= limSupY || window.innerHeight * 0.6 > div_height * zoomScale){
+            document.getElementById("mapDiv").style.marginTop = `${window.innerHeight * 0.1 + limSupY}px`;
         }
         else if (selectedPosY <= limInfY){
-            document.getElementById("mapDiv").style.marginTop = `${limInfY}px`;
+            document.getElementById("mapDiv").style.marginTop = `${window.innerHeight * 0.1 + limInfY}px`;
         }
         else{
-            document.getElementById("mapDiv").style.marginTop = `${selectedPosY}px`;
+            document.getElementById("mapDiv").style.marginTop = `${window.innerHeight * 0.1 + selectedPosY}px`;
         }
     };
 
@@ -222,6 +223,20 @@ onload = function() {
     document.getElementById(`btnterrains${selected.terrains}`).click();
     document.getElementById(`btntribes${selected.tribes}`).click();
 };
+
+onresize = function() {
+    adjustMapPosition();
+}
+function adjustMapPosition(){
+    if(window.innerWidth > div_width * zoomScale){
+        let limSupX = - div_width * (1 - zoomScale) / 2;
+        document.getElementById("mapDiv").style.marginLeft = `${limSupX}px`;
+    }
+    if(window.innerHeight * 0.6 > div_height * zoomScale){
+        let limSupY = - div_height * (1 - zoomScale) / 2;
+        document.getElementById("mapDiv").style.marginTop = `${window.innerHeight * 0.1 + limSupY}px`;
+    }
+}
 
 function addMenuScrollHandlers(menu) {
     document.getElementById(menu).onmousedown = function clickEvent(e) {
@@ -348,9 +363,9 @@ document.getElementById("mapDiv").onclick = function clickEvent(e) {
         selected.tile = getIndex(Xtile, Ytile);
         attSelectedTile();
     }
-    console.log(`X: ${x} Y: ${y}`);
-    console.log(`Xr: ${rotateX(x, y)} Yr: ${rotateY(x, y)}`);
-    console.log(`Xtile: ${Xtile} Ytile: ${Ytile}`);
+    // console.log(`X: ${x} Y: ${y}`);
+    // console.log(`Xr: ${rotateX(x, y)} Yr: ${rotateY(x, y)}`);
+    // console.log(`Xtile: ${Xtile} Ytile: ${Ytile}`);
   }
 function rotateX (x, y) {
     let r = Math.sqrt(x**2 + y**2);
@@ -479,7 +494,7 @@ function ZoomIn(){
         zoomScale = ZOOM_MAX;
     }
     document.getElementById("mapDiv").style.transform = `scale(${zoomScale})`;
-    console.log("in");
+    adjustMapPosition();
 }
 function ZoomOut(){
     if(zoomScale - ZOOM_INCREASE > ZOOM_MIN){
@@ -489,7 +504,7 @@ function ZoomOut(){
         zoomScale = ZOOM_MIN;
     }
     document.getElementById("mapDiv").style.transform = `scale(${zoomScale})`;
-    console.log("out");
+    adjustMapPosition();
 }
 function zoomWheel(event) {
     event.preventDefault();
