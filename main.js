@@ -26,13 +26,14 @@ let zoomScale = 1;
 
 let Buttons = {
     tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
-    terrains: ["Clouds", "DeepWater", "ShallowWater", "Ground", "Forest", "Mountain"],
+    terrains: ["Clouds", "DeepWater", "ShallowWater", "Ground", "Forest", "Mountain", "Ice"],
     Clouds: ["Clouds", "Rainbow"],
     DeepWater: ["DeepWater", "Ruin", "Whale", "Outpost", "IceBank", "WaterTemple", "IceTemple"],
     ShallowWater: ["ShallowWater", "Fish", "Port", "Outpost", "IceBank", "WaterTemple", "IceTemple"],
     Ground: ["Ground", "Ruin", "Village", "Fruit", "Crop", "Farm", "Windmill", "Sawmill", "CustomsHouse", "Sanctuary", "Forge", "Outpost", "IceBank", "Temple"],
     Forest: ["Forest", "Ruin", "Animal", "Lumber hut", "Sanctuary", "ForestTemple"],
     Mountain: ["Mountain", "Ruin", "Metal", "Mine", "Sanctuary", "MountainTemple"],
+    Ice: ["Ice", "Ruin", "Port", "Fish", "Whale", "Outpost", "IceBank", "IceTemple", "WaterTemple"],
     WaterUnits: ["boat", "ship", "battleship", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
     LandUnits: ["warrior", "archer", "rider", "knight", "defender", "catapult", "swordsman", "mindbender", "giant", "polytaur", "dragonegg", 
                 "mooni", "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
@@ -40,7 +41,7 @@ let Buttons = {
 }
 let Folders = {
     tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
-    terrains: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "selected.tribes", "selected.tribes", "selected.tribes"],
+    terrains: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "selected.tribes", "selected.tribes", "selected.tribes", "Miscellaneous"],
     Clouds: ["Miscellaneous", "Miscellaneous"], 
     DeepWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings"], 
     ShallowWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings"], 
@@ -48,6 +49,7 @@ let Folders = {
             "Buildings", "Buildings", "Miscellaneous", "Buildings", "Buildings"], 
     Forest: ["selected.tribes", "Miscellaneous", "selected.tribes", "Miscellaneous", "Buildings", "Buildings"], 
     Mountain: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings"],
+    Ice: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings"],
     WaterUnits: ["selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
                 "selected.tribes", "selected.tribes"],
     LandUnits: ["selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
@@ -58,37 +60,40 @@ let Folders = {
 }
 let OffsetX = {
     tribes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    terrains: [0, 0, 0, 0, 0, 0],
+    terrains: [0, 0, 0, 0, 0, 0, 0],
     Clouds: [0, 0], 
     DeepWater: [0, 0, 0, 0, 0, 0, 0], 
     ShallowWater: [0, 0, 0, 0, 0, 0, 0], 
     Ground: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
     Forest: [0, 0, 0, 0, 0, 0], 
     Mountain: [0, 0, 0, 0, 0, 0],
+    Ice: [0, 0, 0, 0, 0, 0, 0, 0, 0],
     WaterUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0],
     LandUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 }
 let OffsetY = {
     tribes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    terrains: [0, 0, 0, 0, 0, 0],
+    terrains: [0, 0, 0, 0, 0, 0, 0],
     Clouds: [0, 0], 
     DeepWater: [0, 0, 0, 0, 0, 0, 0], 
     ShallowWater: [0, 0, 0, 0, 0, 0, 0], 
     Ground: [0, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
     Forest: [0, 0, 0, 0, 0, 0], 
     Mountain: [0, 0, 0, 0, 0, 0],
+    Ice: [0, 0, 0, 0, 0, 0, 0, 0, 0],
     WaterUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0],
     LandUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 }
 let Scales = {
     tribes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    terrains: [1, 1, 1, 1, 1, 1],
+    terrains: [1, 1, 1, 1, 1, 1, 1],
     Clouds: [1, 1], 
     DeepWater: [1, 1, 1, 1, 1, 1, 1], 
     ShallowWater: [1, 1, 1, 1, 1, 1, 1], 
     Ground: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
     Forest: [1, 1, 0.5, 1, 1, 1], 
     Mountain: [1, 1, 1, 1, 1, 1],
+    Ice: [1, 1, 1, 1, 1, 1, 1, 1, 1],
     WaterUnits: [1, 1, 1, 1, 1, 1, 1, 1, 1],
     LandUnits: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 }
