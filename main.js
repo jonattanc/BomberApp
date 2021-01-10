@@ -35,7 +35,8 @@ let Buttons = {
     Mountain: ["Mountain", "Ruin", "Metal", "Mine"],
     WaterUnits: ["boat", "ship", "battleship", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
     LandUnits: ["warrior", "archer", "rider", "knight", "defender", "catapult", "swordsman", "mindbender", "giant", "polytaur", "dragonegg", 
-                "mooni", "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"]
+                "mooni", "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
+    FixedMenu: ["ShowMenu", "ZoomIn", "ZoomOut"]
 }
 let Folders = {
     tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
@@ -51,7 +52,8 @@ let Folders = {
     LandUnits: ["selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
                 "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
                 "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
-                "selected.tribes"]
+                "selected.tribes"],
+    FixedMenu: ["Others", "Others", "Others"]
 }
 let OffsetX = {
     tribes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -123,11 +125,14 @@ onload = function() {
         });
     });
     
-    // Set main menu click events
+    // Set main menu and fixed menu click events
     document.getElementById(`btnterrains`).addEventListener('click', function(){ selectMainMenu("terrains"); });
     document.getElementById(`btnonterrains`).addEventListener('click', function(){ selectMainMenu("onterrains"); });
     document.getElementById(`btnUnits`).addEventListener('click', function(){ selectMainMenu("Units"); });
     document.getElementById(`btnmiscs`).addEventListener('click', function(){ selectMainMenu("miscs"); });
+    document.getElementById(`btnFixedMenuShowMenu`).addEventListener('click', function(){ menuButtonClick(); });
+    document.getElementById(`btnFixedMenuZoomIn`).addEventListener('click', function(){ ZoomIn(); });
+    document.getElementById(`btnFixedMenuZoomOut`).addEventListener('click', function(){ ZoomOut(); });
 
     // Add horizontal scroll to divs
     onmouseup = function clickEvent(e) {
@@ -142,7 +147,6 @@ onload = function() {
     }
     addEventListener('touchend', fontouchend);
 
-    addMenuScrollHandlers("FixedMenuDiv");
     addMenuScrollHandlers("mainMenuDiv");
     addMenuScrollHandlers("WaterUnitsDiv");
     addMenuScrollHandlers("LandUnitsDiv");
@@ -309,6 +313,7 @@ function createButton(menu, item, index){
     });
     selectedIndex[menu] = 0;
     img.ondragstart = function() { return false; };
+    img.oncontextmenu= function() { return false; };
     document.getElementById(`${menu}Div`).appendChild(img);
 }
 
@@ -332,6 +337,7 @@ class Sprite{
         this.imgElement.setAttribute("width", sprite_width);
         this.imgElement.setAttribute("style", `position: absolute;  top: ${this.posTop}px;  left: ${this.posLeft}px;`);
         this.imgElement.ondragstart = function() { return false; };
+        this.imgElement.oncontextmenu= function() { return false; };
         if(!visible){
             this.imgElement.style.display = "none";
         }
@@ -425,9 +431,10 @@ function menuButtonClick() {
         document.getElementById("mainMenuDiv").style.height = "0%";
         document.getElementById("miscsDiv").style.height = "0%";
         for (let i = 0; i < Object.keys(Buttons).length; i++) { 
-            document.getElementById(Object.keys(Buttons)[i] + "Div").style.height = "0%";
+            if(Object.keys(Buttons)[i] != "FixedMenu"){
+                document.getElementById(Object.keys(Buttons)[i] + "Div").style.height = "0%";
+            }
         }
-
         isMenuOpen = false;
     }
     else {
@@ -449,7 +456,6 @@ function selectMainMenu(newMenuSelection) {
             setMenuHeight("0%");
             document.getElementById(`btn${selected.menu}`).style.backgroundColor = MENU_BG_COLOR;
         }
-
         selected.menu = newMenuSelection;
         document.getElementById("tribesDiv").style.height = "10%";
         setMenuHeight("10%");
