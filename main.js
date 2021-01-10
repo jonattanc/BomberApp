@@ -28,11 +28,11 @@ let Buttons = {
     tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
     terrains: ["Clouds", "DeepWater", "ShallowWater", "Ground", "Forest", "Mountain"],
     Clouds: ["Clouds", "Rainbow"],
-    DeepWater: ["DeepWater", "Ruin", "Whale"],
-    ShallowWater: ["ShallowWater", "Fish", "Port"],
-    Ground: ["Ground", "Ruin", "Village", "Fruit", "Crop", "Farm", "Outpost"],
-    Forest: ["Forest", "Ruin", "Animal", "Lumber hut"],
-    Mountain: ["Mountain", "Ruin", "Metal", "Mine"],
+    DeepWater: ["DeepWater", "Ruin", "Whale", "Outpost", "IceBank", "WaterTemple", "IceTemple"],
+    ShallowWater: ["ShallowWater", "Fish", "Port", "Outpost", "IceBank", "WaterTemple", "IceTemple"],
+    Ground: ["Ground", "Ruin", "Village", "Fruit", "Crop", "Farm", "Windmill", "Sawmill", "CustomsHouse", "Sanctuary", "Forge", "Outpost", "IceBank", "Temple"],
+    Forest: ["Forest", "Ruin", "Animal", "Lumber hut", "Sanctuary", "ForestTemple"],
+    Mountain: ["Mountain", "Ruin", "Metal", "Mine", "Sanctuary", "MountainTemple"],
     WaterUnits: ["boat", "ship", "battleship", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
     LandUnits: ["warrior", "archer", "rider", "knight", "defender", "catapult", "swordsman", "mindbender", "giant", "polytaur", "dragonegg", 
                 "mooni", "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
@@ -42,11 +42,12 @@ let Folders = {
     tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
     terrains: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "selected.tribes", "selected.tribes", "selected.tribes"],
     Clouds: ["Miscellaneous", "Miscellaneous"], 
-    DeepWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous"], 
-    ShallowWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous"], 
-    Ground: ["selected.tribes", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous"], 
-    Forest: ["selected.tribes", "Miscellaneous", "selected.tribes", "Miscellaneous"], 
-    Mountain: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous"],
+    DeepWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings"], 
+    ShallowWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings"], 
+    Ground: ["selected.tribes", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings", 
+            "Buildings", "Buildings", "Miscellaneous", "Buildings", "Buildings"], 
+    Forest: ["selected.tribes", "Miscellaneous", "selected.tribes", "Miscellaneous", "Buildings", "Buildings"], 
+    Mountain: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings"],
     WaterUnits: ["selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
                 "selected.tribes", "selected.tribes"],
     LandUnits: ["selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
@@ -59,11 +60,11 @@ let OffsetX = {
     tribes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     terrains: [0, 0, 0, 0, 0, 0],
     Clouds: [0, 0], 
-    DeepWater: [0, 0, 0], 
-    ShallowWater: [0, 0, 0], 
-    Ground: [0, 0, 0, 0, 0, 0, 0], 
-    Forest: [0, 0, 0, 0], 
-    Mountain: [0, 0, 0, 0],
+    DeepWater: [0, 0, 0, 0, 0, 0, 0], 
+    ShallowWater: [0, 0, 0, 0, 0, 0, 0], 
+    Ground: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+    Forest: [0, 0, 0, 0, 0, 0], 
+    Mountain: [0, 0, 0, 0, 0, 0],
     WaterUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0],
     LandUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 }
@@ -71,11 +72,11 @@ let OffsetY = {
     tribes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     terrains: [0, 0, 0, 0, 0, 0],
     Clouds: [0, 0], 
-    DeepWater: [0, 0, 0], 
-    ShallowWater: [0, 0, 0], 
-    Ground: [0, 0.3, 0, 0, 0, 0, 0], 
-    Forest: [0, 0, 0, 0], 
-    Mountain: [0, 0, 0, 0],
+    DeepWater: [0, 0, 0, 0, 0, 0, 0], 
+    ShallowWater: [0, 0, 0, 0, 0, 0, 0], 
+    Ground: [0, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+    Forest: [0, 0, 0, 0, 0, 0], 
+    Mountain: [0, 0, 0, 0, 0, 0],
     WaterUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0],
     LandUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 }
@@ -83,11 +84,11 @@ let Scales = {
     tribes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     terrains: [1, 1, 1, 1, 1, 1],
     Clouds: [1, 1], 
-    DeepWater: [1, 1, 1], 
-    ShallowWater: [1, 1, 1], 
-    Ground: [1, 1, 1, 1, 1, 1, 1], 
-    Forest: [1, 1, 0.5, 1], 
-    Mountain: [1, 1, 1, 1],
+    DeepWater: [1, 1, 1, 1, 1, 1, 1], 
+    ShallowWater: [1, 1, 1, 1, 1, 1, 1], 
+    Ground: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
+    Forest: [1, 1, 0.5, 1, 1, 1], 
+    Mountain: [1, 1, 1, 1, 1, 1],
     WaterUnits: [1, 1, 1, 1, 1, 1, 1, 1, 1],
     LandUnits: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 }
@@ -301,6 +302,9 @@ function createButton(menu, item, index){
     if(Folders[menu][index] == "selected.tribes"){
         img.setAttribute("src", `Images/${selected.tribes}/${item}.png`);
     }
+    else if(Folders[menu][index] == "Buildings"){
+        img.setAttribute("src", `Images/Buildings/${item}/${item}1.png`);
+    }
     else{
         img.setAttribute("src", `Images/${Folders[menu][index]}/${item}.png`);
     }
@@ -346,6 +350,9 @@ class Sprite{
     redraw(menu, index){
         if(Folders[menu][index] == "selected.tribes"){
             this.imgElement.setAttribute("src", `Images/${selected.tribes}/${Buttons[menu][index]}.png`);
+        }
+        else if(Folders[menu][index] == "Buildings"){
+            this.imgElement.setAttribute("src", `Images/Buildings/${Buttons[menu][index]}/${Buttons[menu][index]}1.png`);
         }
         else{
             this.imgElement.setAttribute("src", `Images/${Folders[menu][index]}/${Buttons[menu][index]}.png`);
