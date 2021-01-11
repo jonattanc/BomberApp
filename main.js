@@ -14,6 +14,8 @@ const ZOOM_WHEEL_FACTOR = 0.001;
 const ZOOM_MAX = 2;
 const ZOOM_MIN = 0.25;
 
+const MIN_DRAG_MOVEMENT = 5;
+
 let map = new Array(400);
 let isMenuOpen = false;
 let isSubMenuOpen = false;
@@ -23,6 +25,7 @@ let misc = "Miscellaneous";
 let mainMenuBtns = ["terrains", "onterrains", "units", "miscs"];
 
 let zoomScale = 1;
+let map_moving = false;
 
 let Buttons = {
     tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
@@ -167,9 +170,10 @@ onload = function() {
     document.getElementById("mapDiv").onmousedown = function clickEvent(e) {
         mousePos["mapDivX"] = e.clientX;
         mousePos["mapDivY"] = e.clientY;
+        map_moving = false;
 
         marginPos["mapDivX"] = document.getElementById("mapDiv").style.marginLeft.replace("px",'')|0;
-        marginPos["mapDivY"] = document.getElementById("mapDiv").style.marginTop.replace("px",'')|0;
+        marginPos["mapDivY"] = (document.getElementById("mapDiv").style.marginTop.replace("px",'')|0) - (window.innerHeight * 0.1);
         document.getElementById("mapDiv").addEventListener('mousemove', mouseMoveMapHandler);
         mouseScrollListeners.push({targetMenu: "mapDiv", handler: mouseMoveMapHandler});
     }
@@ -178,9 +182,10 @@ onload = function() {
         let touch = evt.touches[0] || evt.changedTouches[0];
         mousePos["mapDivX"] = touch.pageX;
         mousePos["mapDivY"] = touch.pageY;
+        map_moving = false;
 
         marginPos["mapDivX"] = document.getElementById("mapDiv").style.marginLeft.replace("px",'')|0;
-        marginPos["mapDivY"] = document.getElementById("mapDiv").style.marginTop.replace("px",'')|0;
+        marginPos["mapDivY"] = (document.getElementById("mapDiv").style.marginTop.replace("px",'')|0) - (window.innerHeight * 0.1);
         document.getElementById("mapDiv").addEventListener('touchmove', mouseMoveMapHandler);
         mouseScrollListeners.push({targetMenu: "mapDiv", handler: mouseMoveMapHandler});
     }
@@ -199,31 +204,36 @@ onload = function() {
             mousePosDY = e.clientY - mousePos["mapDivY"];
         }
 
-        let selectedPosX = marginPos["mapDivX"] + mousePosDX;
-        let selectedPosY = marginPos["mapDivY"] + mousePosDY;
-        let limInfX = window.innerWidth - div_width * (1 + zoomScale) / 2;
-        let limInfY = window.innerHeight * 0.6 - div_height * (1 + zoomScale) / 2;
-        let limSupX = - div_width * (1 - zoomScale) / 2;
-        let limSupY = - div_height * (1 - zoomScale) / 2;
+        if(Math.abs(mousePosDX) >= MIN_DRAG_MOVEMENT || Math.abs(mousePosDY) >= MIN_DRAG_MOVEMENT){
+            map_moving = true;
+        }
+        if(map_moving){
+            let selectedPosX = marginPos["mapDivX"] + mousePosDX;
+            let selectedPosY = marginPos["mapDivY"] + mousePosDY;
+            let limInfX = window.innerWidth - div_width * (1 + zoomScale) / 2;
+            let limInfY = window.innerHeight * 0.6 - div_height * (1 + zoomScale) / 2;
+            let limSupX = - div_width * (1 - zoomScale) / 2;
+            let limSupY = - div_height * (1 - zoomScale) / 2;
 
-        if(selectedPosX >= limSupX || window.innerWidth > div_width * zoomScale){
-            document.getElementById("mapDiv").style.marginLeft = `${limSupX}px`;
-        }
-        else if (selectedPosX <= limInfX){
-            document.getElementById("mapDiv").style.marginLeft = `${limInfX}px`;
-        }
-        else{
-            document.getElementById("mapDiv").style.marginLeft = `${selectedPosX}px`;
-        }
+            if(selectedPosX >= limSupX || window.innerWidth > div_width * zoomScale){
+                document.getElementById("mapDiv").style.marginLeft = `${limSupX}px`;
+            }
+            else if (selectedPosX <= limInfX){
+                document.getElementById("mapDiv").style.marginLeft = `${limInfX}px`;
+            }
+            else{
+                document.getElementById("mapDiv").style.marginLeft = `${selectedPosX}px`;
+            }
 
-        if(selectedPosY >= limSupY || window.innerHeight * 0.6 > div_height * zoomScale){
-            document.getElementById("mapDiv").style.marginTop = `${window.innerHeight * 0.1 + limSupY}px`;
-        }
-        else if (selectedPosY <= limInfY){
-            document.getElementById("mapDiv").style.marginTop = `${window.innerHeight * 0.1 + limInfY}px`;
-        }
-        else{
-            document.getElementById("mapDiv").style.marginTop = `${window.innerHeight * 0.1 + selectedPosY}px`;
+            if(selectedPosY >= limSupY || window.innerHeight * 0.6 > div_height * zoomScale){
+                document.getElementById("mapDiv").style.marginTop = `${window.innerHeight * 0.1 + limSupY}px`;
+            }
+            else if (selectedPosY <= limInfY){
+                document.getElementById("mapDiv").style.marginTop = `${window.innerHeight * 0.1 + limInfY}px`;
+            }
+            else{
+                document.getElementById("mapDiv").style.marginTop = `${window.innerHeight * 0.1 + selectedPosY}px`;
+            }
         }
     };
 
@@ -369,21 +379,23 @@ class Sprite{
 }
 
 document.getElementById("mapDiv").onclick = function clickEvent(e) {
-    let rect = e.currentTarget.getBoundingClientRect();
+    if(!map_moving){
+        let rect = e.currentTarget.getBoundingClientRect();
 
-    let x = (e.clientX - rect.left) / zoomScale;
-    let y = -(e.clientY - rect.top - tile_height * 10 * zoomScale) / zoomScale;
+        let x = (e.clientX - rect.left) / zoomScale;
+        let y = -(e.clientY - rect.top - tile_height * 10 * zoomScale) / zoomScale;
 
-    let Xtile = Math.ceil(rotateX(x, y) / (sprite_width / 2));
-    let Ytile = Math.ceil(rotateY(x, y) / (sprite_width / 2));
+        let Xtile = Math.ceil(rotateX(x, y) / (sprite_width / 2));
+        let Ytile = Math.ceil(rotateY(x, y) / (sprite_width / 2));
 
-    if(Xtile >= 1 && Xtile <= 20 && Ytile >= 1 && Ytile <= 20){
-        selected.tile = getIndex(Xtile, Ytile);
-        attSelectedTile();
+        if(Xtile >= 1 && Xtile <= 20 && Ytile >= 1 && Ytile <= 20){
+            selected.tile = getIndex(Xtile, Ytile);
+            attSelectedTile();
+        }
+        // console.log(`X: ${x} Y: ${y}`);
+        // console.log(`Xr: ${rotateX(x, y)} Yr: ${rotateY(x, y)}`);
+        // console.log(`Xtile: ${Xtile} Ytile: ${Ytile}`);
     }
-    // console.log(`X: ${x} Y: ${y}`);
-    // console.log(`Xr: ${rotateX(x, y)} Yr: ${rotateY(x, y)}`);
-    // console.log(`Xtile: ${Xtile} Ytile: ${Ytile}`);
   }
 function rotateX (x, y) {
     let r = Math.sqrt(x**2 + y**2);
