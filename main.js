@@ -33,7 +33,7 @@ let Buttons = {
     Clouds: ["Clouds", "Rainbow"],
     DeepWater: ["DeepWater", "Ruin", "Whale", "Outpost", "IceBank", "WaterTemple", "IceTemple"],
     ShallowWater: ["ShallowWater", "Fish", "Port", "Outpost", "IceBank", "WaterTemple", "IceTemple"],
-    Ground: ["Ground", "Ruin", "Village", "Fruit", "Crop", "Farm", "Windmill", "Sawmill", "CustomsHouse", "Sanctuary", "Forge", "Outpost", "IceBank", "Temple"],
+    Ground: ["Ground", "Ruin", "Village", "City", "Fruit", "Crop", "Farm", "Windmill", "Sawmill", "CustomsHouse", "Sanctuary", "Forge", "Outpost", "IceBank", "Temple"],
     Forest: ["Forest", "Ruin", "Animal", "Lumber hut", "Sanctuary", "ForestTemple"],
     Mountain: ["Mountain", "Ruin", "Metal", "Mine", "Sanctuary", "MountainTemple"],
     Ice: ["Ice", "Ruin", "Port", "Fish", "Whale", "Outpost", "IceBank", "IceTemple", "WaterTemple"],
@@ -48,7 +48,7 @@ let Folders = {
     Clouds: ["Miscellaneous", "Miscellaneous"], 
     DeepWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings"], 
     ShallowWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings"], 
-    Ground: ["selected.tribes", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings", 
+    Ground: ["selected.tribes", "Miscellaneous", "Miscellaneous", "City", "selected.tribes", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings", 
             "Buildings", "Buildings", "Miscellaneous", "Buildings", "Buildings"], 
     Forest: ["selected.tribes", "Miscellaneous", "selected.tribes", "Miscellaneous", "Buildings", "Buildings"], 
     Mountain: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings"],
@@ -67,7 +67,7 @@ let OffsetX = {
     Clouds: [0, 0], 
     DeepWater: [0, 0, 0, 0, 0, 0, 0], 
     ShallowWater: [0, 0, 0, 0, 0, 0, 0], 
-    Ground: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+    Ground: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
     Forest: [0, 0, 0, 0, 0, 0], 
     Mountain: [0, 0, 0, 0, 0, 0],
     Ice: [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -80,7 +80,7 @@ let OffsetY = {
     Clouds: [0, 0], 
     DeepWater: [0, 0, 0, 0, 0, 0, 0], 
     ShallowWater: [0, 0, 0, 0, 0, 0, 0], 
-    Ground: [0, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+    Ground: [0, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
     Forest: [0, 0, 0, 0, 0, 0], 
     Mountain: [0, 0, 0, 0, 0, 0],
     Ice: [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -93,7 +93,7 @@ let Scales = {
     Clouds: [1, 1], 
     DeepWater: [1, 1, 1, 1, 1, 1, 1], 
     ShallowWater: [1, 1, 1, 1, 1, 1, 1], 
-    Ground: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
+    Ground: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
     Forest: [1, 1, 0.5, 1, 1, 1], 
     Mountain: [1, 1, 1, 1, 1, 1],
     Ice: [1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -320,6 +320,9 @@ function createButton(menu, item, index){
     else if(Folders[menu][index] == "Buildings"){
         img.setAttribute("src", `Images/Buildings/${item}/${item}1.png`);
     }
+    else if(Folders[menu][index] == "City"){
+        img.setAttribute("src", `Images/${selected.tribes}/City/City7.png`);
+    }
     else{
         img.setAttribute("src", `Images/${Folders[menu][index]}/${item}.png`);
     }
@@ -368,6 +371,9 @@ class Sprite{
         }
         else if(Folders[menu][index] == "Buildings"){
             this.imgElement.setAttribute("src", `Images/Buildings/${Buttons[menu][index]}/${Buttons[menu][index]}1.png`);
+        }
+        else if(Folders[menu][index] == "City"){
+            this.imgElement.setAttribute("src", `Images/${selected.tribes}/City/City7.png`);
         }
         else{
             this.imgElement.setAttribute("src", `Images/${Folders[menu][index]}/${Buttons[menu][index]}.png`);
@@ -510,6 +516,9 @@ function attTribes(tribe) {
             for (let j = 0; j < Buttons[Object.keys(Buttons)[i]].length; j++) {
                 if(Folders[Object.keys(Buttons)[i]][j] == "selected.tribes"){
                     document.getElementById(`btn${Object.keys(Buttons)[i]}${Buttons[Object.keys(Buttons)[i]][j]}`).src = `Images/${tribe}/${Buttons[Object.keys(Buttons)[i]][j]}.png`;
+                }
+                else if(Folders[Object.keys(Buttons)[i]][j] == "City"){
+                    document.getElementById(`btn${Object.keys(Buttons)[i]}${Buttons[Object.keys(Buttons)[i]][j]}`).src = `Images/${tribe}/City/City7.png`;
                 }
             }
         }
