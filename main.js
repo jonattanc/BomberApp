@@ -318,7 +318,7 @@ function createButton(menu, item, index){
         img.setAttribute("src", `Images/${selected.tribes}/${item}.png`);
     }
     else if(Folders[menu][index] == "Buildings"){
-        img.setAttribute("src", `Images/Buildings/${item}/${item}1.png`);
+        img.setAttribute("src", `Images/Buildings/${item}/${item}5.png`);
     }
     else if(Folders[menu][index] == "City"){
         img.setAttribute("src", `Images/${selected.tribes}/City/City7.png`);
