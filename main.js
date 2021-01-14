@@ -9,9 +9,9 @@ const div_width = tile_width * 20;
 const MENU_BG_COLOR = "#0e092c";
 const MENU_SELECT_COLOR = "black";
 
-const ZOOM_INCREASE = 0.25;
-const ZOOM_WHEEL_FACTOR = 0.001;
-const ZOOM_MAX = 2;
+const ZOOM_INCREASE = 0.4;
+const ZOOM_WHEEL_FACTOR = 0.003;
+const ZOOM_MAX = 3.5;
 const ZOOM_MIN = 0.25;
 
 const MIN_DRAG_MOVEMENT = 5;
@@ -33,7 +33,7 @@ let Buttons = {
     Clouds: ["Clouds", "Rainbow"],
     DeepWater: ["DeepWater", "Ruin", "Whale", "Outpost", "IceBank", "WaterTemple", "IceTemple"],
     ShallowWater: ["ShallowWater", "Fish", "Port", "Outpost", "IceBank", "WaterTemple", "IceTemple"],
-    Ground: ["Ground", "Ruin", "Village", "City", "Fruit", "Crop", "Farm", "Windmill", "Sawmill", "CustomsHouse", "Sanctuary", "Forge", "Outpost", "IceBank", "Temple"],
+    Ground: ["Ground", "Ruin", "Village", "City", "Fruit", "Crop", "Farm", "Windmill", "Sawmill", "CustomsHouse", "Sanctuary", "Forge", "IceBank", "Temple"],
     Forest: ["Forest", "Ruin", "Animal", "Lumber hut", "Sanctuary", "ForestTemple"],
     Mountain: ["Mountain", "Ruin", "Metal", "Mine", "Sanctuary", "MountainTemple"],
     Ice: ["Ice", "Ruin", "Port", "Fish", "Whale", "Outpost", "IceBank", "IceTemple", "WaterTemple"],
@@ -49,7 +49,7 @@ let Folders = {
     DeepWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings"], 
     ShallowWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings"], 
     Ground: ["selected.tribes", "Miscellaneous", "Miscellaneous", "City", "selected.tribes", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings", 
-            "Buildings", "Buildings", "Miscellaneous", "Buildings", "Buildings"], 
+            "Buildings", "Buildings", "Buildings", "Buildings"], 
     Forest: ["selected.tribes", "Miscellaneous", "selected.tribes", "Miscellaneous", "Buildings", "Buildings"], 
     Mountain: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings"],
     Ice: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings"],
@@ -61,44 +61,38 @@ let Folders = {
                 "selected.tribes"],
     FixedMenu: ["Others", "Others", "Others"]
 }
-let OffsetX = {
-    tribes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    terrains: [0, 0, 0, 0, 0, 0, 0],
-    Clouds: [0, 0], 
-    DeepWater: [0, 0, 0, 0, 0, 0, 0], 
-    ShallowWater: [0, 0, 0, 0, 0, 0, 0], 
-    Ground: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    Forest: [0, 0, 0, 0, 0, 0], 
-    Mountain: [0, 0, 0, 0, 0, 0],
-    Ice: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    WaterUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    LandUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+let OffsetX = { // Positive value moves sprite to the left
+    Clouds: [0, -0.2], 
+    DeepWater: [0.051, -0.18, -0.23, -0.31, -0.18, -0.185, -0.185], 
+    ShallowWater: [0, -0.15, -0.05, -0.31, -0.18, -0.185, -0.185], 
+    Ground: [0, -0.18, -0.2, 0, -0.12, 0, 0, 0, -0.08, -0.28, 0, -0.26, -0.18, -0.185], 
+    Forest: [0, -0.18, -0.35, -0.32, 0, -0.185], 
+    Mountain: [0.08, -0.18, -0.1, -0.25, 0, -0.185],
+    Ice: [0, -0.16, -0.05, -0.15, -0.23, -0.31, -0.18, -0.185, -0.185],
+    WaterUnits: [-0.22, -0.2, -0.23, -0.18, -0.2, -0.2, -0.21, -0.22, -0.22],
+    LandUnits: [-0.19, -0.12, -0.21, -0.2, -0.2, -0.22, -0.2, -0.17, -0.24, -0.2, -0.19, -0.21, -0.17, -0.2, -0.22, -0.2, -0.18, -0.2, -0.2, -0.21, -0.22, -0.22]
 }
-let OffsetY = {
-    tribes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    terrains: [0, 0, 0, 0, 0, 0, 0],
-    Clouds: [0, 0], 
-    DeepWater: [0, 0, 0, 0, 0, 0, 0], 
-    ShallowWater: [0, 0, 0, 0, 0, 0, 0], 
-    Ground: [0, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    Forest: [0, 0, 0, 0, 0, 0], 
-    Mountain: [0, 0, 0, 0, 0, 0],
-    Ice: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    WaterUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    LandUnits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+let OffsetY = { // Positive value moves sprite up // Ice increases 0.05 from water
+    Clouds: [0, 0.1], 
+    DeepWater: [-0.06, 0, -0.18, 0.025, 0.4, 0, 0.15], 
+    ShallowWater: [-0.14, -0.07, -0.12, 0.025, 0.4, 0, 0.15], 
+    Ground: [-0.07, 0.05, -0.1, 0.64, 0.1, 0, 0.03, 0.05, 0.08, 0.11, 0.6, 0, 0.45, -0.02], 
+    Forest: [0.06, 0.03, -0.15, -0.12, 0.6, 0.07], 
+    Mountain: [0.2, 0.05, 0.1, -0.15, 0.6, 0.12],
+    Ice: [-0.09, 0.02, -0.07, -0.07, -0.18, 0.03, 0.45, 0.15, 0],
+    WaterUnits: [0.26, 0.3, 0.19, 0.28, 0.25, 0.25, 0.3, 0.3, 0.31],
+    LandUnits: [0.27, 0.34, 0.25, 0.25, 0.32, 0.29, 0.32, 0.29, 0.3, 0.32, 0.3, 0.22, 0.29, 0.25, 0.21, 0.2, 0.33, 0.3, 0.3, 0.35, 0.35, 0.36]
 }
 let Scales = {
-    tribes: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    terrains: [1, 1, 1, 1, 1, 1, 1],
-    Clouds: [1, 1], 
-    DeepWater: [1, 1, 1, 1, 1, 1, 1], 
-    ShallowWater: [1, 1, 1, 1, 1, 1, 1], 
-    Ground: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-    Forest: [1, 1, 0.5, 1, 1, 1], 
-    Mountain: [1, 1, 1, 1, 1, 1],
-    Ice: [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    WaterUnits: [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    LandUnits: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    Clouds: [1, 0.6], 
+    DeepWater: [1.1, 0.65, 0.55, 0.37, 0.65, 0.65, 0.65], 
+    ShallowWater: [1, 0.75, 0.9, 0.37, 0.65, 0.65, 0.65], 
+    Ground: [1, 0.65, 0.6, 1, 0.8, 1, 1, 0.8, 0.8, 0.45, 1, 0.5, 0.65, 0.65], 
+    Forest: [1, 0.65, 0.35, 0.5, 1, 0.65], 
+    Mountain: [1.13, 0.65, 0.7, 0.45, 1, 0.65],
+    Ice: [0.99, 0.65, 0.9, 0.75, 0.55, 0.37, 0.65, 0.65, 0.65],
+    WaterUnits: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7],
+    LandUnits: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7]
 }
 
 let mousePos = { };
@@ -373,14 +367,21 @@ class Sprite{
             this.imgElement.setAttribute("src", `Images/Buildings/${Buttons[menu][index]}/${Buttons[menu][index]}1.png`);
         }
         else if(Folders[menu][index] == "City"){
-            this.imgElement.setAttribute("src", `Images/${selected.tribes}/City/City7.png`);
+            this.imgElement.setAttribute("src", `Images/${selected.tribes}/City/City3.png`);
         }
         else{
             this.imgElement.setAttribute("src", `Images/${Folders[menu][index]}/${Buttons[menu][index]}.png`);
         }
-        this.imgElement.setAttribute("width", sprite_width * Scales[menu][index]);
-        this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY[menu][index]}px`;
-        this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX[menu][index]}px`;
+        if(menu == "terrains"){
+            this.imgElement.setAttribute("width", sprite_width * Scales[selected.terrains][0]);
+            this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY[selected.terrains][0]}px`;
+            this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX[selected.terrains][0]}px`;
+        }
+        else {
+            this.imgElement.setAttribute("width", sprite_width * Scales[menu][index]);
+            this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY[menu][index]}px`;
+            this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX[menu][index]}px`;
+        }
     }
 }
 
@@ -441,7 +442,6 @@ function attSelectedTile(){
         document.getElementById(`onterrains${selected.tile}`).style.display = 'inline'; // Make what is on terrain visible
     break;
     case "Units":
-        map[selected.tile].terrainSprite.redraw("terrains", selectedIndex["terrains"]); // Update terrain
         if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){ // Check type of unit
             map[selected.tile].UnitSprite.redraw("WaterUnits", selectedIndex["WaterUnits"]); // Update water unit
         }
