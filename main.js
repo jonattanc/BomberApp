@@ -132,6 +132,13 @@ onload = function() {
             attTribes(selected.tribes);
         });
     });
+
+    // Change terrain icon click events
+    Buttons.terrains.forEach(function (item, index){
+        document.getElementById(`btnterrains${item}`).addEventListener('click', function(){
+            updateTerrainIcon();
+        });
+    });
     
     // Set main menu and fixed menu click events
     document.getElementById(`btnterrains`).addEventListener('click', function(){ selectMainMenu("terrains"); });
@@ -341,6 +348,7 @@ function createButton(menu, item, index){
 class Tile {
     constructor(index) {
         this.index = index;
+        this.tribeTerrain = "Bardur";
         this.hasRoads = false;
         this.terrain = "Clouds";
         this.terrainIndex = 0;
@@ -361,6 +369,7 @@ class Tile {
     }
     updateTerrain(newIndex) {
         this.terrainIndex = newIndex;
+        this.tribeTerrain = selected.tribes;
         this.terrain = Buttons.terrains[this.terrainIndex];
         this.terrainSprite.redraw("terrains", this.terrainIndex);
     }
@@ -524,7 +533,7 @@ function attSelectedTile(){
     break;
     case "onterrains":
         if(Buttons[selected["terrains"]][selectedIndex[selected["terrains"]]] == "Roads"){
-            if(map[selected.tile].terrain != selected["terrains"]){ // If terrain type is different
+            if(map[selected.tile].terrain != selected["terrains"] || map[selected.tile].tribeTerrain != selected.tribes){ // If terrain type is different
                 map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
                 map[selected.tile].updateOnTerrain(0);
             }
@@ -613,8 +622,17 @@ function setMenuHeight(newHeight){
         document.getElementById(`${selected.menu}Div`).style.height = newHeight;
     }
 }
+function updateTerrainIcon() {
+    if(selected["terrains"] == "Ground" || selected["terrains"] == "Forest" || selected["terrains"] == "Mountain"){
+        document.getElementById(`btnterrains`).src = `Images/${selected.tribes}/${selected["terrains"]}.png`;
+    }
+    else {
+        document.getElementById(`btnterrains`).src = `Images/Miscellaneous/${selected["terrains"]}.png`;
+    }
+}
 
 function attTribes(tribe) {
+    updateTerrainIcon();
     for (let i = 0; i < Object.keys(Buttons).length; i++) { 
         if(Object.keys(Buttons)[i] != "tribes"){
             for (let j = 0; j < Buttons[Object.keys(Buttons)[i]].length; j++) {
