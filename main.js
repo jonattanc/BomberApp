@@ -33,9 +33,9 @@ let Buttons = {
     Clouds: ["Clouds", "Rainbow"],
     DeepWater: ["DeepWater", "Ruin", "Whale", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "WaterTemple", "IceTemple"],
     ShallowWater: ["ShallowWater", "Fish", "Port", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "WaterTemple", "IceTemple"],
-    Ground: ["Ground", "Ruin", "Village", "City", "Fruit", "Crop", "Farm", "Windmill", "Sawmill", "CustomsHouse", "Sanctuary", "Forge", "IceBank", "POF", "GOP",
+    Ground: ["Ground", "Roads", "Ruin", "Village", "City", "Fruit", "Crop", "Farm", "Windmill", "Sawmill", "CustomsHouse", "Sanctuary", "Forge", "IceBank", "POF", "GOP",
             "GB", "AOP", "ET", "TOW", "EOG", "Temple"],
-    Forest: ["Forest", "Ruin", "Animal", "Lumber hut", "Sanctuary", "ForestTemple"],
+    Forest: ["Forest", "Roads", "Ruin", "Animal", "Lumber hut", "Sanctuary", "ForestTemple"],
     Mountain: ["Mountain", "Ruin", "Metal", "Mine", "Sanctuary", "MountainTemple"],
     Ice: ["Ice", "Ruin", "Port", "Fish", "Whale", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "IceTemple", "WaterTemple"],
     WaterUnits: ["boat", "ship", "battleship", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
@@ -51,10 +51,10 @@ let Folders = {
                 "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "Buildings", "Buildings"], 
     ShallowWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "selected.tribes", "selected.tribes", "selected.tribes", 
                     "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "Buildings", "Buildings"], 
-    Ground: ["selected.tribes", "Miscellaneous", "Miscellaneous", "City", "selected.tribes", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings", 
+    Ground: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous", "City", "selected.tribes", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings", 
             "Buildings", "Buildings", "Buildings", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes",
              "selected.tribes", "Buildings"], 
-    Forest: ["selected.tribes", "Miscellaneous", "selected.tribes", "Miscellaneous", "Buildings", "Buildings"], 
+    Forest: ["selected.tribes", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", "Buildings", "Buildings"], 
     Mountain: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings"],
     Ice: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "selected.tribes", "selected.tribes", 
             "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "Buildings", "Buildings"],
@@ -70,8 +70,8 @@ let OffsetX = { // Positive value moves sprite to the left
     Clouds: [0, -0.2], 
     DeepWater: [0.051, -0.18, -0.23, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185], 
     ShallowWater: [0, -0.15, -0.05, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185], 
-    Ground: [0, -0.18, -0.2, 0, -0.12, 0, 0, 0, -0.08, -0.28, 0, -0.26, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185], 
-    Forest: [0, -0.18, -0.35, -0.32, 0, -0.185], 
+    Ground: [0, 0, -0.18, -0.2, 0, -0.12, 0, 0, 0, -0.08, -0.28, 0, -0.26, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185], 
+    Forest: [0, 0, -0.18, -0.35, -0.32, 0, -0.185], 
     Mountain: [0.08, -0.18, -0.1, -0.25, 0, -0.185],
     Ice: [0, -0.16, -0.05, -0.15, -0.23, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185],
     WaterUnits: [-0.22, -0.2, -0.23, -0.18, -0.2, -0.2, -0.21, -0.22, -0.22],
@@ -81,8 +81,8 @@ let OffsetY = { // Positive value moves sprite up // Ice increases about 0.05 fr
     Clouds: [0, 0.1], 
     DeepWater: [-0.06, 0, -0.18, 0.025, 0.4, 0.04, 0.38, 0.06, 0.19, 0.14, 0.63, 0.2, 0, 0.15], 
     ShallowWater: [-0.14, -0.07, -0.12, 0.025, 0.4, 0.04, 0.38, 0.06, 0.19, 0.14, 0.63, 0.2, 0, 0.15], 
-    Ground: [-0.07, 0.05, -0.1, 0.64, 0.1, 0, 0.03, 0.05, 0.08, 0.11, 0.6, 0, 0.45, 0.08, 0.42, 0.1, 0.23, 0.18, 0.67, 0.24, -0.02], 
-    Forest: [0.06, 0.03, -0.15, -0.12, 0.6, 0.07], 
+    Ground: [-0.07, -0.05, 0.05, -0.1, 0.64, 0.1, 0, 0.03, 0.05, 0.08, 0.11, 0.6, 0, 0.45, 0.08, 0.42, 0.1, 0.23, 0.18, 0.67, 0.24, -0.02], 
+    Forest: [0.06, 0, 0.03, -0.15, -0.12, 0.6, 0.07], 
     Mountain: [0.2, 0.05, 0.1, -0.15, 0.6, 0.12],
     Ice: [-0.09, 0.02, -0.07, -0.07, -0.18, 0.03, 0.45, 0.08, 0.42, 0.1, 0.23, 0.18, 0.67, 0.24, 0.15, 0],
     WaterUnits: [0.26, 0.3, 0.19, 0.28, 0.25, 0.25, 0.3, 0.3, 0.31],
@@ -92,8 +92,8 @@ let Scales = {
     Clouds: [1, 0.6], 
     DeepWater: [1.1, 0.65, 0.55, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65], 
     ShallowWater: [1, 0.75, 0.9, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65], 
-    Ground: [1, 0.65, 0.6, 1, 0.8, 1, 1, 0.8, 0.8, 0.45, 1, 0.5, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65], 
-    Forest: [1, 0.65, 0.35, 0.5, 1, 0.65], 
+    Ground: [1, 1, 0.65, 0.6, 1, 0.8, 1, 1, 0.8, 0.8, 0.45, 1, 0.5, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65], 
+    Forest: [1, 1, 0.65, 0.35, 0.5, 1, 0.65], 
     Mountain: [1.13, 0.65, 0.7, 0.45, 1, 0.65],
     Ice: [0.99, 0.65, 0.9, 0.75, 0.55, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65],
     WaterUnits: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7],
@@ -341,9 +341,76 @@ function createButton(menu, item, index){
 class Tile {
     constructor(index) {
         this.index = index;
+        this.hasRoads = false;
+        this.terrain = "Clouds";
+        this.terrainIndex = 0;
+        this.onterrain = "Clouds";
+        this.onterrainIndex = 0;
+        this.Unit = "";
+
         this.terrainSprite = new Sprite("Images/Miscellaneous/Clouds.png", index, "terrains", true);
+        this.roadSprite = new Array(8);
+        for(let i = 0; i < 8; i++) {
+            this.roadSprite[i] = new Sprite(`Images/Miscellaneous/Roads/Roads${i}.png`, index, `Roads${i}`, false);
+            this.roadSprite[i].imgElement.setAttribute("width", sprite_width * Scales.Ground[1]);
+            this.roadSprite[i].imgElement.style.top = `${this.roadSprite[i].posTop - sprite_width * OffsetY.Ground[1]}px`;
+            this.roadSprite[i].imgElement.style.left = `${this.roadSprite[i].posLeft - sprite_width * OffsetX.Ground[1]}px`;
+        }
         this.onterrainSprite = new Sprite("Images/Miscellaneous/Clouds.png", index, "onterrains", false);
         this.UnitSprite = new Sprite("Images/Miscellaneous/Clouds.png", index, "Units", false);
+    }
+    updateTerrain(newIndex) {
+        this.terrainIndex = newIndex;
+        this.terrain = Buttons.terrains[this.terrainIndex];
+        this.terrainSprite.redraw("terrains", this.terrainIndex);
+    }
+    updateOnTerrain(newIndex) {
+        this.onterrainIndex = newIndex;
+        this.onterrain = Buttons[this.terrain][this.onterrainIndex];
+        this.onterrainSprite.redraw(this.terrain, this.onterrainIndex);
+        if(newIndex == 0) {
+            this.onterrainSprite.imgElement.style.display = 'none';
+        }
+        else {
+            this.onterrainSprite.imgElement.style.display = 'inline';
+        }
+    }
+    attRoads(value) {
+        this.hasRoads = value;
+    
+        for(let i = getX(this.index) - 1; i <= getX(this.index) + 1; i++){
+            if(i >= 1 && i <= 20) {
+                for(let j = getY(this.index) - 1; j <= getY(this.index) + 1; j++){
+                    if(j >= 1 && j <= 20) { // Update all 3x3 tiles
+                        
+                        let k = 0; // Road array index
+                        let roadFound = false;
+                        for(let m = -1; m <= 1; m++){
+                            for(let n = -1; n <= 1; n++){
+                                if(m != 0 || n != 0) { // Skip middle tile
+                                    if(i+m >= 1 && i+m <= 20 && j+n >= 1 && j+n <= 20){
+                                        map[getIndex(i, j)].roadSprite[k].setVisibility(map[getIndex(i+m, j+n)].hasRoads && map[getIndex(i, j)].hasRoads);
+                                        if(map[getIndex(i+m, j+n)].hasRoads) {
+                                            roadFound = true;
+                                        }
+                                    }
+                                    k++;
+                                }
+                            }
+                        }
+                        if(roadFound == false && 
+                            map[getIndex(i, j)].hasRoads && 
+                            map[getIndex(i, j)].onterrain != "Village" && 
+                            map[getIndex(i, j)].onterrain != "City" && 
+                            map[getIndex(i, j)].onterrain != "Port" && 
+                            map[getIndex(i, j)].onterrain != "Outpost") {
+                            map[getIndex(i, j)].roadSprite[4].setVisibility(true);
+                        }
+    
+                    }
+                }
+            }
+        }
     }
 };
 
@@ -361,6 +428,11 @@ class Sprite{
         this.imgElement.oncontextmenu= function() { return false; };
         if(!visible){
             this.imgElement.style.display = "none";
+        }
+        if(type == "Roads"){
+            this.imgElement.setAttribute("width", sprite_width * Scales[selected.terrains][0]);
+            this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY[selected.terrains][0]}px`;
+            this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX[selected.terrains][0]}px`;
         }
         document.getElementById("mapDiv").appendChild(this.imgElement);
     }
@@ -386,6 +458,14 @@ class Sprite{
             this.imgElement.setAttribute("width", sprite_width * Scales[menu][index]);
             this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY[menu][index]}px`;
             this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX[menu][index]}px`;
+        }
+    }
+    setVisibility(isVisible) {
+        if(isVisible) {
+            this.imgElement.style.display = "inline";
+        }
+        else {
+            this.imgElement.style.display = "none";
         }
     }
 }
@@ -438,13 +518,32 @@ function getLeft (x , y) {
 function attSelectedTile(){
     switch(selected.menu){
     case "terrains":
-        map[selected.tile].terrainSprite.redraw("terrains", selectedIndex["terrains"]); // Update terrain
-        document.getElementById(`onterrains${selected.tile}`).style.display = 'none'; // Make what is on terrain invisible
+        map[selected.tile].updateTerrain(selectedIndex["terrains"]);
+        map[selected.tile].updateOnTerrain(0);
+        map[selected.tile].attRoads(false);
     break;
     case "onterrains":
-        map[selected.tile].terrainSprite.redraw("terrains", selectedIndex["terrains"]); // Update terrain
-        map[selected.tile].onterrainSprite.redraw(selected["terrains"], selectedIndex[selected["terrains"]]); // Update what is on terrain
-        document.getElementById(`onterrains${selected.tile}`).style.display = 'inline'; // Make what is on terrain visible
+        if(Buttons[selected["terrains"]][selectedIndex[selected["terrains"]]] == "Roads"){
+            if(map[selected.tile].terrain != selected["terrains"]){ // If terrain type is different
+                map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
+                map[selected.tile].updateOnTerrain(0);
+            }
+            map[selected.tile].attRoads(true);
+        }
+        else{
+            map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
+            map[selected.tile].updateOnTerrain(selectedIndex[selected["terrains"]]);
+            if(map[selected.tile].onterrain == "Village" || 
+                map[selected.tile].onterrain == "City" || 
+                map[selected.tile].onterrain == "Port" || 
+                map[selected.tile].onterrain == "Outpost") {
+                map[selected.tile].attRoads(true);
+                console.log(map[selected.tile].onterrain);
+            }
+            else {
+                map[selected.tile].attRoads(false);
+            }
+        }
     break;
     case "Units":
         if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){ // Check type of unit
