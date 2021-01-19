@@ -362,8 +362,8 @@ class Tile {
         for(let i = 0; i < 8; i++) {
             this.roadSprite[i] = new Sprite(`Images/Miscellaneous/Roads/Roads${i}.png`, index, `Roads${i}`, false);
             this.roadSprite[i].imgElement.setAttribute("width", sprite_width * Scales.Ground[1]);
-            this.roadSprite[i].imgElement.style.top = `${this.roadSprite[i].posTop - sprite_width * OffsetY.Ground[1] + div_border_factor * div_width}px`;
-            this.roadSprite[i].imgElement.style.left = `${this.roadSprite[i].posLeft - sprite_width * OffsetX.Ground[1] + div_border_factor * div_height}px`;
+            this.roadSprite[i].imgElement.style.top = `${this.roadSprite[i].posTop - sprite_width * OffsetY.Ground[1]}px`;
+            this.roadSprite[i].imgElement.style.left = `${this.roadSprite[i].posLeft - sprite_width * OffsetX.Ground[1]}px`;
         }
         this.onterrainSprite = new Sprite("Images/Miscellaneous/Clouds.png", index, "onterrains", false);
         this.UnitSprite = new Sprite("Images/Miscellaneous/Clouds.png", index, "Units", false);
