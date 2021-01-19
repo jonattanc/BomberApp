@@ -63,9 +63,9 @@ let Folders = {
                 "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
                 "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
                 "selected.tribes"],
-    FixedMenu: ["Others", "Others", "Others"],
-    Misc: ["Miscellaneous", "Others", "Others", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Others", "Others", "selected.tribes", "Miscellaneous", 
-            "Miscellaneous"]
+    FixedMenu: ["Miscellaneous", "Miscellaneous", "Miscellaneous"],
+    Misc: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", 
+            "selected.tribes", "Miscellaneous", "Miscellaneous"]
 }
 let OffsetX = { // Positive value moves sprite to the left
     Clouds: [0, -0.2], 
