@@ -41,7 +41,8 @@ let Buttons = {
     LandUnits: ["warrior", "archer", "rider", "knight", "defender", "catapult", "swordsman", "mindbender", "giant", "polytaur", "dragonegg", 
                 "mooni", "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
     FixedMenu: ["ShowMenu", "ZoomIn", "ZoomOut"], 
-    Misc: ["skull", "HPUp", "HPDown", "HP", "Veteran", "Chop", "Destruction", "LevelUp", "LevelDown", "Castle", "Workshop", "Wall"]
+    Misc: ["skull", "HPUp", "HPDown", "HP", "Veteran", "LevelUp", "LevelDown", "Castle", "Workshop", "Wall"],
+    Resources: ["Chop", "Destruction", "Gather", "Destroy"]
 }
 let Folders = {
     tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
@@ -65,8 +66,9 @@ let Folders = {
                 "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
                 "selected.tribes"],
     FixedMenu: ["Miscellaneous", "Miscellaneous", "Miscellaneous"],
-    Misc: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", 
-            "selected.tribes", "Miscellaneous", "Miscellaneous"]
+    Misc: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", 
+            "Miscellaneous"],
+    Resources: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous"]
 }
 let OffsetX = { // Positive value moves sprite to the left
     Clouds: [0, -0.2], 
@@ -147,6 +149,7 @@ onload = function() {
     document.getElementById(`btnonterrains`).addEventListener('click', function(){ selectMainMenu("onterrains"); });
     document.getElementById(`btnUnits`).addEventListener('click', function(){ selectMainMenu("Units"); });
     document.getElementById(`btnMisc`).addEventListener('click', function(){ selectMainMenu("Misc"); attMiscMenu(); });
+    document.getElementById(`btnResources`).addEventListener('click', function(){ selectMainMenu("Resources"); });
     document.getElementById(`btnFixedMenuShowMenu`).addEventListener('click', function(){ menuButtonClick(); });
     document.getElementById(`btnFixedMenuZoomIn`).addEventListener('click', function(){ ZoomIn(); });
     document.getElementById(`btnFixedMenuZoomOut`).addEventListener('click', function(){ ZoomOut(); });
@@ -505,9 +508,9 @@ document.getElementById("mapDiv").onclick = function clickEvent(e) {
             selected.tile = getIndex(Xtile, Ytile);
             attSelectedTile();
         }
-        console.log(`X: ${x} Y: ${y}`);
-        console.log(`Xr: ${rotateX(x, y)} Yr: ${rotateY(x, y)}`);
-        console.log(`Xtile: ${Xtile} Ytile: ${Ytile}`);
+        // console.log(`X: ${x} Y: ${y}`);
+        // console.log(`Xr: ${rotateX(x, y)} Yr: ${rotateY(x, y)}`);
+        // console.log(`Xtile: ${Xtile} Ytile: ${Ytile}`);
     }
   }
 function rotateX (x, y) {
