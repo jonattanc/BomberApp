@@ -475,8 +475,8 @@ class Sprite{
         }
         if(menu == "terrains"){
             this.imgElement.setAttribute("width", sprite_width * Scales[selected.terrains][0]);
-            this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY[selected.terrains][0]}px`;
-            this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX[selected.terrains][0]}px`;
+            this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY[Buttons[menu][index]][0]}px`;
+            this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX[Buttons[menu][index]][0]}px`;
         }
         else {
             this.imgElement.setAttribute("width", sprite_width * Scales[menu][index]);
@@ -540,55 +540,91 @@ function getLeft (x , y) {
 }
 
 function attSelectedTile(){
-    if (selected.menu == "Misc") {
-        attMiscMenu();
-    }
-    else {
-        switch(selected.menu){
-            case "terrains":
-                map[selected.tile].updateTerrain(selectedIndex["terrains"]);
-                map[selected.tile].updateOnTerrain(0);
-                map[selected.tile].attRoads(false);
-            break;
-            case "onterrains":
-                if(Buttons[selected["terrains"]][selectedIndex[selected["terrains"]]] == "Roads"){
-                    if(map[selected.tile].terrain != selected["terrains"] || map[selected.tile].tribeTerrain != selected.tribes){ // If terrain type is different
-                        map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
-                        map[selected.tile].updateOnTerrain(0);
-                    }
-                    map[selected.tile].attRoads(true);
-                }
-                else{
-                    map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
-                    map[selected.tile].updateOnTerrain(selectedIndex[selected["terrains"]]);
-                    if(map[selected.tile].onterrain == "Village" || 
-                        map[selected.tile].onterrain == "City" || 
-                        map[selected.tile].onterrain == "Port" || 
-                        map[selected.tile].onterrain == "Outpost") {
-                        map[selected.tile].attRoads(true);
-                        console.log(map[selected.tile].onterrain);
-                    }
-                    else {
-                        map[selected.tile].attRoads(false);
-                    }
-                }
-            break;
-            case "Units":
-                if(map[selected.tile].terrain == "Clouds") {
+    switch(selected.menu){
+        case "terrains":
+            map[selected.tile].updateTerrain(selectedIndex["terrains"]);
+            map[selected.tile].updateOnTerrain(0);
+            map[selected.tile].attRoads(false);
+        break;
+        case "onterrains":
+            if(Buttons[selected["terrains"]][selectedIndex[selected["terrains"]]] == "Roads"){
+                if(map[selected.tile].terrain != selected["terrains"] || map[selected.tile].tribeTerrain != selected.tribes){ // If terrain type is different
                     map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
                     map[selected.tile].updateOnTerrain(0);
                 }
-                if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){ // Check type of unit
-                    map[selected.tile].updateUnit("WaterUnits", selectedIndex["WaterUnits"]); // Update water unit
+                map[selected.tile].attRoads(true);
+            }
+            else{
+                map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
+                map[selected.tile].updateOnTerrain(selectedIndex[selected["terrains"]]);
+                if(map[selected.tile].onterrain == "Village" || 
+                    map[selected.tile].onterrain == "City" || 
+                    map[selected.tile].onterrain == "Port" || 
+                    map[selected.tile].onterrain == "Outpost") {
+                    map[selected.tile].attRoads(true);
+                    console.log(map[selected.tile].onterrain);
                 }
-                else{
-                    map[selected.tile].updateUnit("LandUnits", selectedIndex["LandUnits"]); // Update land unit
+                else {
+                    map[selected.tile].attRoads(false);
                 }
-            break;
-            default:
+            }
+        break;
+        case "Units":
+            if(map[selected.tile].terrain == "Clouds") {
+                map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
+                map[selected.tile].updateOnTerrain(0);
+            }
+            if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){ // Check type of unit
+                map[selected.tile].updateUnit("WaterUnits", selectedIndex["WaterUnits"]); // Update water unit
+            }
+            else{
+                map[selected.tile].updateUnit("LandUnits", selectedIndex["LandUnits"]); // Update land unit
+            }
+        break;
+        case "Misc":
+            attMiscMenu();
+        break;
+        case "Resources":
+            if(selected.Resources == "Chop" && map[selected.tile].terrain == "Forest") {
+                document.getElementById(`btntribes${map[selected.tile].tribeTerrain}`).click();
+                map[selected.tile].updateTerrain(3);
+                map[selected.tile].updateOnTerrain(0);
+            }
+            else if(selected.Resources == "Destruction") {
+                map[selected.tile].updateOnTerrain(0);
+                map[selected.tile].attRoads(false);
+            }
+            else if(selected.Resources == "Gather") {
+                if(map[selected.tile].onterrain == "Crop") {
+                    map[selected.tile].updateOnTerrain(7); // Farm
+                }
+                else if(map[selected.tile].onterrain == "Forest") {
+                    map[selected.tile].updateOnTerrain(4); // Lumber hut
+                }
+                else if(map[selected.tile].onterrain == "Metal") {
+                    map[selected.tile].updateOnTerrain(3); // Mine
+                }
+                else if(map[selected.tile].onterrain == "Ruin" ||
+                        map[selected.tile].onterrain == "Fruit" ||
+                        map[selected.tile].onterrain == "Fish" ||
+                        map[selected.tile].onterrain == "Whale" ||
+                        map[selected.tile].onterrain == "Animal"
+                ) {
+                    map[selected.tile].updateOnTerrain(0);
+                }
+            }
+            else if(selected.Resources == "Destroy") {
+                if(map[selected.tile].onterrain == "Farm") {
+                    map[selected.tile].updateOnTerrain(6); // Crop
+                }
+                else {
+                    map[selected.tile].updateOnTerrain(0);
+                }
+            }
+        break;
+        default:
 
-            break;
-        }
+        break;
     }
 }
 
