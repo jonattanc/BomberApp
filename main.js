@@ -21,8 +21,6 @@ let isMenuOpen = false;
 let isSubMenuOpen = false;
 let selected = {menu: "None", tile: 0};
 let selectedIndex = {};
-let misc = "Miscellaneous";
-let mainMenuBtns = ["terrains", "onterrains", "units", "miscs"];
 
 let zoomScale = 1;
 let map_moving = false;
@@ -41,7 +39,8 @@ let Buttons = {
     WaterUnits: ["boat", "ship", "battleship", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
     LandUnits: ["warrior", "archer", "rider", "knight", "defender", "catapult", "swordsman", "mindbender", "giant", "polytaur", "dragonegg", 
                 "mooni", "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
-    FixedMenu: ["ShowMenu", "ZoomIn", "ZoomOut"]
+    FixedMenu: ["ShowMenu", "ZoomIn", "ZoomOut"], 
+    Misc: ["skull", "HPUp", "HPDown", "HP", "Veteran", "Chop", "Destruction", "LevelUp", "LevelDown", "Castle", "Workshop", "Wall"]
 }
 let Folders = {
     tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
@@ -51,9 +50,9 @@ let Folders = {
                 "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "Buildings", "Buildings"], 
     ShallowWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "selected.tribes", "selected.tribes", "selected.tribes", 
                     "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "Buildings", "Buildings"], 
-    Ground: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous", "City", "selected.tribes", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings", 
-            "Buildings", "Buildings", "Buildings", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes",
-             "selected.tribes", "Buildings"], 
+    Ground: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous", "City", "selected.tribes", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", 
+            "Buildings", "Buildings", "Buildings", "Buildings", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
+            "selected.tribes", "selected.tribes", "Buildings"], 
     Forest: ["selected.tribes", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", "Buildings", "Buildings"], 
     Mountain: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings"],
     Ice: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "selected.tribes", "selected.tribes", 
@@ -64,7 +63,9 @@ let Folders = {
                 "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
                 "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
                 "selected.tribes"],
-    FixedMenu: ["Others", "Others", "Others"]
+    FixedMenu: ["Others", "Others", "Others"],
+    Misc: ["Miscellaneous", "Others", "Others", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Others", "Others", "selected.tribes", "Miscellaneous", 
+            "Miscellaneous"]
 }
 let OffsetX = { // Positive value moves sprite to the left
     Clouds: [0, -0.2], 
@@ -144,7 +145,7 @@ onload = function() {
     document.getElementById(`btnterrains`).addEventListener('click', function(){ selectMainMenu("terrains"); });
     document.getElementById(`btnonterrains`).addEventListener('click', function(){ selectMainMenu("onterrains"); });
     document.getElementById(`btnUnits`).addEventListener('click', function(){ selectMainMenu("Units"); });
-    document.getElementById(`btnmiscs`).addEventListener('click', function(){ selectMainMenu("miscs"); });
+    document.getElementById(`btnMisc`).addEventListener('click', function(){ selectMainMenu("Misc"); attMiscMenu(); });
     document.getElementById(`btnFixedMenuShowMenu`).addEventListener('click', function(){ menuButtonClick(); });
     document.getElementById(`btnFixedMenuZoomIn`).addEventListener('click', function(){ ZoomIn(); });
     document.getElementById(`btnFixedMenuZoomOut`).addEventListener('click', function(){ ZoomOut(); });
@@ -163,9 +164,6 @@ onload = function() {
     addEventListener('touchend', fontouchend);
 
     addMenuScrollHandlers("mainMenuDiv");
-    addMenuScrollHandlers("WaterUnitsDiv");
-    addMenuScrollHandlers("LandUnitsDiv");
-    addMenuScrollHandlers("miscsDiv");
     for (let i = 0; i < Object.keys(Buttons).length; i++) { 
         addMenuScrollHandlers(Object.keys(Buttons)[i] + "Div");
     }
@@ -348,13 +346,19 @@ function createButton(menu, item, index){
 class Tile {
     constructor(index) {
         this.index = index;
-        this.tribeTerrain = "Bardur";
         this.hasRoads = false;
+
         this.terrain = "Clouds";
         this.terrainIndex = 0;
+        this.tribeTerrain = "Bardur";
+
         this.onterrain = "Clouds";
         this.onterrainIndex = 0;
+
         this.Unit = "";
+        this.UnitIndex = 0;
+        this.tribeUnit = "Bardur";
+        this.hasUnit = false;
 
         this.terrainSprite = new Sprite("Images/Miscellaneous/Clouds.png", index, "terrains", true);
         this.roadSprite = new Array(8);
@@ -382,6 +386,20 @@ class Tile {
         }
         else {
             this.onterrainSprite.imgElement.style.display = 'inline';
+        }
+    }
+    updateUnit(type, newIndex) {
+        if(type == "") {
+            this.UnitSprite.imgElement.style.display = 'none';
+            this.hasUnit = false;
+        }
+        else {
+            this.UnitSprite.redraw(type, newIndex);
+            this.UnitSprite.imgElement.style.display = 'inline';
+            this.UnitIndex = newIndex;
+            this.tribeUnit = selected.tribes;
+            this.Unit = Buttons[type][newIndex];
+            this.hasUnit = true;
         }
     }
     attRoads(value) {
@@ -525,54 +543,61 @@ function getLeft (x , y) {
 }
 
 function attSelectedTile(){
-    switch(selected.menu){
-    case "terrains":
-        map[selected.tile].updateTerrain(selectedIndex["terrains"]);
-        map[selected.tile].updateOnTerrain(0);
-        map[selected.tile].attRoads(false);
-    break;
-    case "onterrains":
-        if(Buttons[selected["terrains"]][selectedIndex[selected["terrains"]]] == "Roads"){
-            if(map[selected.tile].terrain != selected["terrains"] || map[selected.tile].tribeTerrain != selected.tribes){ // If terrain type is different
-                map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
+    if (selected.menu == "Misc") {
+        attMiscMenu();
+    }
+    else {
+        switch(selected.menu){
+            case "terrains":
+                map[selected.tile].updateTerrain(selectedIndex["terrains"]);
                 map[selected.tile].updateOnTerrain(0);
-            }
-            map[selected.tile].attRoads(true);
-        }
-        else{
-            map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
-            map[selected.tile].updateOnTerrain(selectedIndex[selected["terrains"]]);
-            if(map[selected.tile].onterrain == "Village" || 
-                map[selected.tile].onterrain == "City" || 
-                map[selected.tile].onterrain == "Port" || 
-                map[selected.tile].onterrain == "Outpost") {
-                map[selected.tile].attRoads(true);
-                console.log(map[selected.tile].onterrain);
-            }
-            else {
                 map[selected.tile].attRoads(false);
-            }
-        }
-    break;
-    case "Units":
-        if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){ // Check type of unit
-            map[selected.tile].UnitSprite.redraw("WaterUnits", selectedIndex["WaterUnits"]); // Update water unit
-        }
-        else{
-            map[selected.tile].UnitSprite.redraw("LandUnits", selectedIndex["LandUnits"]); // Update land unit
-        }
-        document.getElementById(`Units${selected.tile}`).style.display = 'inline'; // Make unit visible
-    break;
-    default:
+            break;
+            case "onterrains":
+                if(Buttons[selected["terrains"]][selectedIndex[selected["terrains"]]] == "Roads"){
+                    if(map[selected.tile].terrain != selected["terrains"] || map[selected.tile].tribeTerrain != selected.tribes){ // If terrain type is different
+                        map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
+                        map[selected.tile].updateOnTerrain(0);
+                    }
+                    map[selected.tile].attRoads(true);
+                }
+                else{
+                    map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
+                    map[selected.tile].updateOnTerrain(selectedIndex[selected["terrains"]]);
+                    if(map[selected.tile].onterrain == "Village" || 
+                        map[selected.tile].onterrain == "City" || 
+                        map[selected.tile].onterrain == "Port" || 
+                        map[selected.tile].onterrain == "Outpost") {
+                        map[selected.tile].attRoads(true);
+                        console.log(map[selected.tile].onterrain);
+                    }
+                    else {
+                        map[selected.tile].attRoads(false);
+                    }
+                }
+            break;
+            case "Units":
+                if(map[selected.tile].terrain == "Clouds") {
+                    map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
+                    map[selected.tile].updateOnTerrain(0);
+                }
+                if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){ // Check type of unit
+                    map[selected.tile].updateUnit("WaterUnits", selectedIndex["WaterUnits"]); // Update water unit
+                }
+                else{
+                    map[selected.tile].updateUnit("LandUnits", selectedIndex["LandUnits"]); // Update land unit
+                }
+            break;
+            default:
 
-    break;
+            break;
+        }
     }
 }
 
 function menuButtonClick() {
     if(isMenuOpen){
         document.getElementById("mainMenuDiv").style.height = "0%";
-        document.getElementById("miscsDiv").style.height = "0%";
         for (let i = 0; i < Object.keys(Buttons).length; i++) { 
             if(Object.keys(Buttons)[i] != "FixedMenu"){
                 document.getElementById(Object.keys(Buttons)[i] + "Div").style.height = "0%";
@@ -628,6 +653,42 @@ function updateTerrainIcon() {
     }
     else {
         document.getElementById(`btnterrains`).src = `Images/Miscellaneous/${selected["terrains"]}.png`;
+    }
+}
+
+function attMiscMenu() {
+    if(map[selected.tile].Unit == "") {
+        document.getElementById(`btnMiscHPUp`).style.display = "none";
+        document.getElementById(`btnMiscHPDown`).style.display = "none";
+        document.getElementById(`btnMiscHP`).style.display = "none";
+        document.getElementById(`btnMiscVeteran`).style.display = "none";
+    }
+    else {
+        document.getElementById(`btnMiscHPUp`).style.display = "inline";
+        document.getElementById(`btnMiscHPDown`).style.display = "inline";
+        document.getElementById(`btnMiscHP`).style.display = "inline";
+        document.getElementById(`btnMiscVeteran`).style.display = "inline";
+    }
+    if(map[selected.tile].onterrain == "City") {
+        document.getElementById(`btnMiscLevelUp`).style.display = "inline";
+        document.getElementById(`btnMiscLevelDown`).style.display = "inline";
+        document.getElementById(`btnMiscCastle`).style.display = "inline";
+        document.getElementById(`btnMiscWorkshop`).style.display = "inline";
+        document.getElementById(`btnMiscWall`).style.display = "inline";
+    }
+    else if(Folders[map[selected.tile].terrain][map[selected.tile].onterrainIndex] == "Buildings"){
+        document.getElementById(`btnMiscLevelUp`).style.display = "inline";
+        document.getElementById(`btnMiscLevelDown`).style.display = "inline";
+        document.getElementById(`btnMiscCastle`).style.display = "none";
+        document.getElementById(`btnMiscWorkshop`).style.display = "none";
+        document.getElementById(`btnMiscWall`).style.display = "none";
+    }
+    else {
+        document.getElementById(`btnMiscLevelUp`).style.display = "none";
+        document.getElementById(`btnMiscLevelDown`).style.display = "none";
+        document.getElementById(`btnMiscCastle`).style.display = "none";
+        document.getElementById(`btnMiscWorkshop`).style.display = "none";
+        document.getElementById(`btnMiscWall`).style.display = "none";
     }
 }
 
