@@ -85,7 +85,7 @@ let OffsetX = { // Positive value moves sprite to the left
     Ice: [0, -0.16, -0.05, -0.15, -0.23, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185],
     WaterUnits: [-0.22, -0.2, -0.23, -0.18, -0.2, -0.2, -0.21, -0.22, -0.22],
     LandUnits: [-0.19, -0.12, -0.21, -0.2, -0.2, -0.22, -0.2, -0.17, -0.24, -0.2, -0.19, -0.21, -0.17, -0.2, -0.22, -0.2, -0.18, -0.2, -0.2, -0.21, -0.22, -0.22],
-    Misc: {Castle: -0.4, Workshop: -0.18, Wall: 0}
+    Misc: {Castle: -0.4, Workshop: -0.18, Wall: 0, Selection: 0, SelectionSup: 0}
 };
 let OffsetY = { // Positive value moves sprite up // Ice increases about 0.05 from water
     Clouds: [0, 0.1], 
@@ -97,7 +97,7 @@ let OffsetY = { // Positive value moves sprite up // Ice increases about 0.05 fr
     Ice: [-0.09, 0.02, -0.07, -0.07, -0.18, 0.03, 0.45, 0.08, 0.42, 0.1, 0.23, 0.18, 0.67, 0.24, 0.15, 0],
     WaterUnits: [0.26, 0.3, 0.19, 0.28, 0.25, 0.25, 0.3, 0.3, 0.31],
     LandUnits: [0.27, 0.34, 0.25, 0.25, 0.32, 0.29, 0.32, 0.29, 0.3, 0.32, 0.3, 0.22, 0.29, 0.25, 0.21, 0.2, 0.33, 0.3, 0.3, 0.35, 0.35, 0.36],
-    Misc: {Castle: -0.01, Workshop: 0, Wall: 0}
+    Misc: {Castle: -0.01, Workshop: 0, Wall: 0, Selection: -0.05, SelectionSup: -0.05}
 }
 let Scales = {
     Clouds: [1, 0.6], 
@@ -109,7 +109,7 @@ let Scales = {
     Ice: [0.99, 0.65, 0.9, 0.75, 0.55, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65],
     WaterUnits: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7],
     LandUnits: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7],
-    Misc: {Castle: 0.35, Workshop: 0.4, Wall: 1}
+    Misc: {Castle: 0.35, Workshop: 0.4, Wall: 1, Selection: 1, SelectionSup: 1}
 };
 
 let mousePos = { };
@@ -385,11 +385,13 @@ class Tile {
             this.roadSprite[i].imgElement.style.top = `${this.roadSprite[i].posTop - sprite_width * OffsetY.Ground[1]}px`;
             this.roadSprite[i].imgElement.style.left = `${this.roadSprite[i].posLeft - sprite_width * OffsetX.Ground[1]}px`;
         }
+        this.selectionSprite = new Sprite("Images/Miscellaneous/Selection.png", index, "Selection", false);
         this.onterrainSprite = new Sprite("Images/Miscellaneous/Clouds.png", index, "onterrains", false);
         this.castleSprite = new Sprite("Images/Bardur/Castle.png", index, "Castle", false);
         this.workshopSprite = new Sprite("Images/Miscellaneous/Workshop.png", index, "Workshop", false);
         this.wallSprite = new Sprite("Images/Miscellaneous/Wall.png", index, "Wall", false);
         this.UnitSprite = new Sprite("Images/Miscellaneous/Clouds.png", index, "Units", false);
+        this.selectionSupSprite = new Sprite("Images/Miscellaneous/SelectionSup.png", index, "SelectionSup", false);
     }
     updateTerrain(newIndex) {
         this.terrainIndex = newIndex;
@@ -489,7 +491,7 @@ class Sprite{
             this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY[selected.terrains][0]}px`;
             this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX[selected.terrains][0]}px`;
         }
-        else if (type == "Castle" || type == "Workshop" || type == "Wall") {
+        else if (type == "Castle" || type == "Workshop" || type == "Wall" || type == "Selection" || type == "SelectionSup") {
             this.imgElement.setAttribute("width", sprite_width * Scales["Misc"][type]);
             this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY["Misc"][type]}px`;
             this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX["Misc"][type]}px`;
@@ -541,6 +543,12 @@ document.getElementById("mapDiv").onclick = function clickEvent(e) {
         let Ytile = Math.ceil(rotateY(x, y) / (sprite_width / 2));
 
         if(Xtile >= 1 && Xtile <= 20 && Ytile >= 1 && Ytile <= 20){
+            if(selected.menu == "Misc"){
+                map[selected.tile].selectionSprite.imgElement.style.display = "none";
+                map[selected.tile].selectionSupSprite.imgElement.style.display = "none";
+                map[getIndex(Xtile, Ytile)].selectionSprite.imgElement.style.display = "inline";
+                map[getIndex(Xtile, Ytile)].selectionSupSprite.imgElement.style.display = "inline";
+            }
             selected.tile = getIndex(Xtile, Ytile);
             attSelectedTile();
         }
@@ -599,7 +607,6 @@ function attSelectedTile(){
                     map[selected.tile].onterrain == "Port" || 
                     map[selected.tile].onterrain == "Outpost") {
                     map[selected.tile].attRoads(true);
-                    console.log(map[selected.tile].onterrain);
                 }
                 else {
                     map[selected.tile].attRoads(false);
@@ -722,6 +729,14 @@ function selectMainMenu(newMenuSelection) {
         setMenuHeight("10%");
         document.getElementById(`btn${newMenuSelection}`).style.backgroundColor = MENU_SELECT_COLOR;
         isSubMenuOpen = true;
+    }
+    if(selected.menu == "Misc"){
+        map[selected.tile].selectionSprite.imgElement.style.display = "inline";
+        map[selected.tile].selectionSupSprite.imgElement.style.display = "inline";
+    }
+    else {
+        map[selected.tile].selectionSprite.imgElement.style.display = "none";
+        map[selected.tile].selectionSupSprite.imgElement.style.display = "none";
     }
 }
 function setMenuHeight(newHeight){
