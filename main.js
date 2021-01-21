@@ -42,9 +42,8 @@ let Buttons = {
     Forest: ["Forest", "Roads", "Ruin", "Animal", "Lumber hut", "Sanctuary", "ForestTemple"],
     Mountain: ["Mountain", "Ruin", "Metal", "Mine", "Sanctuary", "MountainTemple"],
     Ice: ["Ice", "Ruin", "Port", "Fish", "Whale", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "IceTemple", "WaterTemple"],
-    WaterUnits: ["boat", "ship", "battleship", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
-    LandUnits: ["warrior", "archer", "rider", "knight", "defender", "catapult", "swordsman", "mindbender", "giant", "polytaur", "dragonegg", 
-                "mooni", "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
+    Units: ["boat", "ship", "battleship", "warrior", "archer", "rider", "knight", "defender", "catapult", "swordsman", "mindbender", "giant", "polytaur", 
+                "dragonegg", "mooni", "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
     FixedMenu: ["ShowMenu", "ZoomIn", "ZoomOut"], 
     Misc: ["skull", "HPUp", "HPDown", "HP", "Veteran", "capture", "LevelUp", "LevelDown", "Castle", "Workshop", "Wall"],
     Resources: ["Chop", "Destruction", "Gather", "Destroy"]
@@ -64,12 +63,10 @@ let Folders = {
     Mountain: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings"],
     Ice: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "selected.tribes", "selected.tribes", 
             "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "Buildings", "Buildings"],
-    WaterUnits: ["selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
-                "selected.tribes", "selected.tribes"],
-    LandUnits: ["selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
+    Units: ["selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
                 "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
                 "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
-                "selected.tribes"],
+                "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes"],
     FixedMenu: ["Miscellaneous", "Miscellaneous", "Miscellaneous"],
     Misc: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", 
             "Miscellaneous"],
@@ -83,8 +80,7 @@ let OffsetX = { // Positive value moves sprite to the left
     Forest: [0, 0, -0.18, -0.35, -0.32, 0, -0.185], 
     Mountain: [0.08, -0.18, -0.1, -0.25, 0, -0.185],
     Ice: [0, -0.16, -0.05, -0.15, -0.23, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185],
-    WaterUnits: [-0.22, -0.2, -0.23, -0.18, -0.2, -0.2, -0.21, -0.22, -0.22],
-    LandUnits: [-0.19, -0.12, -0.21, -0.2, -0.2, -0.22, -0.2, -0.17, -0.24, -0.2, -0.19, -0.21, -0.17, -0.2, -0.22, -0.2, -0.18, -0.2, -0.2, -0.21, -0.22, -0.22],
+    Units: [-0.22, -0.2, -0.23, -0.19, -0.12, -0.21, -0.2, -0.2, -0.22, -0.2, -0.17, -0.24, -0.2, -0.19, -0.21, -0.17, -0.2, -0.22, -0.2, -0.18, -0.2, -0.2, -0.21, -0.22, -0.22],
     Misc: {Castle: -0.4, Workshop: -0.18, Wall: 0, Selection: 0, SelectionSup: 0}
 };
 let OffsetY = { // Positive value moves sprite up // Ice increases about 0.05 from water
@@ -95,8 +91,7 @@ let OffsetY = { // Positive value moves sprite up // Ice increases about 0.05 fr
     Forest: [0.06, 0, 0.03, -0.15, -0.12, 0.6, 0.07], 
     Mountain: [0.2, 0.05, 0.1, -0.15, 0.6, 0.12],
     Ice: [-0.09, 0.02, -0.07, -0.07, -0.18, 0.03, 0.45, 0.08, 0.42, 0.1, 0.23, 0.18, 0.67, 0.24, 0.15, 0],
-    WaterUnits: [0.26, 0.3, 0.19, 0.28, 0.25, 0.25, 0.3, 0.3, 0.31],
-    LandUnits: [0.27, 0.34, 0.25, 0.25, 0.32, 0.29, 0.32, 0.29, 0.3, 0.32, 0.3, 0.22, 0.29, 0.25, 0.21, 0.2, 0.33, 0.3, 0.3, 0.35, 0.35, 0.36],
+    Units: [0.26, 0.3, 0.19, 0.27, 0.34, 0.25, 0.25, 0.32, 0.29, 0.32, 0.29, 0.3, 0.32, 0.3, 0.22, 0.29, 0.25, 0.21, 0.2, 0.33, 0.3, 0.3, 0.35, 0.35, 0.36],
     Misc: {Castle: -0.01, Workshop: 0, Wall: 0, Selection: -0.05, SelectionSup: -0.05}
 }
 let Scales = {
@@ -107,8 +102,7 @@ let Scales = {
     Forest: [1, 1, 0.65, 0.35, 0.5, 1, 0.65], 
     Mountain: [1.13, 0.65, 0.7, 0.45, 1, 0.65],
     Ice: [0.99, 0.65, 0.9, 0.75, 0.55, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65],
-    WaterUnits: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7],
-    LandUnits: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7],
+    Units: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7],
     Misc: {Castle: 0.35, Workshop: 0.4, Wall: 1, Selection: 1, SelectionSup: 1}
 };
 
@@ -615,16 +609,7 @@ function attSelectedTile(){
             }
         break;
         case "Units":
-            if(map[selected.tile].terrain == "Clouds") {
-                map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
-                map[selected.tile].updateOnTerrain(0);
-            }
-            if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){ // Check type of unit
-                map[selected.tile].updateUnit("WaterUnits", selectedIndex["WaterUnits"]); // Update water unit
-            }
-            else{
-                map[selected.tile].updateUnit("LandUnits", selectedIndex["LandUnits"]); // Update land unit
-            }
+            map[selected.tile].updateUnit("Units", selectedIndex["Units"]);
         break;
         case "Misc":
             attMiscMenu();
@@ -742,14 +727,6 @@ function selectMainMenu(newMenuSelection) {
 function setMenuHeight(newHeight){
     if(selected.menu == "onterrains"){
         document.getElementById(`${selected.terrains}Div`).style.height = newHeight;
-    }
-    else if (selected.menu == "Units") {
-        if(selected.terrains == "DeepWater" || selected.terrains == "ShallowWater"){
-            document.getElementById(`WaterUnitsDiv`).style.height = newHeight;
-        }
-        else if (selected.terrains != "Clouds"){
-            document.getElementById(`LandUnitsDiv`).style.height = newHeight;
-        }
     }
     else{
         document.getElementById(`${selected.menu}Div`).style.height = newHeight;
