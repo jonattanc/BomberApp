@@ -30,7 +30,9 @@ let minLevel = { City: 1, CustomsHouse: 1, ForestTemple: 1, Forge: 1, IceBank: 1
                     Sanctuary: 1, Sawmill: 1, Temple: 1, WaterTemple: 1, Windmill: 1 };
 let maxLevel = { City: 7, CustomsHouse: 5, ForestTemple: 5, Forge: 8, IceBank: 9, IceTemple: 5, MountainTemple: 5, 
                     Sanctuary: 8, Sawmill: 8, Temple: 5, WaterTemple: 5, Windmill: 6 };
-
+let maxHP = {boat: 10, ship: 10, battleship: 10, warrior: 10, archer: 10, rider: 10, knight: 15, defender: 15, catapult: 10, swordsman: 15, mindbender: 10, giant: 40,
+            polytaur: 15, dragonegg: 10, mooni: 10, icearcher: 10, battlesled: 15, icefortress: 20, gaami: 30, navalon: 30, babydragon: 15, firedragon: 20,
+            amphibian: 10, tridention: 15, crab: 40};
 let Buttons = {
     tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
     terrains: ["Clouds", "DeepWater", "ShallowWater", "Ground", "Forest", "Mountain", "Ice"],
@@ -743,6 +745,7 @@ function updateTerrainIcon() {
 
 function attMiscMenu() {
     if(map[selected.tile].hasUnit) {
+        document.getElementById(`btnMiscskull`).style.display = "inline";
         document.getElementById(`btnMiscHPUp`).style.display = "inline";
         document.getElementById(`btnMiscHPDown`).style.display = "inline";
         document.getElementById(`btnMiscHP`).style.display = "inline";
@@ -750,6 +753,7 @@ function attMiscMenu() {
         document.getElementById(`btntribes${map[selected.tile].tribeUnit}`).click();
     }
     else {
+        document.getElementById(`btnMiscskull`).style.display = "none";
         document.getElementById(`btnMiscHPUp`).style.display = "none";
         document.getElementById(`btnMiscHPDown`).style.display = "none";
         document.getElementById(`btnMiscHP`).style.display = "none";
@@ -789,7 +793,9 @@ function attMiscMenu() {
 function MiscClick(item) {
     switch (item) {
         case "skull":
-
+            map[selected.tile].hasUnit = false;
+            map[selected.tile].UnitSprite.imgElement.style.display = "none";
+            attMiscMenu();
         break;
         case "HPUp":
 
