@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<head>
+<title>Game List</title>
+<link rel="stylesheet" href="./game_list_view.css">
+<script src="game_list_view.js" async></script>
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet"> 
+</head>
+<body onload="loadGames()">
+<h1 style="text-align: center;"><i>-Available Games-</i></h1>
+<div class="middle-container">
+<ul id="game-list">
+</ul>	
+</div>
+<div class="bottom-menu">
+<button type="button" id="add-game-button" onclick="showForm()">+</button>
+</div>
+<!-- hidden modal form to fill in the information when adding a game -->
+<div id="add-game-form">
+<div class="form-wrapper">
+<span class="close" onclick="hideForm()">&times;</span>
+<h1>Add a game</h1>
+<form>
+<div class="row">
+<div>
+<label for="gname">Game name</label>
+</div>
+<div>
+<input type="text" id="gname" name="game_name" placeholder="Moon of Whales" required>
+</div>
+</div>
+<div class="row">
+<div>
+<label for="msize">Map size</label>
+</div>
+<div> 
+<input type="text" id="msize" name="map_size" placeholder="400" required>
+</div> 
+</div>
+<br>
+<div class="row">
+<input type="submit" value="Add game" onclick="addGame()">
+</div>
+</form>
+</div>
+</div>
+
+</body>
+</html>
