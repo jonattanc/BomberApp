@@ -10,7 +10,7 @@ const div_width = tile_width * 20 * (1 + 2 * div_border_factor);
 const MENU_BG_COLOR = "#0e092c";
 const MENU_SELECT_COLOR = "black";
 
-const imagesUrl = "frontend/assets/Images/"
+const imagesUrl = "./assets/Images/"
 
 const ZOOM_INCREASE = 0.4;
 const ZOOM_WHEEL_FACTOR = 0.003;
