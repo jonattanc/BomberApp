@@ -10,6 +10,8 @@ const div_width = tile_width * 20 * (1 + 2 * div_border_factor);
 const MENU_BG_COLOR = "#0e092c";
 const MENU_SELECT_COLOR = "black";
 
+const imagesUrl = "assets/Images/"
+
 const ZOOM_INCREASE = 0.4;
 const ZOOM_WHEEL_FACTOR = 0.003;
 const ZOOM_MAX = 3.5;
@@ -327,16 +329,16 @@ function createButton(menu, item, index){
     img.setAttribute("id", `btn${menu}${item}`);
 
     if(Folders[menu][index] == "selected.tribes"){
-        img.setAttribute("src", `Images/${selected.tribes}/${item}.png`);
+        img.setAttribute("src", imagesUrl + `{selected.tribes}/${item}.png`);
     }
     else if(Folders[menu][index] == "Buildings"){
-        img.setAttribute("src", `Images/Buildings/${item}/${item}5.png`);
+        img.setAttribute("src", imagesUrl + `Buildings/${item}/${item}5.png`);
     }
     else if(Folders[menu][index] == "City"){
-        img.setAttribute("src", `Images/${selected.tribes}/City/City7.png`);
+        img.setAttribute("src", imagesUrl + `${selected.tribes}/City/City7.png`);
     }
     else{
-        img.setAttribute("src", `Images/${Folders[menu][index]}/${item}.png`);
+        img.setAttribute("src", imagesUrl + `${Folders[menu][index]}/${item}.png`);
     }
     img.setAttribute("height", "80%");
     img.addEventListener('click', function(){
@@ -373,21 +375,21 @@ class Tile {
         this.hasWorkshop = false;
         this.hasWall = false;
 
-        this.terrainSprite = new Sprite("Images/Miscellaneous/Clouds.png", index, "terrains", true);
+        this.terrainSprite = new Sprite(imagesUrl + "Miscellaneous/Clouds.png", index, "terrains", true);
         this.roadSprite = new Array(8);
         for(let i = 0; i < 8; i++) {
-            this.roadSprite[i] = new Sprite(`Images/Miscellaneous/Roads/Roads${i}.png`, index, `Roads${i}`, false);
+            this.roadSprite[i] = new Sprite(imagesUrl + `Miscellaneous/Roads/Roads${i}.png`, index, `Roads${i}`, false);
             this.roadSprite[i].imgElement.setAttribute("width", sprite_width * Scales.Ground[1]);
             this.roadSprite[i].imgElement.style.top = `${this.roadSprite[i].posTop - sprite_width * OffsetY.Ground[1]}px`;
             this.roadSprite[i].imgElement.style.left = `${this.roadSprite[i].posLeft - sprite_width * OffsetX.Ground[1]}px`;
         }
-        this.selectionSprite = new Sprite("Images/Miscellaneous/Selection.png", index, "Selection", false);
-        this.onterrainSprite = new Sprite("Images/Miscellaneous/Clouds.png", index, "onterrains", false);
-        this.castleSprite = new Sprite("Images/Bardur/Castle.png", index, "Castle", false);
-        this.workshopSprite = new Sprite("Images/Miscellaneous/Workshop.png", index, "Workshop", false);
-        this.wallSprite = new Sprite("Images/Miscellaneous/Wall.png", index, "Wall", false);
-        this.UnitSprite = new Sprite("Images/Miscellaneous/Clouds.png", index, "Units", false);
-        this.selectionSupSprite = new Sprite("Images/Miscellaneous/SelectionSup.png", index, "SelectionSup", false);
+        this.selectionSprite = new Sprite(imagesUrl + "Miscellaneous/Selection.png", index, "Selection", false);
+        this.onterrainSprite = new Sprite(imagesUrl + "Miscellaneous/Clouds.png", index, "onterrains", false);
+        this.castleSprite = new Sprite(imagesUrl + "Bardur/Castle.png", index, "Castle", false);
+        this.workshopSprite = new Sprite(imagesUrl + "Miscellaneous/Workshop.png", index, "Workshop", false);
+        this.wallSprite = new Sprite(imagesUrl + "Miscellaneous/Wall.png", index, "Wall", false);
+        this.UnitSprite = new Sprite(imagesUrl + "Miscellaneous/Clouds.png", index, "Units", false);
+        this.selectionSupSprite = new Sprite(imagesUrl + "Miscellaneous/SelectionSup.png", index, "SelectionSup", false);
     }
     updateTerrain(newIndex) {
         this.terrainIndex = newIndex;
@@ -496,16 +498,16 @@ class Sprite{
     }
     redraw(menu, index){
         if(Folders[menu][index] == "selected.tribes"){
-            this.imgElement.setAttribute("src", `Images/${selected.tribes}/${Buttons[menu][index]}.png`);
+            this.imgElement.setAttribute("src", imagesUrl + `${selected.tribes}/${Buttons[menu][index]}.png`);
         }
         else if(Folders[menu][index] == "Buildings"){
-            this.imgElement.setAttribute("src", `Images/Buildings/${Buttons[menu][index]}/${Buttons[menu][index]}1.png`);
+            this.imgElement.setAttribute("src", imagesUrl + `Buildings/${Buttons[menu][index]}/${Buttons[menu][index]}1.png`);
         }
         else if(Folders[menu][index] == "City"){
-            this.imgElement.setAttribute("src", `Images/${selected.tribes}/City/City1.png`);
+            this.imgElement.setAttribute("src", imagesUrl + `${selected.tribes}/City/City1.png`);
         }
         else{
-            this.imgElement.setAttribute("src", `Images/${Folders[menu][index]}/${Buttons[menu][index]}.png`);
+            this.imgElement.setAttribute("src", imagesUrl + `${Folders[menu][index]}/${Buttons[menu][index]}.png`);
         }
         if(menu == "terrains"){
             this.imgElement.setAttribute("width", sprite_width * Scales[selected.terrains][0]);
@@ -736,10 +738,10 @@ function setMenuHeight(newHeight){
 }
 function updateTerrainIcon() {
     if(selected["terrains"] == "Ground" || selected["terrains"] == "Forest" || selected["terrains"] == "Mountain"){
-        document.getElementById(`btnterrains`).src = `Images/${selected.tribes}/${selected["terrains"]}.png`;
+        document.getElementById(`btnterrains`).src = imagesUrl + `${selected.tribes}/${selected["terrains"]}.png`;
     }
     else {
-        document.getElementById(`btnterrains`).src = `Images/Miscellaneous/${selected["terrains"]}.png`;
+        document.getElementById(`btnterrains`).src = imagesUrl + `Miscellaneous/${selected["terrains"]}.png`;
     }
 }
 
@@ -760,7 +762,7 @@ function attMiscMenu() {
         document.getElementById(`btnMiscVeteran`).style.display = "none";
     }
     if(map[selected.tile].onterrain == "City") {
-        document.getElementById(`btnMiscCastle`).src = `Images/${map[selected.tile].tribeTerrain}/Castle.png`;
+        document.getElementById(`btnMiscCastle`).src = imagesUrl + `${map[selected.tile].tribeTerrain}/Castle.png`;
         document.getElementById(`btnMiscLevelUp`).style.display = "inline";
         document.getElementById(`btnMiscLevelDown`).style.display = "inline";
         document.getElementById(`btnMiscCastle`).style.display = "inline";
@@ -811,18 +813,18 @@ function MiscClick(item) {
         break;
         case "capture":
             map[selected.tile].tribeTerrain = map[selected.tile].tribeUnit;
-            map[selected.tile].terrainSprite.imgElement.setAttribute("src", `Images/${map[selected.tile].tribeUnit}/${Buttons["Ground"][0]}.png`);
-            map[selected.tile].onterrainSprite.imgElement.setAttribute("src", `Images/${map[selected.tile].tribeUnit}/City/City${map[selected.tile].buildingLevel}.png`);
+            map[selected.tile].terrainSprite.imgElement.setAttribute("src", imagesUrl + `${map[selected.tile].tribeUnit}/${Buttons["Ground"][0]}.png`);
+            map[selected.tile].onterrainSprite.imgElement.setAttribute("src", imagesUrl + `${map[selected.tile].tribeUnit}/City/City${map[selected.tile].buildingLevel}.png`);
             attMiscMenu();
         break;
         case "LevelUp":
             if(map[selected.tile].buildingLevel < maxLevel[map[selected.tile].onterrain]) {
                 map[selected.tile].buildingLevel++;
                 if(Folders[map[selected.tile].terrain][map[selected.tile].onterrainIndex] == "Buildings"){
-                    map[selected.tile].onterrainSprite.imgElement.setAttribute("src", `Images/Buildings/${Buttons[map[selected.tile].terrain][map[selected.tile].onterrainIndex]}/${Buttons[map[selected.tile].terrain][map[selected.tile].onterrainIndex]}${map[selected.tile].buildingLevel}.png`);
+                    map[selected.tile].onterrainSprite.imgElement.setAttribute("src", imagesUrl + `Buildings/${Buttons[map[selected.tile].terrain][map[selected.tile].onterrainIndex]}/${Buttons[map[selected.tile].terrain][map[selected.tile].onterrainIndex]}${map[selected.tile].buildingLevel}.png`);
                 }
                 else if(Folders[map[selected.tile].terrain][map[selected.tile].onterrainIndex] == "City"){
-                    map[selected.tile].onterrainSprite.imgElement.setAttribute("src", `Images/${map[selected.tile].tribeTerrain}/City/City${map[selected.tile].buildingLevel}.png`);
+                    map[selected.tile].onterrainSprite.imgElement.setAttribute("src", imagesUrl + `${map[selected.tile].tribeTerrain}/City/City${map[selected.tile].buildingLevel}.png`);
                 }
             }
         break;
@@ -830,10 +832,10 @@ function MiscClick(item) {
             if(map[selected.tile].buildingLevel > minLevel[map[selected.tile].onterrain]) {
                 map[selected.tile].buildingLevel--;
                 if(Folders[map[selected.tile].terrain][map[selected.tile].onterrainIndex] == "Buildings"){
-                    map[selected.tile].onterrainSprite.imgElement.setAttribute("src", `Images/Buildings/${Buttons[map[selected.tile].terrain][map[selected.tile].onterrainIndex]}/${Buttons[map[selected.tile].terrain][map[selected.tile].onterrainIndex]}${map[selected.tile].buildingLevel}.png`);
+                    map[selected.tile].onterrainSprite.imgElement.setAttribute("src", imagesUrl + `Buildings/${Buttons[map[selected.tile].terrain][map[selected.tile].onterrainIndex]}/${Buttons[map[selected.tile].terrain][map[selected.tile].onterrainIndex]}${map[selected.tile].buildingLevel}.png`);
                 }
                 else if(Folders[map[selected.tile].terrain][map[selected.tile].onterrainIndex] == "City"){
-                    map[selected.tile].onterrainSprite.imgElement.setAttribute("src", `Images/${map[selected.tile].tribeTerrain}/City/City${map[selected.tile].buildingLevel}.png`);
+                    map[selected.tile].onterrainSprite.imgElement.setAttribute("src", imagesUrl + `${map[selected.tile].tribeTerrain}/City/City${map[selected.tile].buildingLevel}.png`);
                 }
             }
         break;
@@ -844,7 +846,7 @@ function MiscClick(item) {
             }
             else {
                 map[selected.tile].hasCastle = true;
-                map[selected.tile].castleSprite.imgElement.src = `Images/${map[selected.tile].tribeTerrain}/Castle.png`;
+                map[selected.tile].castleSprite.imgElement.src = imagesUrl + `${map[selected.tile].tribeTerrain}/Castle.png`;
                 map[selected.tile].castleSprite.imgElement.style.display = "inline";
             }
         break;
@@ -881,10 +883,10 @@ function attTribes(tribe) {
         if(Object.keys(Buttons)[i] != "tribes"){
             for (let j = 0; j < Buttons[Object.keys(Buttons)[i]].length; j++) {
                 if(Folders[Object.keys(Buttons)[i]][j] == "selected.tribes"){
-                    document.getElementById(`btn${Object.keys(Buttons)[i]}${Buttons[Object.keys(Buttons)[i]][j]}`).src = `Images/${tribe}/${Buttons[Object.keys(Buttons)[i]][j]}.png`;
+                    document.getElementById(`btn${Object.keys(Buttons)[i]}${Buttons[Object.keys(Buttons)[i]][j]}`).src = imagesUrl + `${tribe}/${Buttons[Object.keys(Buttons)[i]][j]}.png`;
                 }
                 else if(Folders[Object.keys(Buttons)[i]][j] == "City"){
-                    document.getElementById(`btn${Object.keys(Buttons)[i]}${Buttons[Object.keys(Buttons)[i]][j]}`).src = `Images/${tribe}/City/City7.png`;
+                    document.getElementById(`btn${Object.keys(Buttons)[i]}${Buttons[Object.keys(Buttons)[i]][j]}`).src = imagesUrl + `${tribe}/City/City7.png`;
                 }
             }
         }
@@ -892,7 +894,7 @@ function attTribes(tribe) {
 
     if (selected.menu == "Misc" && map[selected.tile].hasUnit == true) {
         map[selected.tile].tribeUnit = selected.tribes;
-        map[selected.tile].UnitSprite.imgElement.src = `Images/${selected.tribes}/${map[selected.tile].Unit}.png`;
+        map[selected.tile].UnitSprite.imgElement.src = imagesUrl + `${selected.tribes}/${map[selected.tile].Unit}.png`;
         attMiscMenu();
     }
 }
