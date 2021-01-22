@@ -32,9 +32,8 @@ let minLevel = { City: 1, CustomsHouse: 1, ForestTemple: 1, Forge: 1, IceBank: 1
                     Sanctuary: 1, Sawmill: 1, Temple: 1, WaterTemple: 1, Windmill: 1 };
 let maxLevel = { City: 7, CustomsHouse: 5, ForestTemple: 5, Forge: 8, IceBank: 9, IceTemple: 5, MountainTemple: 5, 
                     Sanctuary: 8, Sawmill: 8, Temple: 5, WaterTemple: 5, Windmill: 6 };
-let maxHP = {boat: 10, ship: 10, battleship: 10, warrior: 10, archer: 10, rider: 10, knight: 15, defender: 15, catapult: 10, swordsman: 15, mindbender: 10, giant: 40,
-            polytaur: 15, dragonegg: 10, mooni: 10, icearcher: 10, battlesled: 15, icefortress: 20, gaami: 30, navalon: 30, babydragon: 15, firedragon: 20,
-            amphibian: 10, tridention: 15, crab: 40};
+let maxHP = {warrior: 10, archer: 10, rider: 10, knight: 15, defender: 15, catapult: 10, swordsman: 15, mindbender: 10, giant: 40, polytaur: 15, dragonegg: 10, 
+            mooni: 10, icearcher: 10, battlesled: 15, icefortress: 20, gaami: 30, navalon: 30, babydragon: 15, firedragon: 20, amphibian: 10, tridention: 15, crab: 40};
 let veteranPossible = {warrior: true, archer: true, rider: true, knight: true, defender: true, catapult: true, swordsman: true, mindbender: false, giant: false, 
                 polytaur: true, dragonegg: false, mooni: false, icearcher: false, battlesled: true, icefortress: true, gaami: false, navalon: false, babydragon: false, 
                 firedragon: false, amphibian: true, tridention: true, crab: false};
@@ -52,7 +51,7 @@ let Buttons = {
     Units: ["warrior", "archer", "rider", "knight", "defender", "catapult", "swordsman", "mindbender", "giant", "polytaur", "dragonegg", "mooni", 
             "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
     FixedMenu: ["ShowMenu", "ZoomIn", "ZoomOut"], 
-    Misc: ["skull", "HPUp", "HPDown", "HP", "Veteran", "capture", "LevelUp", "LevelDown", "Castle", "Workshop", "Wall"],
+    Misc: ["skull", "HPUp", "HPDown", "HP", "Veteran", "capture", "LevelUp", "LevelDown", "Castle", "Workshop", "Wall", "ship0", "ship1", "ship2"],
     Resources: ["Chop", "Destruction", "Gather", "Destroy"]
 };
 let Folders = {
@@ -75,7 +74,7 @@ let Folders = {
             "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes"],
     FixedMenu: ["Miscellaneous", "Miscellaneous", "Miscellaneous"],
     Misc: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", 
-            "Miscellaneous"],
+            "Miscellaneous", "selected.tribes", "selected.tribes", "selected.tribes"],
     Resources: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous"]
 };
 let OffsetX = { // Positive value moves sprite to the left
@@ -166,7 +165,7 @@ onload = function() {
     document.getElementById(`btnterrains`).addEventListener('click', function(){ selectMainMenu("terrains"); });
     document.getElementById(`btnonterrains`).addEventListener('click', function(){ selectMainMenu("onterrains"); });
     document.getElementById(`btnUnits`).addEventListener('click', function(){ selectMainMenu("Units"); });
-    document.getElementById(`btnMisc`).addEventListener('click', function(){ selectMainMenu("Misc"); attMiscMenu(); });
+    document.getElementById(`btnMisc`).addEventListener('click', function(){ selectMainMenu("Misc"); attMiscMenu(true); });
     document.getElementById(`btnResources`).addEventListener('click', function(){ selectMainMenu("Resources"); });
     document.getElementById(`btnFixedMenuShowMenu`).addEventListener('click', function(){ menuButtonClick(); });
     document.getElementById(`btnFixedMenuZoomIn`).addEventListener('click', function(){ ZoomIn(); });
@@ -376,6 +375,7 @@ class Tile {
         this.UnitHP = 10;
         this.UnitIsVeteran = 10;
         this.hasUnit = false;
+        this.shipLevel = 3; // boat, ship, battleship, none
 
         this.buildingLevel = 1;
         this.hasCastle = false;
@@ -421,16 +421,30 @@ class Tile {
             this.hasUnit = false;
         }
         else {
-            if(this.terrain == "ShallowWater" || this.terrain == "DeepWater")
-            {
-
-            }
-            this.UnitSprite.redraw(type, newIndex);
             this.UnitSprite.imgElement.style.display = 'inline';
             this.UnitIndex = newIndex;
             this.tribeUnit = selected.tribes;
             this.Unit = Buttons[type][newIndex];
             this.hasUnit = true;
+
+            if((this.terrain == "ShallowWater" || this.terrain == "DeepWater") && this.Unit != "navalon" && this.Unit != "babydragon" && 
+                this.Unit != "firedragon" && this.Unit != "amphibian" && this.Unit != "tridention" && this.Unit != "crab")
+            {
+                this.attShip(0);
+            }
+            else {
+                this.attShip(3);
+                this.UnitSprite.redraw(type, newIndex);
+            }
+        }
+    }
+    attShip(level) {
+        this.shipLevel = level;
+        if (level != 3) {
+            this.UnitSprite.imgElement.setAttribute("src", imagesUrl + `${selected.tribes}/ship${level}.png`);
+            this.UnitSprite.imgElement.setAttribute("width", sprite_width * Scales.WaterUnits[level]);
+            this.UnitSprite.imgElement.style.top = `${this.UnitSprite.posTop - sprite_width * OffsetY.WaterUnits[level]}px`;
+            this.UnitSprite.imgElement.style.left = `${this.UnitSprite.posLeft - sprite_width * OffsetX.WaterUnits[level]}px`;
         }
     }
     removeCity() {
@@ -627,7 +641,7 @@ function attSelectedTile(){
             map[selected.tile].updateUnit("Units", selectedIndex["Units"]);
         break;
         case "Misc":
-            attMiscMenu();
+            attMiscMenu(true);
         break;
         case "Resources":
             if(selected.Resources == "Chop" && map[selected.tile].terrain == "Forest") {
@@ -756,14 +770,24 @@ function updateTerrainIcon() {
     }
 }
 
-function attMiscMenu() {
+function attMiscMenu(attTribe) {
     if(map[selected.tile].hasUnit) {
         document.getElementById(`btnMiscskull`).style.display = "inline";
         document.getElementById(`btnMiscHPUp`).style.display = "inline";
         document.getElementById(`btnMiscHPDown`).style.display = "inline";
         document.getElementById(`btnMiscHP`).style.display = "inline";
         document.getElementById(`btnMiscVeteran`).style.display = "inline";
-        document.getElementById(`btntribes${map[selected.tile].tribeUnit}`).click();
+        if (attTribe) {
+            document.getElementById(`btntribes${map[selected.tile].tribeUnit}`).click();
+        }
+        for(let i = 0; i < 3; i++) {
+            if(map[selected.tile].shipLevel == 3 || map[selected.tile].shipLevel == i) {
+                document.getElementById(`btnMiscship${i}`).style.display = "none";
+            }
+            else {
+                document.getElementById(`btnMiscship${i}`).style.display = "inline";
+            }
+        }
     }
     else {
         document.getElementById(`btnMiscskull`).style.display = "none";
@@ -771,6 +795,9 @@ function attMiscMenu() {
         document.getElementById(`btnMiscHPDown`).style.display = "none";
         document.getElementById(`btnMiscHP`).style.display = "none";
         document.getElementById(`btnMiscVeteran`).style.display = "none";
+        document.getElementById(`btnMiscship0`).style.display = "none";
+        document.getElementById(`btnMiscship1`).style.display = "none";
+        document.getElementById(`btnMiscship2`).style.display = "none";
     }
     if(map[selected.tile].onterrain == "City") {
         document.getElementById(`btnMiscCastle`).src = imagesUrl + `${map[selected.tile].tribeTerrain}/Castle.png`;
@@ -807,7 +834,7 @@ function MiscClick(item) {
     switch (item) {
         case "skull":
             map[selected.tile].updateUnit("", 0);
-            attMiscMenu();
+            attMiscMenu(false);
         break;
         case "HPUp":
 
@@ -825,7 +852,7 @@ function MiscClick(item) {
             map[selected.tile].tribeTerrain = map[selected.tile].tribeUnit;
             map[selected.tile].terrainSprite.imgElement.setAttribute("src", imagesUrl + `${map[selected.tile].tribeUnit}/${Buttons["Ground"][0]}.png`);
             map[selected.tile].onterrainSprite.imgElement.setAttribute("src", imagesUrl + `${map[selected.tile].tribeUnit}/City/City${map[selected.tile].buildingLevel}.png`);
-            attMiscMenu();
+            attMiscMenu(false);
         break;
         case "LevelUp":
             if(map[selected.tile].buildingLevel < maxLevel[map[selected.tile].onterrain]) {
@@ -880,6 +907,15 @@ function MiscClick(item) {
                 map[selected.tile].wallSprite.imgElement.style.display = "inline";
             }
         break;
+        case "ship0":
+            map[selected.tile].attShip(0);
+        break;
+        case "ship1":
+            map[selected.tile].attShip(1);
+        break;
+        case "ship2":
+            map[selected.tile].attShip(2);
+        break;
         default:
 
         break;
@@ -904,8 +940,13 @@ function attTribes(tribe) {
 
     if (selected.menu == "Misc" && map[selected.tile].hasUnit == true) {
         map[selected.tile].tribeUnit = selected.tribes;
-        map[selected.tile].UnitSprite.imgElement.src = imagesUrl + `${selected.tribes}/${map[selected.tile].Unit}.png`;
-        attMiscMenu();
+        if(map[selected.tile].shipLevel != 3) {
+            map[selected.tile].attShip(map[selected.tile].shipLevel);
+        }
+        else {
+            map[selected.tile].UnitSprite.imgElement.src = imagesUrl + `${selected.tribes}/${map[selected.tile].Unit}.png`;
+        }
+        attMiscMenu(false);
     }
 }
 
