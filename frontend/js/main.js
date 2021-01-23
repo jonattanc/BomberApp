@@ -61,7 +61,7 @@ let Buttons = {
     Ice: ["Ice", "Ruin", "Port", "Fish", "Whale", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "IceTemple", "WaterTemple"],
     Units: ["warrior", "archer", "rider", "knight", "defender", "catapult", "swordsman", "mindbender", "giant", "polytaur", "dragonegg", "mooni", 
             "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
-    FixedMenu: ["ShowMenu", "ZoomIn", "ZoomOut"], 
+    FixedMenu: ["ShowMenu", "ZoomIn", "ZoomOut", "Settings"], 
     Misc: ["skull", "HPUp", "HPDown", "HP", "Veteran", "Ice", "capture", "LevelUp", "LevelDown", "Castle", "Workshop", "Wall", "ship0", "ship1", "ship2"],
     Resources: ["Chop", "Destruction", "Gather", "Destroy"]
 };
@@ -83,7 +83,7 @@ let Folders = {
     Units: ["selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
             "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
             "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes"],
-    FixedMenu: ["Miscellaneous", "Miscellaneous", "Miscellaneous"],
+    FixedMenu: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous"],
     Misc: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", 
             "Miscellaneous", "selected.tribes", "selected.tribes", "selected.tribes"],
     Resources: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous"]
@@ -181,6 +181,7 @@ onload = function() {
     document.getElementById(`btnFixedMenuShowMenu`).addEventListener('click', function(){ menuButtonClick(); });
     document.getElementById(`btnFixedMenuZoomIn`).addEventListener('click', function(){ ZoomIn(); });
     document.getElementById(`btnFixedMenuZoomOut`).addEventListener('click', function(){ ZoomOut(); });
+    document.getElementById(`btnFixedMenuSettings`).addEventListener('click', function(){ Settings(); });
 
     // Add horizontal scroll to divs
     onmouseup = function clickEvent(e) {
@@ -1071,4 +1072,8 @@ function zoomWheel(event) {
     document.getElementById("mapDiv").style.transform = `scale(${zoomScale}, ${zoomScale})`;
     adjustMapPosition(document.getElementById("mapDiv").style.marginLeft.replace("px",'')|0, 
                     (document.getElementById("mapDiv").style.marginTop.replace("px",'')|0) - (window.innerHeight * 0.1));
+  }
+
+  function Settings() {
+      
   }
