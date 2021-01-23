@@ -22,6 +22,9 @@ const MIN_DRAG_MOVEMENT = 5;
 const UNITS_ICON_SCALE = 0.25;
 const UNITS_ICON_OFFSET_X = -0.63;
 const UNITS_ICON_OFFSET_Y = 0.08;
+const VETERAN_SCALE = 0.1;
+const VETERAN_OFFSET_X = -0.71;
+const VETERAN_OFFSET_Y = -0.13;
 const HP_PX = "8px";
 const HP_SHADOW = "2px";
 const HP_OFFSET_X = -0.2;
@@ -381,7 +384,7 @@ class Tile {
         this.UnitIndex = 0;
         this.tribeUnit = "Bardur";
         this.UnitHP = 10;
-        this.UnitIsVeteran = 10;
+        this.UnitIsVeteran = false;
         this.hasUnit = false;
         this.shipLevel = 3; // boat, ship, battleship, none
 
@@ -406,6 +409,7 @@ class Tile {
         this.UnitSprite = new Sprite(imagesUrl + "Miscellaneous/Clouds.png", index, "Units", false);
         this.selectionSupSprite = new Sprite(imagesUrl + "Miscellaneous/SelectionSup.png", index, "SelectionSup", false);
         this.UnitIconSprite = new Sprite(imagesUrl + "Miscellaneous/UnitsIcon/warrior.png", index, "UnitsIcon", false);
+        this.UnitVeteranSprite = new Sprite(imagesUrl + "Miscellaneous/Veteran.png", index, "Veteran", false);
 
         this.HPtext = document.createElement("p");
         this.HPtext.innerHTML = 10;
@@ -440,6 +444,7 @@ class Tile {
             this.UnitSprite.imgElement.style.display = 'none';
             this.UnitIconSprite.imgElement.style.display = 'none';
             this.HPtext.style.display = 'none';
+            this.UnitVeteranSprite.imgElement.style.display = 'none';
             this.hasUnit = false;
         }
         else {
@@ -447,10 +452,14 @@ class Tile {
             this.tribeUnit = selected.tribes;
             this.Unit = Buttons[type][newIndex];
             this.UnitIconSprite.imgElement.setAttribute("src", imagesUrl + `Miscellaneous/UnitsIcon/${this.Unit}.png`);
-            this.HPtext.innerHTML = maxHP[this.Unit];
+            this.UnitHP = maxHP[this.Unit];
+            this.HPtext.innerHTML = this.UnitHP;
             this.UnitIconSprite.imgElement.style.display = 'inline';
             this.UnitSprite.imgElement.style.display = 'inline';
             this.HPtext.style.display = 'inline';
+            this.UnitVeteranSprite.imgElement.style.display = 'none';
+            this.UnitIsVeteran = false;
+            this.shipLevel = 3;
             this.hasUnit = true;
 
             if((this.terrain == "ShallowWater" || this.terrain == "DeepWater") && this.Unit != "navalon" && this.Unit != "babydragon" && 
@@ -539,6 +548,11 @@ class Sprite{
             this.imgElement.setAttribute("width", sprite_width * UNITS_ICON_SCALE);
             this.imgElement.style.top = `${this.posTop - sprite_width * UNITS_ICON_OFFSET_Y}px`;
             this.imgElement.style.left = `${this.posLeft - sprite_width * UNITS_ICON_OFFSET_X}px`;
+        }
+        else if (type == "Veteran") {
+            this.imgElement.setAttribute("width", sprite_width * VETERAN_SCALE);
+            this.imgElement.style.top = `${this.posTop - sprite_width * VETERAN_OFFSET_Y}px`;
+            this.imgElement.style.left = `${this.posLeft - sprite_width * VETERAN_OFFSET_X}px`;
         }
         else if(type == "Roads"){
             this.imgElement.setAttribute("width", sprite_width * Scales[selected.terrains][0]);
@@ -807,7 +821,12 @@ function attMiscMenu(attTribe) {
         document.getElementById(`btnMiscHPUp`).style.display = "inline";
         document.getElementById(`btnMiscHPDown`).style.display = "inline";
         document.getElementById(`btnMiscHP`).style.display = "inline";
-        document.getElementById(`btnMiscVeteran`).style.display = "inline";
+        if(veteranPossible[map[selected.tile].Unit]){
+            document.getElementById(`btnMiscVeteran`).style.display = "inline";
+        }
+        else {
+            document.getElementById(`btnMiscVeteran`).style.display = "none";
+        }
         if (attTribe) {
             document.getElementById(`btntribes${map[selected.tile].tribeUnit}`).click();
         }
@@ -868,16 +887,41 @@ function MiscClick(item) {
             attMiscMenu(false);
         break;
         case "HPUp":
-
+            if (map[selected.tile].UnitHP < maxHP[map[selected.tile].Unit] || 
+                (map[selected.tile].UnitHP < maxHP[map[selected.tile].Unit] + 5 && map[selected.tile].UnitIsVeteran)) {
+                map[selected.tile].UnitHP++;
+                map[selected.tile].HPtext.innerHTML = map[selected.tile].UnitHP;
+            }
         break;
         case "HPDown":
-
+            if (map[selected.tile].UnitHP > 1) {
+                map[selected.tile].UnitHP--;
+                map[selected.tile].HPtext.innerHTML = map[selected.tile].UnitHP;
+            }
         break;
         case "HP":
-
+            let max = maxHP[map[selected.tile].Unit];
+            if(map[selected.tile].UnitIsVeteran) {
+                max += 5;
+            }
+            let newHP = prompt(`new HP (1 to ${max})`, map[selected.tile].UnitHP);
+            if (newHP >= 1 && newHP <= max) {
+                map[selected.tile].UnitHP = newHP;
+                map[selected.tile].HPtext.innerHTML = map[selected.tile].UnitHP;
+            }
         break;
         case "Veteran":
-
+            if(map[selected.tile].UnitIsVeteran) {
+                map[selected.tile].UnitIsVeteran = false;
+                map[selected.tile].UnitHP = maxHP[map[selected.tile].Unit];
+                map[selected.tile].UnitVeteranSprite.imgElement.style.display = 'none';
+            }
+            else {
+                map[selected.tile].UnitIsVeteran = true;
+                map[selected.tile].UnitHP = maxHP[map[selected.tile].Unit] + 5;
+                map[selected.tile].UnitVeteranSprite.imgElement.style.display = 'inline';
+            }
+            map[selected.tile].HPtext.innerHTML = map[selected.tile].UnitHP;
         break;
         case "capture":
             map[selected.tile].tribeTerrain = map[selected.tile].tribeUnit;
