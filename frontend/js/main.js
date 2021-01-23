@@ -62,7 +62,7 @@ let Buttons = {
     Units: ["warrior", "archer", "rider", "knight", "defender", "catapult", "swordsman", "mindbender", "giant", "polytaur", "dragonegg", "mooni", 
             "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
     FixedMenu: ["ShowMenu", "ZoomIn", "ZoomOut"], 
-    Misc: ["skull", "HPUp", "HPDown", "HP", "Veteran", "capture", "LevelUp", "LevelDown", "Castle", "Workshop", "Wall", "ship0", "ship1", "ship2"],
+    Misc: ["skull", "HPUp", "HPDown", "HP", "Veteran", "Ice", "capture", "LevelUp", "LevelDown", "Castle", "Workshop", "Wall", "ship0", "ship1", "ship2"],
     Resources: ["Chop", "Destruction", "Gather", "Destroy"]
 };
 let Folders = {
@@ -84,7 +84,7 @@ let Folders = {
             "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
             "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes"],
     FixedMenu: ["Miscellaneous", "Miscellaneous", "Miscellaneous"],
-    Misc: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", 
+    Misc: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", 
             "Miscellaneous", "selected.tribes", "selected.tribes", "selected.tribes"],
     Resources: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous"]
 };
@@ -385,6 +385,7 @@ class Tile {
         this.tribeUnit = "Bardur";
         this.UnitHP = 10;
         this.UnitIsVeteran = false;
+        this.UnitIsFrozen = false;
         this.hasUnit = false;
         this.shipLevel = 3; // boat, ship, battleship, none
 
@@ -459,6 +460,7 @@ class Tile {
             this.HPtext.style.display = 'inline';
             this.UnitVeteranSprite.imgElement.style.display = 'none';
             this.UnitIsVeteran = false;
+            this.UnitIsFrozen = false;
             this.shipLevel = 3;
             this.hasUnit = true;
 
@@ -821,6 +823,7 @@ function attMiscMenu(attTribe) {
         document.getElementById(`btnMiscHPUp`).style.display = "inline";
         document.getElementById(`btnMiscHPDown`).style.display = "inline";
         document.getElementById(`btnMiscHP`).style.display = "inline";
+        document.getElementById(`btnMiscIce`).style.display = "inline";
         if(veteranPossible[map[selected.tile].Unit]){
             document.getElementById(`btnMiscVeteran`).style.display = "inline";
         }
@@ -844,6 +847,7 @@ function attMiscMenu(attTribe) {
         document.getElementById(`btnMiscHPUp`).style.display = "none";
         document.getElementById(`btnMiscHPDown`).style.display = "none";
         document.getElementById(`btnMiscHP`).style.display = "none";
+        document.getElementById(`btnMiscIce`).style.display = "none";
         document.getElementById(`btnMiscVeteran`).style.display = "none";
         document.getElementById(`btnMiscship0`).style.display = "none";
         document.getElementById(`btnMiscship1`).style.display = "none";
@@ -922,6 +926,16 @@ function MiscClick(item) {
                 map[selected.tile].UnitVeteranSprite.imgElement.style.display = 'inline';
             }
             map[selected.tile].HPtext.innerHTML = map[selected.tile].UnitHP;
+        break;
+        case "Ice":
+            if(map[selected.tile].UnitIsFrozen) {
+                map[selected.tile].UnitIsFrozen = false;
+                map[selected.tile].UnitSprite.imgElement.style.webkitFilter = "";
+            }
+            else {
+                map[selected.tile].UnitIsFrozen = true;
+                map[selected.tile].UnitSprite.imgElement.style.webkitFilter = "sepia(100%) hue-rotate(190deg) brightness(110%) saturate(400%)";
+            }
         break;
         case "capture":
             map[selected.tile].tribeTerrain = map[selected.tile].tribeUnit;
