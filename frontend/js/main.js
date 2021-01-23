@@ -21,7 +21,11 @@ const MIN_DRAG_MOVEMENT = 5;
 
 const UNITS_ICON_SCALE = 0.25;
 const UNITS_ICON_OFFSET_X = -0.63;
-const UNITS_ICON_OFFSET_Y = 0.1;
+const UNITS_ICON_OFFSET_Y = 0.08;
+const HP_PX = "8px";
+const HP_SHADOW = "2px";
+const HP_OFFSET_X = -0.2;
+const HP_OFFSET_Y = 0.18;
 
 let map = new Array(400);
 let isMenuOpen = false;
@@ -89,7 +93,7 @@ let OffsetX = { // Positive value moves sprite to the left
     Forest: [0, 0, -0.18, -0.35, -0.32, 0, -0.185], 
     Mountain: [0.08, -0.18, -0.1, -0.25, 0, -0.185],
     Ice: [0, -0.16, -0.05, -0.15, -0.23, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185],
-    Units: [-0.19, -0.12, -0.21, -0.2, -0.2, -0.22, -0.2, -0.17, -0.24, -0.2, -0.19, -0.21, -0.17, -0.2, -0.22, -0.2, -0.18, -0.2, -0.2, -0.21, -0.22, -0.22],
+    Units: [-0.19, -0.12, -0.21, -0.2, -0.2, -0.22, -0.2, -0.17, -0.23, -0.2, -0.19, -0.21, -0.17, -0.2, -0.22, -0.2, -0.18, -0.2, -0.2, -0.21, -0.22, -0.22],
     WaterUnits: [-0.22, -0.2, -0.23],
     Misc: {Castle: -0.4, Workshop: -0.18, Wall: 0, Selection: 0, SelectionSup: 0}
 };
@@ -101,7 +105,7 @@ let OffsetY = { // Positive value moves sprite up // Ice increases about 0.05 fr
     Forest: [0.06, 0, 0.03, -0.15, -0.12, 0.6, 0.07], 
     Mountain: [0.2, 0.05, 0.1, -0.15, 0.6, 0.12],
     Ice: [-0.09, 0.02, -0.07, -0.07, -0.18, 0.03, 0.45, 0.08, 0.42, 0.1, 0.23, 0.18, 0.67, 0.24, 0.15, 0],
-    Units: [0.27, 0.34, 0.25, 0.25, 0.32, 0.29, 0.32, 0.29, 0.3, 0.32, 0.3, 0.22, 0.29, 0.25, 0.21, 0.2, 0.33, 0.3, 0.3, 0.35, 0.35, 0.36],
+    Units: [0.27, 0.34, 0.25, 0.25, 0.32, 0.29, 0.32, 0.29, 0.28, 0.32, 0.3, 0.22, 0.29, 0.25, 0.21, 0.2, 0.33, 0.3, 0.3, 0.35, 0.35, 0.36],
     WaterUnits: [0.26, 0.3, 0.19],
     Misc: {Castle: -0.01, Workshop: 0, Wall: 0, Selection: -0.05, SelectionSup: -0.05}
 }
@@ -402,6 +406,17 @@ class Tile {
         this.UnitSprite = new Sprite(imagesUrl + "Miscellaneous/Clouds.png", index, "Units", false);
         this.selectionSupSprite = new Sprite(imagesUrl + "Miscellaneous/SelectionSup.png", index, "SelectionSup", false);
         this.UnitIconSprite = new Sprite(imagesUrl + "Miscellaneous/UnitsIcon/warrior.png", index, "UnitsIcon", false);
+
+        this.HPtext = document.createElement("p");
+        this.HPtext.innerHTML = 10;
+        this.HPtext.style.textShadow = `-1px 0 ${HP_SHADOW} black, 1px 0 ${HP_SHADOW} black, 0 -1px ${HP_SHADOW} black, 0 1px ${HP_SHADOW} black`;
+        this.HPtext.style.color = "white";
+        this.HPtext.style.fontSize = HP_PX;
+        this.HPtext.style.position = "absolute"
+        this.HPtext.style.top = `${getTop(getX(index) , getY(index)) - sprite_width * HP_OFFSET_Y}px`;
+        this.HPtext.style.left = `${getLeft(getX(index) , getY(index)) - sprite_width * HP_OFFSET_X}px`;
+        this.HPtext.style.display = 'none';
+        document.getElementById("mapDiv").appendChild(this.HPtext);
     }
     updateTerrain(newIndex) {
         this.terrainIndex = newIndex;
@@ -424,6 +439,7 @@ class Tile {
         if(type == "") {
             this.UnitSprite.imgElement.style.display = 'none';
             this.UnitIconSprite.imgElement.style.display = 'none';
+            this.HPtext.style.display = 'none';
             this.hasUnit = false;
         }
         else {
@@ -431,8 +447,10 @@ class Tile {
             this.tribeUnit = selected.tribes;
             this.Unit = Buttons[type][newIndex];
             this.UnitIconSprite.imgElement.setAttribute("src", imagesUrl + `Miscellaneous/UnitsIcon/${this.Unit}.png`);
+            this.HPtext.innerHTML = maxHP[this.Unit];
             this.UnitIconSprite.imgElement.style.display = 'inline';
             this.UnitSprite.imgElement.style.display = 'inline';
+            this.HPtext.style.display = 'inline';
             this.hasUnit = true;
 
             if((this.terrain == "ShallowWater" || this.terrain == "DeepWater") && this.Unit != "navalon" && this.Unit != "babydragon" && 
