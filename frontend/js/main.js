@@ -19,6 +19,10 @@ const ZOOM_MIN = 0.25;
 
 const MIN_DRAG_MOVEMENT = 5;
 
+const UNITS_ICON_SCALE = 0.25;
+const UNITS_ICON_OFFSET_X = -0.63;
+const UNITS_ICON_OFFSET_Y = 0.1;
+
 let map = new Array(400);
 let isMenuOpen = false;
 let isSubMenuOpen = false;
@@ -397,6 +401,7 @@ class Tile {
         this.wallSprite = new Sprite(imagesUrl + "Miscellaneous/Wall.png", index, "Wall", false);
         this.UnitSprite = new Sprite(imagesUrl + "Miscellaneous/Clouds.png", index, "Units", false);
         this.selectionSupSprite = new Sprite(imagesUrl + "Miscellaneous/SelectionSup.png", index, "SelectionSup", false);
+        this.UnitIconSprite = new Sprite(imagesUrl + "Miscellaneous/UnitsIcon/warrior.png", index, "UnitsIcon", false);
     }
     updateTerrain(newIndex) {
         this.terrainIndex = newIndex;
@@ -418,13 +423,16 @@ class Tile {
     updateUnit(type, newIndex) {
         if(type == "") {
             this.UnitSprite.imgElement.style.display = 'none';
+            this.UnitIconSprite.imgElement.style.display = 'none';
             this.hasUnit = false;
         }
         else {
-            this.UnitSprite.imgElement.style.display = 'inline';
             this.UnitIndex = newIndex;
             this.tribeUnit = selected.tribes;
             this.Unit = Buttons[type][newIndex];
+            this.UnitIconSprite.imgElement.setAttribute("src", imagesUrl + `Miscellaneous/UnitsIcon/${this.Unit}.png`);
+            this.UnitIconSprite.imgElement.style.display = 'inline';
+            this.UnitSprite.imgElement.style.display = 'inline';
             this.hasUnit = true;
 
             if((this.terrain == "ShallowWater" || this.terrain == "DeepWater") && this.Unit != "navalon" && this.Unit != "babydragon" && 
@@ -509,7 +517,12 @@ class Sprite{
         if(!visible){
             this.imgElement.style.display = "none";
         }
-        if(type == "Roads"){
+        if (type == "UnitsIcon") {
+            this.imgElement.setAttribute("width", sprite_width * UNITS_ICON_SCALE);
+            this.imgElement.style.top = `${this.posTop - sprite_width * UNITS_ICON_OFFSET_Y}px`;
+            this.imgElement.style.left = `${this.posLeft - sprite_width * UNITS_ICON_OFFSET_X}px`;
+        }
+        else if(type == "Roads"){
             this.imgElement.setAttribute("width", sprite_width * Scales[selected.terrains][0]);
             this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY[selected.terrains][0]}px`;
             this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX[selected.terrains][0]}px`;
@@ -909,12 +922,15 @@ function MiscClick(item) {
         break;
         case "ship0":
             map[selected.tile].attShip(0);
+            attMiscMenu(false);
         break;
         case "ship1":
             map[selected.tile].attShip(1);
+            attMiscMenu(false);
         break;
         case "ship2":
             map[selected.tile].attShip(2);
+            attMiscMenu(false);
         break;
         default:
 
