@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<title>Game List</title>
+<link rel="stylesheet" href="./index.css">
+<script src="index.js" async></script>
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet"> 
+</head>
+<body onload="loadGames()">
+<h1 style="text-align: center;"><i>-Available Games-</i></h1>
+<div class="middle-container">
+<ul id="game-list">
+</ul>	
+</div>
+<div class="bottom-menu">
+<button type="button" id="add-game-button" onclick="showForm()">+</button>
+</div>
+
+
+
+
+
+
+<!-- hidden modal form to fill in the information when adding a game -->
+<div id="add-game-form">
+<div class="form-wrapper">
+<span class="close" onclick="hideForm()">&times;</span>
+<h1>Add a game</h1>
+<form method="post">
+<div id="information-tabs">
+<div id="game-tab" class="tab selected-tab" onclick="switchTab(Tabs.GAME)">
+Game
+</div>
+<div id="players-tab" class="tab" onclick="switchTab(Tabs.PLAYERS)">
+Players
+</div>
+</div>
+<div id="game-information">
+<div class="row">
+<div>
+<label for="gname">Game name</label>
+</div>
+<div>
+<input type="text" id="gname" name="game_name" placeholder="Moon of Whales" required>
+</div>
+</div>
+<div class="row">
+<div>
+<label for="pebid">PolyEloBot ID</label>
+</div>
+<div> 
+<input type="text" id="pebid" name="poly_id" placeholder="69696" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
+</div> 
+</div>
+<div class="row">
+<div>
+<label for="msize">Map size</label>
+</div>
+<div> 
+<select id="msize" name="map_size">
+<option value="11">Tiny (121 tiles)</option>
+<option value="16">Normal (256 tiles)</option>
+<option value="18" selected>Large (324 tiles)</option>
+<option value="20">Huge (400 tiles)</option>
+<option value="30">Massive (900 tiles)</option>
+</select>
+</div> 
+</div>
+<br>
+<div class="row">
+<div>
+<label for="gtype">Game type</label>
+</div>
+<div>
+<select  id="gtype" name="game_type">
+<optgroup label="PolyChampions Season Game">
+      <option value="bomber"> Bomber Season Game</option>
+      <option value="dynamite"> Dynamite Season Game</option>
+    </optgroup>
+<optgroup label="Other Games">
+<option value="team">Regular Team Game</option>
+</optgroup>
+</select>
+</div>
+</div>
+</div>
+
+
+<div id="player-information">
+<br>
+<div id="player-list">
+<!--
+<div id="player0" class="player">
+<div class="column">
+<div>
+<label for="name0">Name</label>
+</div>
+<div>
+<input type="text" id="name0" name="name0" placeholder="AttilaTheHun">
+</div>
+</div>
+<div class="column">
+<div>
+<label for="tribe0">Tribe</label>
+</div>
+<div>
+<select  id="tribe0" name="tribe0">
+<option value="unknown">Unknown</option>
+<optgroup label="Regular Tribes">
+      <option value="xin-xi">Xin-Xi</option>
+      <option value="imperius">Imperius</option>
+ <option value="bardur" selected>Bardur</option>
+      <option value="kickoo">Kickoo</option>
+<option value="oumaji">Oumaji</option>
+<option value="hoodrick">Hoodrick</option>
+<option value="luxidoor">Luxidoor</option>
+<option value="vengir">Vengir</option>
+<option value="zebasi">Zebasi</option>
+<option value="ai-mo">Ai-Mo</option>
+<option value="quetzali">Quetzali</option>
+<option value="yadakk">Yădakk</option>
+</optgroup>
+<optgroup label="Special Tribes">
+<option value="aquarion">Aquarion</option>
+<option value="elyrion">∑∫ỹriȱŋ</option>
+<option value="polaris">Polaris</option>
+</optgroup>
+</select>
+</div>
+</div>
+<div class="column">
+<div>
+<label for="color0">Color</label>
+</div>
+<div>
+<select  id="color1" name="color1">
+      <option valeu="unknown">Unknown</option>
+      <option value="xinxi">Xinxi (Red)</option>
+      <option value="imperius">Imperius (Blue)</option>
+<option value="bardur">Bardur (Black)</option>
+      <option value="oumaji">Oumaji (Yellow)</option>
+      <option value="kickoo">Kickoo (Lime)</option>
+<option value="hoodrick">Hoodrick (SaddleBrown)</option>
+      <option value="luxidoor">Luxidoor (DarkViolet)</option>
+<option value="vengir">Vengir (White)</option>
+      <option value="zebasi">Zebasi (Orange)</option>
+<option value="aimo">Aimo (Aquamarine)</option>
+      <option value="quetzali">Quetzali (SeaGreen)</option>
+<option value="yadakk">Yadakk (DarkRed)</option>
+      <option value="aquarion">Aquarion (LightCoral)</option>
+<option value="elyrion">Elyrion (DeepPink)</option>
+<option value="polaris">Polaris (AntiqueWhite)</option>
+</select>
+</div>
+</div>
+<div class="column">
+<div>
+<label for="team0">Team</label>
+</div>
+<div>
+<input type="text" id="team0" name="team0" placeholder="Away">
+</div>
+</div>
+<div class="column">
+<div>
+<label>Remove</label>
+</div>
+<div>
+<button type="button" id="remove0" class="remove-player" onclick="removePlayer(this)">&times;</button>
+</div>
+</div>
+</div>
+<div id="player1" class="player">
+<div class="column">
+<div>
+<label for="name1">Name</label>
+</div>
+<div>
+<input type="text" id="name1" name="name1" placeholder="AttilaTheHun">
+</div>
+</div>
+<div class="column">
+<div>
+<label for="tribe1">Tribe</label>
+</div>
+<div>
+<select  id="tribe1" name="tribe1">
+<option value="unknown">Unknown</option>
+<optgroup label="Regular Tribes">
+      <option value="xin-xi">Xin-Xi</option>
+      <option value="imperius">Imperius</option>
+ <option value="bardur" selected>Bardur</option>
+      <option value="kickoo">Kickoo</option>
+<option value="oumaji">Oumaji</option>
+<option value="hoodrick">Hoodrick</option>
+<option value="luxidoor">Luxidoor</option>
+<option value="vengir">Vengir</option>
+<option value="zebasi">Zebasi</option>
+<option value="ai-mo">Ai-Mo</option>
+<option value="quetzali">Quetzali</option>
+<option value="yadakk">Yădakk</option>
+</optgroup>
+<optgroup label="Special Tribes">
+<option value="aquarion">Aquarion</option>
+<option value="elyrion">∑∫ỹriȱŋ</option>
+<option value="polaris">Polaris</option>
+</optgroup>
+</select>
+</div>
+</div>
+<div class="column">
+<div>
+<label for="color1">Color</label>
+</div>
+<div>
+<select  id="color1" name="color1">
+      <option valeu="unknown">Unknown</option>
+      <option value="xinxi">Xinxi (Red)</option>
+      <option value="imperius">Imperius (Blue)</option>
+<option value="bardur">Bardur (Black)</option>
+      <option value="oumaji">Oumaji (Yellow)</option>
+      <option value="kickoo">Kickoo (Lime)</option>
+<option value="hoodrick">Hoodrick (SaddleBrown)</option>
+      <option value="luxidoor">Luxidoor (DarkViolet)</option>
+<option value="vengir">Vengir (White)</option>
+      <option value="zebasi">Zebasi (Orange)</option>
+<option value="aimo">Aimo (Aquamarine)</option>
+      <option value="quetzali">Quetzali (SeaGreen)</option>
+<option value="yadakk">Yadakk (DarkRed)</option>
+      <option value="aquarion">Aquarion (LightCoral)</option>
+<option value="elyrion">Elyrion (DeepPink)</option>
+<option value="polaris">Polaris (AntiqueWhite)</option>
+</select>
+</div>
+</div>
+<div class="column">
+<div>
+<label for="team1">Team</label>
+</div>
+<div>
+<input type="text" id="team1" name="team1" placeholder="Away">
+</div>
+</div>
+<div class="column">
+<div>
+<label>Remove</label>
+</div>
+<div>
+<button type="button" id="remove1" class="remove-player" onclick="removePlayer(this)">&times;</button>
+</div>
+</div>
+</div>
+-->
+</div>
+<br>
+<div>
+<button type="button" id="add-player-button" onclick="addPlayer()">Add Player</button>
+</div>
+</div>
+<div class="row">
+<br>
+<input type="submit" value="Add game" onclick="verifyInput()">
+</div>
+</form>
+</div>
+</div>
+
+</body>
+</html>
