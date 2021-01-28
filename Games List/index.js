@@ -1,5 +1,6 @@
 /*VARIABLES AND CONSTANTS*/
 
+
 const DEBUG = false;
 const Tabs = {
 GAME: 0, 
@@ -17,9 +18,13 @@ ARCHIVED: 4,
 Object.freeze(Tabs);
 Object.freeze(Categories);
 
+const placeholder_games = ["Moon of Whales", "Nuclear Fiddlesticks", "Popcorn & Papercuts", "Mountain of Owo", "Silly Duh!"];
+const placeholder_teams = ["Home", "Away", "Owls", "Sharks", "Bears", "Tigers", "Eagles"];
+const placeholder_players = ["AttilaTheHun", "Jonc", "Luna", "Mysticul"];
+
+
 let players = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
 let null_players = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-
 
 /*let allTheGamesArray = [{name: "Moon of Whales", polybot_id: 1234}, {name: "Mountain of Owo", polybot_id: 1235}];*/
 
@@ -60,7 +65,7 @@ let serverResponse = deleteAPI(`games/${element.id}/`);
 alert(`The game ${element.parentElement.getAttribute("game")} was deleted.`);
 }
 
-
+/*Initialize the game list*/
 function loadGames(){
 let allTheGamesArray = getAPI('/games/');
 let game_list = document.getElementById("game-list");
@@ -93,7 +98,7 @@ function addGame(game){
 if(DEBUG){
 alert(`Name: ${game.name}\nMap size: ${game.map_size}\nPoly ID: ${game.polybot_id}\nPlayers: ${JSON.stringify(game.players)}\nType: ${game.game_type}\n`);
 }
-/*let serverResponse = postAPI('/games', game);*/
+let serverResponse = postAPI('/games', game);
 }
 
 
@@ -147,6 +152,8 @@ openGame(game.polybot_id);
 /*Shows the Add Game form*/
 function showForm(){
 let form = document.getElementById("add-game-form");
+let game_name = document.getElementById("gname");
+game_name.placeholder = `${randomArrayItem(placeholder_games)}`;
 form.style.display = "block";
 if(DEBUG){
 console.log("form shown");
@@ -212,7 +219,7 @@ player.innerHTML = `
 <label for="name${player_number}">Name</label>
 </div>
 <div>
-<input type="text" id="name${player_number}" name="name${player_number}" placeholder="AttilaTheHun">
+<input type="text" id="name${player_number}" name="name${player_number}" placeholder="${randomArrayItem(placeholder_players)}">
 </div>
 </div>`;
 player.innerHTML += `<div class="column">
@@ -223,7 +230,7 @@ player.innerHTML += `<div class="column">
 <select  id="tribe${player_number}" name="tribe${player_number}">
 <option value="unknown">Unknown</option>
 <optgroup label="Regular Tribes">
-      <option value="xin-xi">Xin-Xi</option>
+      <option value="xinxi">Xin-Xi</option>
       <option value="imperius">Imperius</option>
  <option value="bardur" selected>Bardur</option>
       <option value="kickoo">Kickoo</option>
@@ -232,7 +239,7 @@ player.innerHTML += `<div class="column">
 <option value="luxidoor">Luxidoor</option>
 <option value="vengir">Vengir</option>
 <option value="zebasi">Zebasi</option>
-<option value="ai-mo">Ai-Mo</option>
+<option value="aimo">Ai-Mo</option>
 <option value="quetzali">Quetzali</option>
 <option value="yadakk">Yădakk</option>
 </optgroup>
@@ -274,7 +281,7 @@ player.innerHTML += `<div class="column">
 <label for="team${player_number}">Team</label>
 </div>
 <div>
-<input type="text" id="team${player_number}" name="team${player_number}" placeholder="Away">
+<input type="text" id="team${player_number}" name="team${player_number}" placeholder="${randomArrayItem(placeholder_teams)}">
 </div>
 </div>`;
 player.innerHTML += `<div class="column">
@@ -301,6 +308,13 @@ console.log("player removed: " + id);
 }
 }
 
+
+/*Other fuctions*/
+
+function randomArrayItem(array){
+let item = array[Math.floor(Math.random() * array.length)];
+return item;
+}
 
 
 /*CLASSES*/

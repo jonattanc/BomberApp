@@ -3,12 +3,13 @@
 <meta charset="UTF-8">
 <title>Game List</title>
 <link rel="stylesheet" href="./index.css">
+<script src="./js/utils/customFetch.js" async></script>
 <script src="index.js" async></script>
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet"> 
 </head>
 <body onload="loadGames()">
-<h1 style="text-align: center;"><i>-Available Games-</i></h1>
+<h1 id="top-heading" style="text-align: center;"><i>-Available Games-</i></h1>
 <div class="middle-container">
 <ul id="game-list">
 </ul>	
@@ -90,168 +91,7 @@ Players
 <div id="player-information">
 <br>
 <div id="player-list">
-<!--
-<div id="player0" class="player">
-<div class="column">
-<div>
-<label for="name0">Name</label>
-</div>
-<div>
-<input type="text" id="name0" name="name0" placeholder="AttilaTheHun">
-</div>
-</div>
-<div class="column">
-<div>
-<label for="tribe0">Tribe</label>
-</div>
-<div>
-<select  id="tribe0" name="tribe0">
-<option value="unknown">Unknown</option>
-<optgroup label="Regular Tribes">
-      <option value="xin-xi">Xin-Xi</option>
-      <option value="imperius">Imperius</option>
- <option value="bardur" selected>Bardur</option>
-      <option value="kickoo">Kickoo</option>
-<option value="oumaji">Oumaji</option>
-<option value="hoodrick">Hoodrick</option>
-<option value="luxidoor">Luxidoor</option>
-<option value="vengir">Vengir</option>
-<option value="zebasi">Zebasi</option>
-<option value="ai-mo">Ai-Mo</option>
-<option value="quetzali">Quetzali</option>
-<option value="yadakk">Yădakk</option>
-</optgroup>
-<optgroup label="Special Tribes">
-<option value="aquarion">Aquarion</option>
-<option value="elyrion">∑∫ỹriȱŋ</option>
-<option value="polaris">Polaris</option>
-</optgroup>
-</select>
-</div>
-</div>
-<div class="column">
-<div>
-<label for="color0">Color</label>
-</div>
-<div>
-<select  id="color1" name="color1">
-      <option valeu="unknown">Unknown</option>
-      <option value="xinxi">Xinxi (Red)</option>
-      <option value="imperius">Imperius (Blue)</option>
-<option value="bardur">Bardur (Black)</option>
-      <option value="oumaji">Oumaji (Yellow)</option>
-      <option value="kickoo">Kickoo (Lime)</option>
-<option value="hoodrick">Hoodrick (SaddleBrown)</option>
-      <option value="luxidoor">Luxidoor (DarkViolet)</option>
-<option value="vengir">Vengir (White)</option>
-      <option value="zebasi">Zebasi (Orange)</option>
-<option value="aimo">Aimo (Aquamarine)</option>
-      <option value="quetzali">Quetzali (SeaGreen)</option>
-<option value="yadakk">Yadakk (DarkRed)</option>
-      <option value="aquarion">Aquarion (LightCoral)</option>
-<option value="elyrion">Elyrion (DeepPink)</option>
-<option value="polaris">Polaris (AntiqueWhite)</option>
-</select>
-</div>
-</div>
-<div class="column">
-<div>
-<label for="team0">Team</label>
-</div>
-<div>
-<input type="text" id="team0" name="team0" placeholder="Away">
-</div>
-</div>
-<div class="column">
-<div>
-<label>Remove</label>
-</div>
-<div>
-<button type="button" id="remove0" class="remove-player" onclick="removePlayer(this)">&times;</button>
-</div>
-</div>
-</div>
-<div id="player1" class="player">
-<div class="column">
-<div>
-<label for="name1">Name</label>
-</div>
-<div>
-<input type="text" id="name1" name="name1" placeholder="AttilaTheHun">
-</div>
-</div>
-<div class="column">
-<div>
-<label for="tribe1">Tribe</label>
-</div>
-<div>
-<select  id="tribe1" name="tribe1">
-<option value="unknown">Unknown</option>
-<optgroup label="Regular Tribes">
-      <option value="xin-xi">Xin-Xi</option>
-      <option value="imperius">Imperius</option>
- <option value="bardur" selected>Bardur</option>
-      <option value="kickoo">Kickoo</option>
-<option value="oumaji">Oumaji</option>
-<option value="hoodrick">Hoodrick</option>
-<option value="luxidoor">Luxidoor</option>
-<option value="vengir">Vengir</option>
-<option value="zebasi">Zebasi</option>
-<option value="ai-mo">Ai-Mo</option>
-<option value="quetzali">Quetzali</option>
-<option value="yadakk">Yădakk</option>
-</optgroup>
-<optgroup label="Special Tribes">
-<option value="aquarion">Aquarion</option>
-<option value="elyrion">∑∫ỹriȱŋ</option>
-<option value="polaris">Polaris</option>
-</optgroup>
-</select>
-</div>
-</div>
-<div class="column">
-<div>
-<label for="color1">Color</label>
-</div>
-<div>
-<select  id="color1" name="color1">
-      <option valeu="unknown">Unknown</option>
-      <option value="xinxi">Xinxi (Red)</option>
-      <option value="imperius">Imperius (Blue)</option>
-<option value="bardur">Bardur (Black)</option>
-      <option value="oumaji">Oumaji (Yellow)</option>
-      <option value="kickoo">Kickoo (Lime)</option>
-<option value="hoodrick">Hoodrick (SaddleBrown)</option>
-      <option value="luxidoor">Luxidoor (DarkViolet)</option>
-<option value="vengir">Vengir (White)</option>
-      <option value="zebasi">Zebasi (Orange)</option>
-<option value="aimo">Aimo (Aquamarine)</option>
-      <option value="quetzali">Quetzali (SeaGreen)</option>
-<option value="yadakk">Yadakk (DarkRed)</option>
-      <option value="aquarion">Aquarion (LightCoral)</option>
-<option value="elyrion">Elyrion (DeepPink)</option>
-<option value="polaris">Polaris (AntiqueWhite)</option>
-</select>
-</div>
-</div>
-<div class="column">
-<div>
-<label for="team1">Team</label>
-</div>
-<div>
-<input type="text" id="team1" name="team1" placeholder="Away">
-</div>
-</div>
-<div class="column">
-<div>
-<label>Remove</label>
-</div>
-<div>
-<button type="button" id="remove1" class="remove-player" onclick="removePlayer(this)">&times;</button>
-</div>
-</div>
-</div>
--->
+
 </div>
 <br>
 <div>
