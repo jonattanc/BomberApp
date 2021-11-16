@@ -1349,6 +1349,7 @@ function attPlayers(index) {
         map[selected.tile].UnitColorIndex = selectedIndex.color;
         map[selected.tile].UnitColor = selected.color;
         map[selected.tile].UnitPlayer = selected.players;
+        map[selected.tile].UnitIconSprite.imgElement.setAttribute("src", imagesUrl + `UnitsIcon/${map[selected.tile].UnitColor}/${map[selected.tile].Unit}.png`);
         if(map[selected.tile].shipLevel != 3) {
             map[selected.tile].attShip(map[selected.tile].shipLevel, map[selected.tile].UnitPlayer);
         }
