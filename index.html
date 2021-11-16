@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8"/>
+    <meta name="author" content="Jonattan C. (Jonc)" />
+    <meta name="description" content="Bomber Polytopia Helper">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" href="./frontend/assets/Images/BomberLogo.png">
+
+    <title>Bomber PolyHelper</title>
+
+    <style>
+        body {
+            overflow-x: hidden;
+            overflow-y: hidden;
+            margin: 0;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+            -webkit-touch-callout:none;
+            background-color: black;
+        }
+
+        #settingsDiv {
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            top: 10%;
+            background-color: #0e092c;
+            color: rgb(0, 255, 234);
+            overflow-x: scroll;
+            order: "2";
+            display: none
+        }
+
+        #mapDiv {
+            position: absolute; 
+            width: 1000px; 
+            height: 600px; 
+            background-color: black;
+            order: "1"
+        }
+
+        #FixedMenuDiv {
+            top: 0%;
+            height: 10%;
+        }
+
+        .topbuttons {
+            font-size:60px; 
+            cursor:pointer; 
+            color: red;
+            position: fixed;
+            z-index: 1;
+        }
+
+        .menus {
+            height: 0;
+            width: 100%;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            background-color: #0e092c;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            transition: 0.2s;
+        }
+        .menus img {
+            padding: 1vh;
+            cursor:pointer;
+        }
+        .menus img:hover {
+            background-color: #ddd !important;
+        }
+
+        #mainMenuDiv {
+            bottom: 0%;
+        }
+        #playersDiv {
+            bottom: 10%;
+        }
+        .topmenus {
+            bottom: 20%;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="FixedMenuDiv" class="menus"> </div>
+
+    <div id="settingsDiv"> </div>
+
+    <div id="mapDiv"> 
+        
+    </div>
+
+    <div id="mainMenuDiv" class="menus">
+        <img id="btnterrains" height="80%" src="./frontend/assets/Images/Miscellaneous/Clouds.png" ondragstart="return false"/>
+        <img id="btnonterrains" height="80%" src="./frontend/assets/Images/Miscellaneous/Fort.png" ondragstart="return false"/>
+        <img id="btnUnits" height="80%" src="./frontend/assets/Images/Miscellaneous/capture.png" ondragstart="return false"/>
+        <img id="btnMisc" height="80%" src="./frontend/assets/Images/Miscellaneous/Literacy.png" ondragstart="return false"/>
+        <img id="btnResources" height="80%" src="./frontend/assets/Images/Miscellaneous/Resources.png" ondragstart="return false"/>
+    </div>
+
+    <div id="playersDiv" class="menus">    </div>
+
+    <div id="terrainsDiv" class="menus topmenus">    </div>
+
+    <div id="CloudsDiv" class="menus topmenus"> </div>
+    <div id="DeepWaterDiv" class="menus topmenus"> </div>
+    <div id="ShallowWaterDiv" class="menus topmenus"> </div>
+    <div id="GroundDiv" class="menus topmenus"> </div>
+    <div id="ForestDiv" class="menus topmenus"> </div>
+    <div id="MountainDiv" class="menus topmenus"> </div>
+    <div id="IceDiv" class="menus topmenus"> </div>
+
+    <div id="UnitsDiv" class="menus topmenus">    </div>
+
+    <div id="MiscDiv" class="menus topmenus">    </div>
+
+    <div id="ResourcesDiv" class="menus topmenus">    </div>
+
+    <script src="./frontend/js/main.js"></script>
+
+</body>
+</html>
