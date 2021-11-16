@@ -30,15 +30,25 @@ const HP_SHADOW = "2px";
 const HP_OFFSET_X = -0.2;
 const HP_OFFSET_Y = 0.18;
 
+let mapSize = 20;
 let map = new Array(400);
+let extraBorderSpriteX = new Array(mapSize);
+let extraBorderSpriteY = new Array(mapSize);
 let isMenuOpen = false;
 let isSubMenuOpen = false;
-let selected = {menu: "None", tile: 0};
-let selectedIndex = {};
+let selected = {menu: "None", tile: 0, players: 0, tribes: "Bardur", color: "Bardur"};
+let selectedIndex = {players: 0, tribes: 0, color: 0};
+let isSettingsVisible = false;
+
+let players;
 
 let zoomScale = 1;
 let map_moving = false;
 
+let binaryTile = new Uint32Array(3);
+let binaryPos = 0;
+
+let tribes = ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"];
 let minLevel = { City: 1, CustomsHouse: 1, ForestTemple: 1, Forge: 1, IceBank: 1, IceTemple: 1, MountainTemple: 1, 
                     Sanctuary: 1, Sawmill: 1, Temple: 1, WaterTemple: 1, Windmill: 1 };
 let maxLevel = { City: 7, CustomsHouse: 5, ForestTemple: 5, Forge: 8, IceBank: 9, IceTemple: 5, MountainTemple: 5, 
@@ -49,80 +59,77 @@ let veteranPossible = {warrior: true, archer: true, rider: true, knight: true, d
                 polytaur: true, dragonegg: false, mooni: false, icearcher: false, battlesled: true, icefortress: true, gaami: false, navalon: false, babydragon: false, 
                 firedragon: false, amphibian: true, tridention: true, crab: false};
 let Buttons = {
-    tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
     terrains: ["Clouds", "DeepWater", "ShallowWater", "Ground", "Forest", "Mountain", "Ice"],
     Clouds: ["Clouds", "Rainbow"],
     DeepWater: ["DeepWater", "Ruin", "Whale", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "WaterTemple", "IceTemple"],
     ShallowWater: ["ShallowWater", "Fish", "Port", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "WaterTemple", "IceTemple"],
-    Ground: ["Ground", "Roads", "Ruin", "Village", "City", "Fruit", "Crop", "Farm", "Windmill", "Sawmill", "CustomsHouse", "Sanctuary", "Forge", "IceBank", "POF", "GOP",
-            "GB", "AOP", "ET", "TOW", "EOG", "Temple"],
+    Ground: ["Ground", "Roads", "Ruin", "Village", "City", "Fruit", "Crop", "Farm", "Windmill", "Sawmill", "CustomsHouse", "Sanctuary", "Forge", "IceBank", "POF", 
+            "GOP", "GB", "AOP", "ET", "TOW", "EOG", "Temple"],
     Forest: ["Forest", "Roads", "Ruin", "Animal", "Lumber hut", "Sanctuary", "ForestTemple"],
     Mountain: ["Mountain", "Ruin", "Metal", "Mine", "Sanctuary", "MountainTemple"],
     Ice: ["Ice", "Ruin", "Port", "Fish", "Whale", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "IceTemple", "WaterTemple"],
     Units: ["warrior", "archer", "rider", "knight", "defender", "catapult", "swordsman", "mindbender", "giant", "polytaur", "dragonegg", "mooni", 
             "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
     FixedMenu: ["ShowMenu", "ZoomIn", "ZoomOut", "Settings"], 
-    Misc: ["skull", "HPUp", "HPDown", "HP", "Veteran", "Ice", "capture", "LevelUp", "LevelDown", "Castle", "Workshop", "Wall", "ship0", "ship1", "ship2"],
+    Misc: ["skull", "HPUp", "HPDown", "HP", "Veteran", "Ice", "capture", "BorderGrow", "LevelUp", "LevelDown", "Castle", "Workshop", "Wall", "ship0", "ship1", "ship2"],
     Resources: ["Chop", "Destruction", "Gather", "Destroy"]
 };
 let Folders = {
-    tribes: ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion"],
-    terrains: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "selected.tribes", "selected.tribes", "selected.tribes", "Miscellaneous"],
+    terrains: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "player.tribe", "player.tribe", "player.tribe", "Miscellaneous"],
     Clouds: ["Miscellaneous", "Miscellaneous"], 
-    DeepWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "selected.tribes", "selected.tribes", "selected.tribes", 
-                "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "Buildings", "Buildings"], 
-    ShallowWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "selected.tribes", "selected.tribes", "selected.tribes", 
-                    "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "Buildings", "Buildings"], 
-    Ground: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous", "City", "selected.tribes", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", 
-            "Buildings", "Buildings", "Buildings", "Buildings", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
-            "selected.tribes", "selected.tribes", "Buildings"], 
-    Forest: ["selected.tribes", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", "Buildings", "Buildings"], 
-    Mountain: ["selected.tribes", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings"],
-    Ice: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "selected.tribes", "selected.tribes", 
-            "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "Buildings", "Buildings"],
-    Units: ["selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
-            "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", 
-            "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes", "selected.tribes"],
+    DeepWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "player.tribe", "player.tribe", "player.tribe", "player.tribe", 
+                "player.tribe", "player.tribe", "player.tribe", "Buildings", "Buildings"], 
+    ShallowWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "player.tribe", "player.tribe", "player.tribe", "player.tribe", 
+                    "player.tribe", "player.tribe", "player.tribe", "Buildings", "Buildings"], 
+    Ground: ["player.tribe", "Miscellaneous", "Miscellaneous", "Miscellaneous", "City", "player.tribe", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", 
+            "Buildings", "Buildings", "Buildings", "Buildings", "player.tribe", "player.tribe", "player.tribe", "player.tribe", "player.tribe", "player.tribe", 
+            "player.tribe", "Buildings"], 
+    Forest: ["player.tribe", "Miscellaneous", "Miscellaneous", "player.tribe", "Miscellaneous", "Buildings", "Buildings"], 
+    Mountain: ["player.tribe", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings"],
+    Ice: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "player.tribe", "player.tribe", 
+            "player.tribe", "player.tribe", "player.tribe", "player.tribe", "player.tribe", "Buildings", "Buildings"],
+    Units: ["unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", 
+            "unit", "unit", "unit"],
     FixedMenu: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous"],
-    Misc: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "selected.tribes", "Miscellaneous", 
-            "Miscellaneous", "selected.tribes", "selected.tribes", "selected.tribes"],
+    Misc: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", 
+            "Miscellaneous", "player.tribe", "Miscellaneous", "Miscellaneous", "unit", "unit", "unit"],
     Resources: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous"]
 };
 let OffsetX = { // Positive value moves sprite to the left
     Clouds: [0, -0.2], 
     DeepWater: [0.051, -0.18, -0.23, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185], 
     ShallowWater: [0, -0.15, -0.05, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185], 
-    Ground: [0, 0, -0.18, -0.2, 0, -0.12, 0, 0, 0, -0.08, -0.28, 0, -0.26, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185], 
-    Forest: [0, 0, -0.18, -0.35, -0.32, 0, -0.185], 
-    Mountain: [0.08, -0.18, -0.1, -0.25, 0, -0.185],
+    Ground: [0, 0, -0.18, -0.2, 0, -0.12, 0, 0, -0.1, -0.15, -0.28, -0.1, -0.26, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185], 
+    Forest: [0, 0, -0.18, -0.35, -0.32, -0.1, -0.185], 
+    Mountain: [0.08, -0.18, -0.1, -0.25, -0.1, -0.185],
     Ice: [0, -0.16, -0.05, -0.15, -0.23, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185],
     Units: [-0.19, -0.12, -0.21, -0.2, -0.2, -0.22, -0.2, -0.17, -0.23, -0.2, -0.19, -0.21, -0.17, -0.2, -0.22, -0.2, -0.18, -0.2, -0.2, -0.21, -0.22, -0.22],
     WaterUnits: [-0.22, -0.2, -0.23],
-    Misc: {Castle: -0.4, Workshop: -0.18, Wall: 0, Selection: 0, SelectionSup: 0}
+    Misc: {Castle: -0.4, Workshop: -0.18, Wall: 0, Selection: 0, SelectionSup: 0, Border: -0.01}
 };
 let OffsetY = { // Positive value moves sprite up // Ice increases about 0.05 from water
     Clouds: [0, 0.1], 
     DeepWater: [-0.06, 0, -0.18, 0.025, 0.4, 0.04, 0.38, 0.06, 0.19, 0.14, 0.63, 0.2, 0, 0.15], 
     ShallowWater: [-0.14, -0.07, -0.12, 0.025, 0.4, 0.04, 0.38, 0.06, 0.19, 0.14, 0.63, 0.2, 0, 0.15], 
-    Ground: [-0.07, -0.05, 0.05, -0.1, 0.64, 0.1, 0, 0.03, 0.05, 0.08, 0.11, 0.6, 0, 0.45, 0.08, 0.42, 0.1, 0.23, 0.18, 0.67, 0.24, -0.02], 
-    Forest: [0.06, 0, 0.03, -0.15, -0.12, 0.6, 0.07], 
-    Mountain: [0.2, 0.05, 0.1, -0.15, 0.6, 0.12],
+    Ground: [-0.07, -0.05, 0.05, -0.1, 0.64, 0.1, 0, 0.03, 0, 0.05, 0.11, 0.4, 0, 0.45, 0.08, 0.42, 0.1, 0.23, 0.18, 0.67, 0.24, -0.02], 
+    Forest: [0.06, 0, 0.03, -0.15, -0.12, 0.4, 0.07], 
+    Mountain: [0.2, 0.05, 0.1, -0.15, 0.4, 0.12],
     Ice: [-0.09, 0.02, -0.07, -0.07, -0.18, 0.03, 0.45, 0.08, 0.42, 0.1, 0.23, 0.18, 0.67, 0.24, 0.15, 0],
     Units: [0.27, 0.34, 0.25, 0.25, 0.32, 0.29, 0.32, 0.29, 0.28, 0.32, 0.3, 0.22, 0.29, 0.25, 0.21, 0.2, 0.33, 0.3, 0.3, 0.35, 0.35, 0.36],
     WaterUnits: [0.26, 0.3, 0.19],
-    Misc: {Castle: -0.01, Workshop: 0, Wall: 0, Selection: -0.05, SelectionSup: -0.05}
+    Misc: {Castle: -0.01, Workshop: 0, Wall: 0, Selection: -0.05, SelectionSup: -0.05, Border: 0.01}
 }
 let Scales = {
     Clouds: [1, 0.6], 
     DeepWater: [1.1, 0.65, 0.55, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65], 
     ShallowWater: [1, 0.75, 0.9, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65], 
-    Ground: [1, 1, 0.65, 0.6, 1, 0.8, 1, 1, 0.8, 0.8, 0.45, 1, 0.5, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65], 
-    Forest: [1, 1, 0.65, 0.35, 0.5, 1, 0.65], 
-    Mountain: [1.13, 0.65, 0.7, 0.45, 1, 0.65],
+    Ground: [1, 1, 0.65, 0.6, 1, 0.8, 1, 1, 0.8, 0.7, 0.45, 0.8, 0.5, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65], 
+    Forest: [1, 1, 0.65, 0.35, 0.5, 0.8, 0.65], 
+    Mountain: [1.13, 0.65, 0.7, 0.45, 0.8, 0.65],
     Ice: [0.99, 0.65, 0.9, 0.75, 0.55, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65],
     Units: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7],
     WaterUnits: [0.7, 0.7, 0.7],
-    Misc: {Castle: 0.35, Workshop: 0.4, Wall: 1, Selection: 1, SelectionSup: 1}
+    Misc: {Castle: 0.35, Workshop: 0.4, Wall: 1, Selection: 1, SelectionSup: 1, Border: 1}
 };
 
 let mousePos = { };
@@ -131,6 +138,15 @@ let mouseScrollListeners = [];
 let sprites = [];
 
 onload = function() {
+
+    players = new Array(6);
+    players[0] = new Player(0, 0);
+    players[1] = new Player(1, 1);
+    players[2] = new Player(0, 11);
+    players[3] = new Player(1, 8);
+    players[4] = new Player(2, 2);
+    players[5] = new Player(3, 3);
+
     document.getElementById("mapDiv").style.height = `${div_height}px`;
     document.getElementById("mapDiv").style.width = `${div_width}px`;
     document.getElementById("mapDiv").style.marginTop = `${window.innerHeight * 0.1}px`;
@@ -141,8 +157,24 @@ onload = function() {
             map[getIndex (x , y)] = new Tile(getIndex (x , y));
         }
     }
+    for(let i = 0; i < mapSize; i++) {
+        extraBorderSpriteY[i] = new Sprite(imagesUrl + `Tribes/Aimo/BorderY.png`, getIndex(i + 1, 20), `BorderY${i}`, false);
+        extraBorderSpriteY[i].imgElement.setAttribute("width", sprite_width * Scales.Misc.Border);
+        extraBorderSpriteY[i].posTop += tile_height / 2;
+        extraBorderSpriteY[i].posLeft += tile_width / 2;
+        extraBorderSpriteY[i].imgElement.style.top = `${extraBorderSpriteY[i].posTop - sprite_width * OffsetY.Misc.Border}px`;
+        extraBorderSpriteY[i].imgElement.style.left = `${extraBorderSpriteY[i].posLeft - sprite_width * OffsetX.Misc.Border}px`;
+    }
+    for(let i = 0; i < mapSize; i++) {
+        extraBorderSpriteX[i] = new Sprite(imagesUrl + `Tribes/Aimo/BorderX.png`, getIndex(1, i + 1), `BorderX${i}`, false);
+        extraBorderSpriteX[i].imgElement.setAttribute("width", sprite_width * Scales.Misc.Border);
+        extraBorderSpriteX[i].posTop += tile_height / 2;
+        extraBorderSpriteX[i].posLeft -= tile_width / 2;
+        extraBorderSpriteX[i].imgElement.style.top = `${extraBorderSpriteX[i].posTop - sprite_width * OffsetY.Misc.Border}px`;
+        extraBorderSpriteX[i].imgElement.style.left = `${extraBorderSpriteX[i].posLeft - sprite_width * OffsetX.Misc.Border}px`;
+    }
 
-    // Create all buttons, except for main menu
+    // Create all buttons, except for main menu and players
     for (let i = 0; i < Object.keys(Buttons).length; i++) { 
         selected[Object.keys(Buttons)[i]] = Buttons[Object.keys(Buttons)[i]][0];
 
@@ -151,12 +183,13 @@ onload = function() {
         }
     }
 
-    // Set tribe buttons click events
-    Buttons.tribes.forEach(function (item, index){
-        document.getElementById(`btntribes${item}`).addEventListener('click', function(){
-            attTribes(selected.tribes);
+    // Create players buttons
+    for (let i = 0; i < players.length; i++) {
+        createButton("players", i, i);
+        document.getElementById(`btnplayers${i}`).addEventListener('click', function(){
+            attPlayers(selected.players);
         });
-    });
+    }
 
     // Set misc buttons click events
     Buttons.Misc.forEach(function (item, index){
@@ -171,6 +204,59 @@ onload = function() {
             updateTerrainIcon();
         });
     });
+
+    // Create settings menu
+    for(let i = 1; i <= 6; i++) {
+        let field = document.createElement("fieldset");
+        field.setAttribute("id", `settingsField${i}`);
+        document.getElementById(`settingsDiv`).appendChild(field);
+        let legend = document.createElement("legend");
+        legend.setAttribute("id", `settingsLegend${i}`);
+        legend.innerHTML = `Player ${i}`
+        field.appendChild(legend);
+
+        let labelTribe = document.createElement("label");
+        labelTribe.setAttribute("id", `labelTribe${i}`);
+        labelTribe.setAttribute("for", `tribe`);
+        labelTribe.innerHTML = "Tribe: "
+        field.appendChild(labelTribe);
+
+        let selectTribe = document.createElement("select");
+        selectTribe.setAttribute("id", `selectTribe${i}`);
+        selectTribe.setAttribute("name", `tribe${i}`);
+        tribes.forEach(function (item, index){
+            let option = document.createElement("option");
+            option.setAttribute("value", item);
+            option.innerHTML = item
+            selectTribe.appendChild(option);
+        });
+        selectTribe.value = tribes[i-1];
+        field.appendChild(selectTribe);
+
+
+        field.appendChild(document.createElement("br"));
+
+        let labelColor = document.createElement("label");
+        labelColor.setAttribute("id", `labelColor${i}`);
+        labelColor.setAttribute("for", `color`);
+        labelColor.innerHTML = "Color: "
+        field.appendChild(labelColor);
+
+        let selectColor = document.createElement("select");
+        selectColor.setAttribute("id", `selectColor${i}`);
+        selectColor.setAttribute("name", `color${i}`);
+        tribes.forEach(function (item, index){
+            let option = document.createElement("option");
+            option.setAttribute("value", item);
+            option.innerHTML = item
+            selectColor.appendChild(option);
+        });
+        selectColor.value = tribes[i-1];
+        field.appendChild(selectColor);
+    }
+
+
+
     
     // Set main menu and fixed menu click events
     document.getElementById(`btnterrains`).addEventListener('click', function(){ selectMainMenu("terrains"); });
@@ -195,7 +281,7 @@ onload = function() {
         });
     }
     addEventListener('touchend', fontouchend);
-
+    
     addMenuScrollHandlers("mainMenuDiv");
     for (let i = 0; i < Object.keys(Buttons).length; i++) { 
         addMenuScrollHandlers(Object.keys(Buttons)[i] + "Div");
@@ -253,7 +339,35 @@ onload = function() {
     menuButtonClick();
     document.getElementById(`btnterrains`).click();
     document.getElementById(`btnterrains${selected.terrains}`).click();
-    document.getElementById(`btntribes${selected.tribes}`).click();
+    document.getElementById(`btnplayers${selectedIndex.players}`).click();
+
+
+
+    saveBits(255, 8); // 1111 1111
+    saveBits(255, 8); // 1111 1111
+    saveBits(255, 8); // 1111 1111
+    saveBits(255, 8); // 1111 1111
+
+    saveBits(255, 8); // 1111 1111
+    saveBits(255, 8); // 1111 1111
+    saveBits(255, 8); // 1111 1111
+    saveBits(15, 4); // 1111
+    saveBits(43, 6); // 1010 +11
+    saveBits(15, 4); // 1111
+
+    binaryPos = 0;
+
+    console.log(`*${binaryPos}: ${loadBits(8)}`);
+    console.log(`*${binaryPos}: ${loadBits(8)}`);
+    console.log(`*${binaryPos}: ${loadBits(8)}`);
+    console.log(`*${binaryPos}: ${loadBits(8)}`);
+
+    console.log(`*${binaryPos}: ${loadBits(8)}`);
+    console.log(`*${binaryPos}: ${loadBits(8)}`);
+    console.log(`*${binaryPos}: ${loadBits(8)}`);
+    console.log(`*${binaryPos}: ${loadBits(4)}`);
+    console.log(`*${binaryPos}: ${loadBits(6)}`);
+    console.log(`*${binaryPos}: ${loadBits(4)}`);
 };
 
 onresize = function() {
@@ -344,14 +458,20 @@ function createButton(menu, item, index){
     let img = document.createElement("img");
     img.setAttribute("id", `btn${menu}${item}`);
 
-    if(Folders[menu][index] == "selected.tribes"){
-        img.setAttribute("src", imagesUrl + `{selected.tribes}/${item}.png`);
+    if(menu == "players") {
+        img.setAttribute("src", imagesUrl + `Tribes/${players[index].tribe}/${players[index].tribe}.png`);
+    }
+    else if(Folders[menu][index] == "player.tribe"){
+        img.setAttribute("src", imagesUrl + `Tribes/${players[0].tribe}/${item}.png`);
+    }
+    else if(Folders[menu][index] == "unit"){
+        img.setAttribute("src", imagesUrl + `Tribes/${players[0].tribe}/Units/${players[0].color}/${item}.png`);
     }
     else if(Folders[menu][index] == "Buildings"){
         img.setAttribute("src", imagesUrl + `Buildings/${item}/${item}5.png`);
     }
     else if(Folders[menu][index] == "City"){
-        img.setAttribute("src", imagesUrl + `${selected.tribes}/City/City7.png`);
+        img.setAttribute("src", imagesUrl + `Tribes/${players[0].tribe}/City/City7.png`);
     }
     else{
         img.setAttribute("src", imagesUrl + `${Folders[menu][index]}/${item}.png`);
@@ -369,31 +489,58 @@ function createButton(menu, item, index){
     document.getElementById(`${menu}Div`).appendChild(img);
 }
 
+class Player {
+    constructor(tribeIndex, colorIndex) {
+        this.tribeIndex = tribeIndex;
+        this.colorIndex = colorIndex;
+        this.tribe = tribes[tribeIndex];
+        this.color = tribes[colorIndex];
+    }
+}
+
 class Tile {
     constructor(index) {
         this.index = index;
-        this.hasRoads = false;
+        this.x = getX(index);
+        this.y = getY(index);
 
+        this.terrainIndex = 0; // Terrain type
         this.terrain = "Clouds";
-        this.terrainIndex = 0;
-        this.tribeTerrain = "Bardur";
+        this.terrainTribeIndex = 0; // Terrain tribe
+        this.terrainTribe = "Bardur";
 
+        this.onterrainIndex = 0; // What is on terrain
         this.onterrain = "Clouds";
-        this.onterrainIndex = 0;
 
+        this.hasUnit = false; // Has unit
+        this.UnitIndex = 0; // Unit
         this.Unit = "";
-        this.UnitIndex = 0;
-        this.tribeUnit = "Bardur";
-        this.UnitHP = 10;
-        this.UnitIsVeteran = false;
-        this.UnitIsFrozen = false;
-        this.hasUnit = false;
+        this.UnitTribeIndex = 0;
+        this.UnitTribe = "Bardur";
+        this.UnitColorIndex = 0;
+        this.UnitColor = "Bardur";
+        this.UnitPlayer = 0; // Player which owns the unit
+        this.UnitHP = 10; // Unit HP
+        this.UnitIsVeteran = false; // Is unit veteran
+        this.UnitIsFrozen = false; // Is unit frozen
         this.shipLevel = 3; // boat, ship, battleship, none
 
-        this.buildingLevel = 1;
-        this.hasCastle = false;
-        this.hasWorkshop = false;
-        this.hasWall = false;
+        this.buildingLevel = 1; // Building level
+        this.hasCastle = false; // Has city castle
+        this.hasWorkshop = false; // Has workshop
+        this.hasWall = false; // Has walls
+
+        this.territoryPlayer = 0; // Player who owns the territory
+        this.territoryCity = 0; // City index which tile belongs
+        this.borderGrow = false; // City has border grow
+
+        this.isColored = false; // Has color mark
+        this.coloredIndex = 0; // Color mark index
+        this.hasSymbol = false; // Has symbol
+        this.symbolIndex = 0; // Symbol index
+        this.symbolColor = 0; // Symbol color
+
+        this.hasRoads = false; // Has Roads
 
         this.terrainSprite = new Sprite(imagesUrl + "Miscellaneous/Clouds.png", index, "terrains", true);
         this.roadSprite = new Array(8);
@@ -403,14 +550,24 @@ class Tile {
             this.roadSprite[i].imgElement.style.top = `${this.roadSprite[i].posTop - sprite_width * OffsetY.Ground[1]}px`;
             this.roadSprite[i].imgElement.style.left = `${this.roadSprite[i].posLeft - sprite_width * OffsetX.Ground[1]}px`;
         }
+
+        this.borderXSprite = new Sprite(imagesUrl + `Tribes/Bardur/BorderX.png`, index, `BorderX`, false);
+        this.borderXSprite.imgElement.setAttribute("width", sprite_width * Scales.Misc.Border);
+        this.borderXSprite.imgElement.style.top = `${this.borderXSprite.posTop - sprite_width * OffsetY.Misc.Border}px`;
+        this.borderXSprite.imgElement.style.left = `${this.borderXSprite.posLeft - sprite_width * OffsetX.Misc.Border}px`;
+        this.borderYSprite = new Sprite(imagesUrl + `Tribes/Bardur/BorderY.png`, index, `BorderY`, false);
+        this.borderYSprite.imgElement.setAttribute("width", sprite_width * Scales.Misc.Border);
+        this.borderYSprite.imgElement.style.top = `${this.borderYSprite.posTop - sprite_width * OffsetY.Misc.Border}px`;
+        this.borderYSprite.imgElement.style.left = `${this.borderYSprite.posLeft - sprite_width * OffsetX.Misc.Border}px`;
+
         this.selectionSprite = new Sprite(imagesUrl + "Miscellaneous/Selection.png", index, "Selection", false);
-        this.onterrainSprite = new Sprite(imagesUrl + "Miscellaneous/Clouds.png", index, "onterrains", false);
-        this.castleSprite = new Sprite(imagesUrl + "Bardur/Castle.png", index, "Castle", false);
+        this.onterrainSprite = new Sprite(imagesUrl + "Miscellaneous/Clouds.png", index, "onterrains", true);
+        this.castleSprite = new Sprite(imagesUrl + "Tribes/Bardur/Castle.png", index, "Castle", false);
         this.workshopSprite = new Sprite(imagesUrl + "Miscellaneous/Workshop.png", index, "Workshop", false);
         this.wallSprite = new Sprite(imagesUrl + "Miscellaneous/Wall.png", index, "Wall", false);
         this.UnitSprite = new Sprite(imagesUrl + "Miscellaneous/Clouds.png", index, "Units", false);
         this.selectionSupSprite = new Sprite(imagesUrl + "Miscellaneous/SelectionSup.png", index, "SelectionSup", false);
-        this.UnitIconSprite = new Sprite(imagesUrl + "Miscellaneous/UnitsIcon/warrior.png", index, "UnitsIcon", false);
+        this.UnitIconSprite = new Sprite(imagesUrl + "UnitsIcon/Bardur/warrior.png", index, "UnitsIcon", false);
         this.UnitVeteranSprite = new Sprite(imagesUrl + "Miscellaneous/Veteran.png", index, "Veteran", false);
 
         this.HPtext = document.createElement("p");
@@ -424,74 +581,115 @@ class Tile {
         this.HPtext.style.display = 'none';
         document.getElementById("mapDiv").appendChild(this.HPtext);
     }
-    updateTerrain(newIndex) {
+    updateTerrain(newIndex, tribeIndex) {
+        if(this.onterrain == "City") {
+            this.removeCity();
+        }
+        else {
+            for (let m = this.x - 1; m <= this.x + 1; m++) {
+                for (let n = this.y - 1; n <= this.y + 1; n++) {
+                    if(m >= 1 && m <= 20 && n >= 1 && n <= 20){
+                            map[getIndex(m, n)].attBorderSprite();
+                    }
+                }
+            }
+        }
         this.terrainIndex = newIndex;
-        this.tribeTerrain = selected.tribes;
         this.terrain = Buttons.terrains[this.terrainIndex];
-        this.terrainSprite.redraw("terrains", this.terrainIndex);
+        this.terrainTribeIndex = tribeIndex;
+        this.terrainTribe = tribes[tribeIndex];
+        this.buildingLevel = 1;
+        this.terrainSprite.redraw("terrains", this.index, this.terrainIndex);
+        if (this.terrain == "Clouds") {
+            this.updateOnTerrain(0, this.terrainTribeIndex);
+        }
     }
-    updateOnTerrain(newIndex) {
+    updateOnTerrain(newIndex, tribeIndex) {
+        if(this.onterrain == "City") {
+            this.removeCity();
+        }
+        else {
+            for (let m = this.x - 1; m <= this.x + 1; m++) {
+                for (let n = this.y - 1; n <= this.y + 1; n++) {
+                    if(m >= 1 && m <= 20 && n >= 1 && n <= 20){
+                            map[getIndex(m, n)].attBorderSprite();
+                    }
+                }
+            }
+        }
         this.onterrainIndex = newIndex;
         this.onterrain = Buttons[this.terrain][this.onterrainIndex];
-        this.onterrainSprite.redraw(this.terrain, this.onterrainIndex);
-        if(newIndex == 0) {
+        this.terrainTribeIndex = tribeIndex;
+        this.terrainTribe = tribes[tribeIndex];
+        this.buildingLevel = 1;
+        if (newIndex == 0 && this.terrain != "Clouds") {
             this.onterrainSprite.imgElement.style.display = 'none';
         }
         else {
+            this.onterrainSprite.redraw(this.terrain, this.index, this.onterrainIndex);
             this.onterrainSprite.imgElement.style.display = 'inline';
         }
+        if(this.onterrain == "City") {
+            this.territoryCity = this.index;
+            this.territoryPlayer = selected.players;
+            this.attCityTerritory(true, false);
+        }
     }
-    updateUnit(type, newIndex) {
-        if(type == "") {
+    updateUnit(type, newIndex, player) {
+        if (type == "") {
             this.UnitSprite.imgElement.style.display = 'none';
             this.UnitIconSprite.imgElement.style.display = 'none';
             this.HPtext.style.display = 'none';
-            this.UnitVeteranSprite.imgElement.style.display = 'none';
+            this.shipLevel = 3;
             this.hasUnit = false;
         }
         else {
             this.UnitIndex = newIndex;
-            this.tribeUnit = selected.tribes;
             this.Unit = Buttons[type][newIndex];
-            this.UnitIconSprite.imgElement.setAttribute("src", imagesUrl + `Miscellaneous/UnitsIcon/${this.Unit}.png`);
+            this.UnitTribeIndex = players[player].tribeIndex;
+            this.UnitTribe = tribes[this.UnitTribeIndex];
+            this.UnitColorIndex = players[player].colorIndex;
+            this.UnitColor = tribes[this.UnitColorIndex];
+            this.UnitPlayer = player;
+            this.UnitIconSprite.imgElement.setAttribute("src", imagesUrl + `UnitsIcon/${this.UnitColor}/${this.Unit}.png`);
             this.UnitHP = maxHP[this.Unit];
             this.HPtext.innerHTML = this.UnitHP;
             this.UnitIconSprite.imgElement.style.display = 'inline';
             this.UnitSprite.imgElement.style.display = 'inline';
             this.HPtext.style.display = 'inline';
-            this.UnitVeteranSprite.imgElement.style.display = 'none';
-            this.UnitIsVeteran = false;
-            this.UnitIsFrozen = false;
-            this.shipLevel = 3;
             this.hasUnit = true;
 
             if((this.terrain == "ShallowWater" || this.terrain == "DeepWater") && this.Unit != "navalon" && this.Unit != "babydragon" && 
                 this.Unit != "firedragon" && this.Unit != "amphibian" && this.Unit != "tridention" && this.Unit != "crab")
             {
-                this.attShip(0);
+                this.attShip(0, this.UnitPlayer);
             }
             else {
-                this.attShip(3);
-                this.UnitSprite.redraw(type, newIndex);
+                this.attShip(3, this.UnitPlayer);
+                this.UnitSprite.redraw("Units", this.index, newIndex);
             }
         }
+        this.attFrozen(false);
+        this.attVeteran(false);
     }
-    attShip(level) {
+    attShip(level, player) {
         this.shipLevel = level;
         if (level != 3) {
-            this.UnitSprite.imgElement.setAttribute("src", imagesUrl + `${selected.tribes}/ship${level}.png`);
+            this.UnitSprite.imgElement.setAttribute("src", imagesUrl + `Tribes/${players[player].tribe}/Units/${players[player].color}/ship${level}.png`);
             this.UnitSprite.imgElement.setAttribute("width", sprite_width * Scales.WaterUnits[level]);
             this.UnitSprite.imgElement.style.top = `${this.UnitSprite.posTop - sprite_width * OffsetY.WaterUnits[level]}px`;
             this.UnitSprite.imgElement.style.left = `${this.UnitSprite.posLeft - sprite_width * OffsetX.WaterUnits[level]}px`;
         }
     }
     removeCity() {
+        this.borderGrow = false;
         this.hasCastle = false;
         this.hasWorkshop = false;
         this.hasWall = false;
         this.castleSprite.imgElement.style.display = "none";
         this.workshopSprite.imgElement.style.display = "none";
         this.wallSprite.imgElement.style.display = "none";
+        this.attCityTerritory(false, true);
     }
     attRoads(value) {
         this.hasRoads = value;
@@ -500,34 +698,179 @@ class Tile {
             if(i >= 1 && i <= 20) {
                 for(let j = getY(this.index) - 1; j <= getY(this.index) + 1; j++){
                     if(j >= 1 && j <= 20) { // Update all 3x3 tiles
-                        
-                        let k = 0; // Road array index
-                        let roadFound = false;
-                        for(let m = -1; m <= 1; m++){
-                            for(let n = -1; n <= 1; n++){
-                                if(m != 0 || n != 0) { // Skip middle tile
-                                    if(i+m >= 1 && i+m <= 20 && j+n >= 1 && j+n <= 20){
-                                        map[getIndex(i, j)].roadSprite[k].setVisibility(map[getIndex(i+m, j+n)].hasRoads && map[getIndex(i, j)].hasRoads);
-                                        if(map[getIndex(i+m, j+n)].hasRoads) {
-                                            roadFound = true;
-                                        }
-                                    }
-                                    k++;
-                                }
-                            }
-                        }
-                        if(roadFound == false && 
-                            map[getIndex(i, j)].hasRoads && 
-                            map[getIndex(i, j)].onterrain != "Village" && 
-                            map[getIndex(i, j)].onterrain != "City" && 
-                            map[getIndex(i, j)].onterrain != "Port" && 
-                            map[getIndex(i, j)].onterrain != "Outpost") {
-                            map[getIndex(i, j)].roadSprite[4].setVisibility(true);
-                        }
-    
+                        this.attSingleRoad(i, j);
                     }
                 }
             }
+        }
+    }
+    attSingleRoad(i, j) {
+        let k = 0; // Road array index
+        let roadFound = false;
+        for(let m = -1; m <= 1; m++){
+            for(let n = -1; n <= 1; n++){
+                if(m != 0 || n != 0) { // Skip middle tile
+                    if(i+m >= 1 && i+m <= 20 && j+n >= 1 && j+n <= 20){
+                        map[getIndex(i, j)].roadSprite[k].setVisibility(map[getIndex(i+m, j+n)].hasRoads && map[getIndex(i, j)].hasRoads);
+                        if(map[getIndex(i+m, j+n)].hasRoads) {
+                            roadFound = true;
+                        }
+                    }
+                    k++;
+                }
+            }
+        }
+        if(roadFound == false && 
+            map[getIndex(i, j)].hasRoads && 
+            map[getIndex(i, j)].onterrain != "Village" && 
+            map[getIndex(i, j)].onterrain != "City" && 
+            map[getIndex(i, j)].onterrain != "Port" && 
+            map[getIndex(i, j)].onterrain != "Outpost") {
+            map[getIndex(i, j)].roadSprite[4].setVisibility(true);
+        }
+    }
+    attBorderSprite() {
+        if(this.x == 1) {
+            if (this.territoryCity != 0 && this.terrain != "Clouds") {
+                extraBorderSpriteX[getY(this.index) - 1].setVisibility(true);
+                extraBorderSpriteX[getY(this.index) - 1].imgElement.src = imagesUrl + `Tribes/${players[this.territoryPlayer].color}/BorderX.png`;
+            }
+            else {
+                extraBorderSpriteX[getY(this.index) - 1].setVisibility(false);
+            }
+        }
+        let visibility = false;
+        if (this.x + 1 <= 20) {
+            if (this.territoryCity != 0) {
+                if (this.territoryCity != map[getIndex(this.x + 1, this.y)].territoryCity && this.terrain != "Clouds") {
+                    visibility = true;
+                    this.borderXSprite.imgElement.src = imagesUrl + `Tribes/${players[this.territoryPlayer].color}/BorderX.png`;
+                }
+            }
+            else if (map[getIndex(this.x + 1, this.y)].territoryCity != 0 && map[getIndex(this.x + 1, this.y)].terrain != "Clouds") {
+                visibility = true;
+                this.borderXSprite.imgElement.src = imagesUrl + `Tribes/${players[map[getIndex(this.x + 1, this.y)].territoryPlayer].color}/BorderX.png`;
+            }
+        }
+        else if (this.territoryCity != 0) {
+            visibility = true;
+            this.borderXSprite.imgElement.src = imagesUrl + `Tribes/${players[this.territoryPlayer].color}/BorderX.png`;
+        }
+        this.borderXSprite.setVisibility(visibility);
+        
+        if (this.y == 20) {
+            if (this.territoryCity != 0 && this.terrain != "Clouds") {
+                extraBorderSpriteY[getX(this.index) - 1].setVisibility(true);
+                extraBorderSpriteY[getX(this.index) - 1].imgElement.src = imagesUrl + `Tribes/${players[this.territoryPlayer].color}/BorderY.png`;
+            }
+            else {
+                extraBorderSpriteY[getX(this.index) - 1].setVisibility(false);
+            }
+        }
+        visibility = false;
+        if (this.y - 1 >= 1) {
+            if (this.territoryCity != 0) {
+                if (this.territoryCity != map[getIndex(this.x, this.y - 1)].territoryCity && this.terrain != "Clouds") {
+                    visibility = true;
+                    this.borderYSprite.imgElement.src = imagesUrl + `Tribes/${players[this.territoryPlayer].color}/BorderY.png`;
+                }
+            }
+            else if (map[getIndex(this.x, this.y - 1)].territoryCity != 0 && map[getIndex(this.x, this.y - 1)].terrain != "Clouds") {
+                visibility = true;
+                this.borderYSprite.imgElement.src = imagesUrl + `Tribes/${players[map[getIndex(this.x, this.y - 1)].territoryPlayer].color}/BorderY.png`;
+            }
+        }
+        else if (this.territoryCity != 0) {
+            visibility = true;
+            this.borderYSprite.imgElement.src = imagesUrl + `Tribes/${players[this.territoryPlayer].color}/BorderY.png`;
+        }
+        this.borderYSprite.setVisibility(visibility);
+    }
+    attCityTerritory(status, setBorderGrow) {
+        for (let m = this.x - 2; m <= this.x + 2; m++) {
+            for (let n = this.y - 2; n <= this.y + 2; n++) {
+                if(m >= 1 && m <= 20 && n >= 1 && n <= 20){
+                    if ((status && (m > this.x - 2 && m < this.x + 2 && n > this.y - 2 && n < this.y + 2)) || (status && setBorderGrow)) {
+                        if(map[getIndex(m, n)].territoryCity == 0) {
+                            map[getIndex(m, n)].territoryCity = this.index;
+                            map[getIndex(m, n)].territoryPlayer = this.territoryPlayer;
+                        }
+                    }
+                    else if(map[getIndex(m, n)].territoryCity == this.index) {
+                        map[getIndex(m, n)].territoryCity = 0;
+                    }
+                }
+            }
+        }
+
+        let l = 2;
+        if (setBorderGrow || this.borderGrow) {
+            l++;
+        }
+        for (let m = this.x - l; m <= this.x + l; m++) {
+            for (let n = this.y - l; n <= this.y + l; n++) {
+                if(m >= 1 && m <= 20 && n >= 1 && n <= 20){
+                        map[getIndex(m, n)].attBorderSprite();
+                }
+            }
+        }
+
+        this.borderGrow = setBorderGrow;
+    }
+    attBuilding(level) {
+        if(Folders[this.terrain][this.onterrainIndex] == "Buildings"){
+            this.buildingLevel = level;
+            this.onterrainSprite.imgElement.setAttribute("src", imagesUrl + `Buildings/${Buttons[this.terrain][this.onterrainIndex]}/${Buttons[this.terrain][this.onterrainIndex]}${this.buildingLevel}.png`);
+        }
+        else if(Folders[this.terrain][this.onterrainIndex] == "City"){
+            this.buildingLevel = level;
+            this.onterrainSprite.imgElement.setAttribute("src", imagesUrl + `Tribes/${this.terrainTribe}/City/City${this.buildingLevel}.png`);
+        }
+    }
+    attVeteran(bool) {
+        this.UnitIsVeteran = bool;
+        if (bool) {
+            this.UnitVeteranSprite.imgElement.style.display = 'inline';
+        }
+        else {
+            this.UnitVeteranSprite.imgElement.style.display = 'none';
+        }
+    }
+    attFrozen(bool) {
+        this.UnitIsFrozen = bool;
+        if (bool) {
+            this.UnitSprite.imgElement.style.webkitFilter = "sepia(100%) hue-rotate(190deg) brightness(110%) saturate(400%)";
+        }
+        else {
+            this.UnitSprite.imgElement.style.webkitFilter = "";
+        }
+    }
+    attCastle(bool) {
+        this.hasCastle = bool;
+        if(bool) {
+            this.castleSprite.imgElement.src = imagesUrl + `Tribes/${this.terrainTribe}/Castle.png`;
+            this.castleSprite.imgElement.style.display = "inline";
+        }
+        else {
+            this.castleSprite.imgElement.style.display = "none";
+        }
+    }
+    attWorkshop(bool) {
+        this.hasWorkshop = bool;
+        if(bool) {
+            this.workshopSprite.imgElement.style.display = "inline";
+        }
+        else {
+            this.workshopSprite.imgElement.style.display = "none";
+        }
+    }
+    attWall(bool) {
+        this.hasWall = bool;
+        if(bool) {
+            this.wallSprite.imgElement.style.display = "inline";
+        }
+        else {
+            this.wallSprite.imgElement.style.display = "none";
         }
     }
 };
@@ -569,28 +912,31 @@ class Sprite{
         }
         document.getElementById("mapDiv").appendChild(this.imgElement);
     }
-    redraw(menu, index){
-        if(Folders[menu][index] == "selected.tribes"){
-            this.imgElement.setAttribute("src", imagesUrl + `${selected.tribes}/${Buttons[menu][index]}.png`);
+    redraw(menu, index, elmIndex){
+        if(Folders[menu][elmIndex] == "player.tribe"){
+            this.imgElement.setAttribute("src", imagesUrl + `Tribes/${map[index].terrainTribe}/${Buttons[menu][elmIndex]}.png`);
         }
-        else if(Folders[menu][index] == "Buildings"){
-            this.imgElement.setAttribute("src", imagesUrl + `Buildings/${Buttons[menu][index]}/${Buttons[menu][index]}1.png`);
+        else if(Folders[menu][elmIndex] == "unit"){
+            this.imgElement.setAttribute("src", imagesUrl + `Tribes/${map[index].UnitTribe}/Units/${map[index].UnitColor}/${Buttons[menu][elmIndex]}.png`);
         }
-        else if(Folders[menu][index] == "City"){
-            this.imgElement.setAttribute("src", imagesUrl + `${selected.tribes}/City/City1.png`);
+        else if(Folders[menu][elmIndex] == "Buildings"){
+            this.imgElement.setAttribute("src", imagesUrl + `Buildings/${Buttons[menu][elmIndex]}/${Buttons[menu][elmIndex]}${map[index].buildingLevel}.png`);
+        }
+        else if(Folders[menu][elmIndex] == "City"){
+            this.imgElement.setAttribute("src", imagesUrl + `Tribes/${map[index].terrainTribe}/City/City${map[index].buildingLevel}.png`);
         }
         else{
-            this.imgElement.setAttribute("src", imagesUrl + `${Folders[menu][index]}/${Buttons[menu][index]}.png`);
+            this.imgElement.setAttribute("src", imagesUrl + `${Folders[menu][elmIndex]}/${Buttons[menu][elmIndex]}.png`);
         }
         if(menu == "terrains"){
-            this.imgElement.setAttribute("width", sprite_width * Scales[selected.terrains][0]);
-            this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY[Buttons[menu][index]][0]}px`;
-            this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX[Buttons[menu][index]][0]}px`;
+            this.imgElement.setAttribute("width", sprite_width * Scales[map[index].terrain][0]);
+            this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY[Buttons[menu][elmIndex]][0]}px`;
+            this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX[Buttons[menu][elmIndex]][0]}px`;
         }
         else {
-            this.imgElement.setAttribute("width", sprite_width * Scales[menu][index]);
-            this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY[menu][index]}px`;
-            this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX[menu][index]}px`;
+            this.imgElement.setAttribute("width", sprite_width * Scales[menu][elmIndex]);
+            this.imgElement.style.top = `${this.posTop - sprite_width * OffsetY[menu][elmIndex]}px`;
+            this.imgElement.style.left = `${this.posLeft - sprite_width * OffsetX[menu][elmIndex]}px`;
         }
     }
     setVisibility(isVisible) {
@@ -623,9 +969,9 @@ document.getElementById("mapDiv").onclick = function clickEvent(e) {
             selected.tile = getIndex(Xtile, Ytile);
             attSelectedTile();
         }
-        // console.log(`X: ${x} Y: ${y}`);
-        // console.log(`Xr: ${rotateX(x, y)} Yr: ${rotateY(x, y)}`);
-        // console.log(`Xtile: ${Xtile} Ytile: ${Ytile}`);
+        console.log(`X: ${x} Y: ${y}`);
+        console.log(`Xr: ${rotateX(x, y)} Yr: ${rotateY(x, y)}`);
+        console.log(`Xtile: ${Xtile} Ytile: ${Ytile}`);
     }
   }
 function rotateX (x, y) {
@@ -657,22 +1003,21 @@ function getLeft (x , y) {
 function attSelectedTile(){
     switch(selected.menu){
         case "terrains":
-            map[selected.tile].updateTerrain(selectedIndex["terrains"]);
-            map[selected.tile].updateOnTerrain(0);
+            map[selected.tile].updateTerrain(selectedIndex["terrains"], selectedIndex.tribes);
+            map[selected.tile].updateOnTerrain(0, selectedIndex.tribes);
             map[selected.tile].attRoads(false);
-            map[selected.tile].removeCity();
         break;
         case "onterrains":
             if(Buttons[selected["terrains"]][selectedIndex[selected["terrains"]]] == "Roads"){
-                if(map[selected.tile].terrain != selected["terrains"] || map[selected.tile].tribeTerrain != selected.tribes){ // If terrain type is different
-                    map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
-                    map[selected.tile].updateOnTerrain(0);
+                if(map[selected.tile].terrain != selected["terrains"] || map[selected.tile].terrainTribe != selected.tribes){ // If terrain type is different
+                    map[selected.tile].updateTerrain(selectedIndex["terrains"], selectedIndex.tribes); 
+                    map[selected.tile].updateOnTerrain(0, selectedIndex.tribes);
                 }
                 map[selected.tile].attRoads(true);
             }
             else{
-                map[selected.tile].updateTerrain(selectedIndex["terrains"]); 
-                map[selected.tile].updateOnTerrain(selectedIndex[selected["terrains"]]);
+                map[selected.tile].updateTerrain(selectedIndex["terrains"], selectedIndex.tribes); 
+                map[selected.tile].updateOnTerrain(selectedIndex[selected["terrains"]], selectedIndex.tribes);
                 if(map[selected.tile].onterrain == "Village" || 
                     map[selected.tile].onterrain == "City" || 
                     map[selected.tile].onterrain == "Port" || 
@@ -682,35 +1027,35 @@ function attSelectedTile(){
                 else {
                     map[selected.tile].attRoads(false);
                 }
-                map[selected.tile].removeCity();
             }
         break;
         case "Units":
-            map[selected.tile].updateUnit("Units", selectedIndex["Units"]);
+            map[selected.tile].updateUnit("Units", selectedIndex["Units"], selected.players);
         break;
         case "Misc":
             attMiscMenu(true);
         break;
         case "Resources":
             if(selected.Resources == "Chop" && map[selected.tile].terrain == "Forest") {
-                document.getElementById(`btntribes${map[selected.tile].tribeTerrain}`).click();
-                map[selected.tile].updateTerrain(3);
-                map[selected.tile].updateOnTerrain(0);
+                document.getElementById(`btnplayers${map[selected.tile].UnitPlayer}`).click();
+                map[selected.tile].terrainIndex = 3;
+                map[selected.tile].terrain = Buttons.terrains[3];
+                map[selected.tile].terrainSprite.redraw("terrains", selected.tile, 3);
+                map[selected.tile].updateOnTerrain(0, map[selected.tile].terrainTribeIndex);
             }
             else if(selected.Resources == "Destruction") {
-                map[selected.tile].updateOnTerrain(0);
+                map[selected.tile].updateOnTerrain(0, map[selected.tile].terrainTribeIndex);
                 map[selected.tile].attRoads(false);
-                map[selected.tile].removeCity();
             }
             else if(selected.Resources == "Gather") {
                 if(map[selected.tile].onterrain == "Crop") {
-                    map[selected.tile].updateOnTerrain(7); // Farm
+                    map[selected.tile].updateOnTerrain(7, map[selected.tile].terrainTribeIndex); // Farm
                 }
                 else if(map[selected.tile].onterrain == "Forest") {
-                    map[selected.tile].updateOnTerrain(4); // Lumber hut
+                    map[selected.tile].updateOnTerrain(4, map[selected.tile].terrainTribeIndex); // Lumber hut
                 }
                 else if(map[selected.tile].onterrain == "Metal") {
-                    map[selected.tile].updateOnTerrain(3); // Mine
+                    map[selected.tile].updateOnTerrain(3, map[selected.tile].terrainTribeIndex); // Mine
                 }
                 else if(map[selected.tile].onterrain == "Ruin" ||
                         map[selected.tile].onterrain == "Fruit" ||
@@ -718,12 +1063,12 @@ function attSelectedTile(){
                         map[selected.tile].onterrain == "Whale" ||
                         map[selected.tile].onterrain == "Animal"
                 ) {
-                    map[selected.tile].updateOnTerrain(0);
+                    map[selected.tile].updateOnTerrain(0, map[selected.tile].terrainTribeIndex);
                 }
             }
             else if(selected.Resources == "Destroy") {
                 if(map[selected.tile].onterrain == "Farm") {
-                    map[selected.tile].updateOnTerrain(6); // Crop
+                    map[selected.tile].updateOnTerrain(6, map[selected.tile].terrainTribeIndex); // Crop
                 }
                 else if(map[selected.tile].onterrain == "Outpost" ||
                         map[selected.tile].onterrain == "IceBank" ||
@@ -747,7 +1092,7 @@ function attSelectedTile(){
                         map[selected.tile].onterrain == "ForestTemple" ||
                         map[selected.tile].onterrain == "Mine" ||
                         map[selected.tile].onterrain == "MountainTemple" ) {
-                    map[selected.tile].updateOnTerrain(0);
+                    map[selected.tile].updateOnTerrain(0, map[selected.tile].terrainTribeIndex);
                 }
             }
         break;
@@ -775,7 +1120,7 @@ function menuButtonClick() {
 
 function selectMainMenu(newMenuSelection) {
     if(selected.menu == newMenuSelection){
-        document.getElementById("tribesDiv").style.height = "0%";
+        document.getElementById("playersDiv").style.height = "0%";
         setMenuHeight("0%");
         document.getElementById(`btn${newMenuSelection}`).style.backgroundColor = MENU_BG_COLOR;
         isSubMenuOpen = false;
@@ -787,7 +1132,7 @@ function selectMainMenu(newMenuSelection) {
             document.getElementById(`btn${selected.menu}`).style.backgroundColor = MENU_BG_COLOR;
         }
         selected.menu = newMenuSelection;
-        document.getElementById("tribesDiv").style.height = "10%";
+        document.getElementById("playersDiv").style.height = "10%";
         setMenuHeight("10%");
         document.getElementById(`btn${newMenuSelection}`).style.backgroundColor = MENU_SELECT_COLOR;
         isSubMenuOpen = true;
@@ -811,7 +1156,7 @@ function setMenuHeight(newHeight){
 }
 function updateTerrainIcon() {
     if(selected["terrains"] == "Ground" || selected["terrains"] == "Forest" || selected["terrains"] == "Mountain"){
-        document.getElementById(`btnterrains`).src = imagesUrl + `${selected.tribes}/${selected["terrains"]}.png`;
+        document.getElementById(`btnterrains`).src = imagesUrl + `Tribes/${selected.tribes}/${selected["terrains"]}.png`;
     }
     else {
         document.getElementById(`btnterrains`).src = imagesUrl + `Miscellaneous/${selected["terrains"]}.png`;
@@ -832,7 +1177,7 @@ function attMiscMenu(attTribe) {
             document.getElementById(`btnMiscVeteran`).style.display = "none";
         }
         if (attTribe) {
-            document.getElementById(`btntribes${map[selected.tile].tribeUnit}`).click();
+            document.getElementById(`btnplayers${map[selected.tile].UnitPlayer}`).click();
         }
         for(let i = 0; i < 3; i++) {
             if(map[selected.tile].shipLevel == 3 || map[selected.tile].shipLevel == i) {
@@ -855,13 +1200,14 @@ function attMiscMenu(attTribe) {
         document.getElementById(`btnMiscship2`).style.display = "none";
     }
     if(map[selected.tile].onterrain == "City") {
-        document.getElementById(`btnMiscCastle`).src = imagesUrl + `${map[selected.tile].tribeTerrain}/Castle.png`;
+        document.getElementById(`btnMiscCastle`).src = imagesUrl + `Tribes/${map[selected.tile].terrainTribe}/Castle.png`;
         document.getElementById(`btnMiscLevelUp`).style.display = "inline";
         document.getElementById(`btnMiscLevelDown`).style.display = "inline";
+        document.getElementById(`btnMiscBorderGrow`).style.display = "inline";
         document.getElementById(`btnMiscCastle`).style.display = "inline";
         document.getElementById(`btnMiscWorkshop`).style.display = "inline";
         document.getElementById(`btnMiscWall`).style.display = "inline";
-        if(map[selected.tile].hasUnit && map[selected.tile].tribeUnit != map[selected.tile].tribeTerrain) {
+        if(map[selected.tile].hasUnit && map[selected.tile].UnitPlayer != map[selected.tile].territoryPlayer) {
             document.getElementById(`btnMisccapture`).style.display = "inline";
         }
         else {
@@ -871,6 +1217,7 @@ function attMiscMenu(attTribe) {
     else if(Folders[map[selected.tile].terrain][map[selected.tile].onterrainIndex] == "Buildings"){
         document.getElementById(`btnMiscLevelUp`).style.display = "inline";
         document.getElementById(`btnMiscLevelDown`).style.display = "inline";
+        document.getElementById(`btnMiscBorderGrow`).style.display = "none";
         document.getElementById(`btnMiscCastle`).style.display = "none";
         document.getElementById(`btnMiscWorkshop`).style.display = "none";
         document.getElementById(`btnMiscWall`).style.display = "none";
@@ -879,6 +1226,7 @@ function attMiscMenu(attTribe) {
     else {
         document.getElementById(`btnMiscLevelUp`).style.display = "none";
         document.getElementById(`btnMiscLevelDown`).style.display = "none";
+        document.getElementById(`btnMiscBorderGrow`).style.display = "none";
         document.getElementById(`btnMiscCastle`).style.display = "none";
         document.getElementById(`btnMiscWorkshop`).style.display = "none";
         document.getElementById(`btnMiscWall`).style.display = "none";
@@ -888,7 +1236,7 @@ function attMiscMenu(attTribe) {
 function MiscClick(item) {
     switch (item) {
         case "skull":
-            map[selected.tile].updateUnit("", 0);
+            map[selected.tile].updateUnit("", 0, selected.players);
             attMiscMenu(false);
         break;
         case "HPUp":
@@ -917,96 +1265,56 @@ function MiscClick(item) {
         break;
         case "Veteran":
             if(map[selected.tile].UnitIsVeteran) {
-                map[selected.tile].UnitIsVeteran = false;
                 map[selected.tile].UnitHP = maxHP[map[selected.tile].Unit];
-                map[selected.tile].UnitVeteranSprite.imgElement.style.display = 'none';
+                map[selected.tile].attVeteran(false);
             }
             else {
-                map[selected.tile].UnitIsVeteran = true;
                 map[selected.tile].UnitHP = maxHP[map[selected.tile].Unit] + 5;
-                map[selected.tile].UnitVeteranSprite.imgElement.style.display = 'inline';
+                map[selected.tile].attVeteran(true);
             }
             map[selected.tile].HPtext.innerHTML = map[selected.tile].UnitHP;
         break;
         case "Ice":
-            if(map[selected.tile].UnitIsFrozen) {
-                map[selected.tile].UnitIsFrozen = false;
-                map[selected.tile].UnitSprite.imgElement.style.webkitFilter = "";
-            }
-            else {
-                map[selected.tile].UnitIsFrozen = true;
-                map[selected.tile].UnitSprite.imgElement.style.webkitFilter = "sepia(100%) hue-rotate(190deg) brightness(110%) saturate(400%)";
-            }
+            map[selected.tile].attFrozen(!map[selected.tile].UnitIsFrozen);
         break;
         case "capture":
-            map[selected.tile].tribeTerrain = map[selected.tile].tribeUnit;
-            map[selected.tile].terrainSprite.imgElement.setAttribute("src", imagesUrl + `${map[selected.tile].tribeUnit}/${Buttons["Ground"][0]}.png`);
-            map[selected.tile].onterrainSprite.imgElement.setAttribute("src", imagesUrl + `${map[selected.tile].tribeUnit}/City/City${map[selected.tile].buildingLevel}.png`);
+            map[selected.tile].terrainTribe = map[selected.tile].UnitTribe;
+            map[selected.tile].terrainSprite.imgElement.setAttribute("src", imagesUrl + `Tribes/${map[selected.tile].UnitTribe}/${Buttons["Ground"][0]}.png`);
+            map[selected.tile].onterrainSprite.imgElement.setAttribute("src", imagesUrl + `Tribes/${map[selected.tile].UnitTribe}/City/City${map[selected.tile].buildingLevel}.png`);
             attMiscMenu(false);
         break;
         case "LevelUp":
             if(map[selected.tile].buildingLevel < maxLevel[map[selected.tile].onterrain]) {
-                map[selected.tile].buildingLevel++;
-                if(Folders[map[selected.tile].terrain][map[selected.tile].onterrainIndex] == "Buildings"){
-                    map[selected.tile].onterrainSprite.imgElement.setAttribute("src", imagesUrl + `Buildings/${Buttons[map[selected.tile].terrain][map[selected.tile].onterrainIndex]}/${Buttons[map[selected.tile].terrain][map[selected.tile].onterrainIndex]}${map[selected.tile].buildingLevel}.png`);
-                }
-                else if(Folders[map[selected.tile].terrain][map[selected.tile].onterrainIndex] == "City"){
-                    map[selected.tile].onterrainSprite.imgElement.setAttribute("src", imagesUrl + `${map[selected.tile].tribeTerrain}/City/City${map[selected.tile].buildingLevel}.png`);
-                }
+                map[selected.tile].attBuilding(map[selected.tile].buildingLevel + 1);
             }
         break;
         case "LevelDown":
             if(map[selected.tile].buildingLevel > minLevel[map[selected.tile].onterrain]) {
-                map[selected.tile].buildingLevel--;
-                if(Folders[map[selected.tile].terrain][map[selected.tile].onterrainIndex] == "Buildings"){
-                    map[selected.tile].onterrainSprite.imgElement.setAttribute("src", imagesUrl + `Buildings/${Buttons[map[selected.tile].terrain][map[selected.tile].onterrainIndex]}/${Buttons[map[selected.tile].terrain][map[selected.tile].onterrainIndex]}${map[selected.tile].buildingLevel}.png`);
-                }
-                else if(Folders[map[selected.tile].terrain][map[selected.tile].onterrainIndex] == "City"){
-                    map[selected.tile].onterrainSprite.imgElement.setAttribute("src", imagesUrl + `${map[selected.tile].tribeTerrain}/City/City${map[selected.tile].buildingLevel}.png`);
-                }
+                map[selected.tile].attBuilding(map[selected.tile].buildingLevel - 1);
             }
+        break;
+        case "BorderGrow":
+            map[selected.tile].attCityTerritory(true,  !map[selected.tile].borderGrow);
         break;
         case "Castle":
-            if(map[selected.tile].hasCastle) {
-                map[selected.tile].hasCastle = false;
-                map[selected.tile].castleSprite.imgElement.style.display = "none";
-            }
-            else {
-                map[selected.tile].hasCastle = true;
-                map[selected.tile].castleSprite.imgElement.src = imagesUrl + `${map[selected.tile].tribeTerrain}/Castle.png`;
-                map[selected.tile].castleSprite.imgElement.style.display = "inline";
-            }
+            map[selected.tile].attCastle(!map[selected.tile].hasCastle);
         break;
         case "Workshop":
-            if(map[selected.tile].hasWorkshop) {
-                map[selected.tile].hasWorkshop = false;
-                map[selected.tile].workshopSprite.imgElement.style.display = "none";
-            }
-            else {
-                map[selected.tile].hasWorkshop = true;
-                map[selected.tile].workshopSprite.imgElement.style.display = "inline";
-            }
+            map[selected.tile].attWorkshop(!map[selected.tile].hasWorkshop);
         break;
         case "Wall":
-            if(map[selected.tile].hasWall) {
-                map[selected.tile].hasWall = false;
-                map[selected.tile].wallSprite.imgElement.style.display = "none";
-            }
-            else {
-                map[selected.tile].hasWall = true;
-                map[selected.tile].wallSprite.imgElement.style.display = "inline";
-            }
+            map[selected.tile].attWall(!map[selected.tile].hasWall);
         break;
         case "ship0":
-            map[selected.tile].attShip(0);
+            map[selected.tile].attShip(0, map[selected.tile].UnitPlayer);
             attMiscMenu(false);
         break;
         case "ship1":
-            map[selected.tile].attShip(1);
+            map[selected.tile].attShip(1, map[selected.tile].UnitPlayer);
             attMiscMenu(false);
         break;
         case "ship2":
-            map[selected.tile].attShip(2);
+            map[selected.tile].attShip(2, map[selected.tile].UnitPlayer);
             attMiscMenu(false);
         break;
         default:
@@ -1015,29 +1323,41 @@ function MiscClick(item) {
     }
 }
 
-function attTribes(tribe) {
+function attPlayers(index) {
+    selectedIndex.tribes = players[index].tribeIndex;
+    selected.tribes = players[index].tribe;
+    selectedIndex.color = players[index].colorIndex;
+    selected.color = players[index].color;
+
     updateTerrainIcon();
 
     for (let i = 0; i < Object.keys(Buttons).length; i++) { 
         if(Object.keys(Buttons)[i] != "tribes"){
             for (let j = 0; j < Buttons[Object.keys(Buttons)[i]].length; j++) {
-                if(Folders[Object.keys(Buttons)[i]][j] == "selected.tribes"){
-                    document.getElementById(`btn${Object.keys(Buttons)[i]}${Buttons[Object.keys(Buttons)[i]][j]}`).src = imagesUrl + `${tribe}/${Buttons[Object.keys(Buttons)[i]][j]}.png`;
+                if(Folders[Object.keys(Buttons)[i]][j] == "player.tribe"){
+                    document.getElementById(`btn${Object.keys(Buttons)[i]}${Buttons[Object.keys(Buttons)[i]][j]}`).src = imagesUrl + `Tribes/${players[index].tribe}/${Buttons[Object.keys(Buttons)[i]][j]}.png`;
+                }
+                else if(Folders[Object.keys(Buttons)[i]][j] == "unit"){
+                    document.getElementById(`btn${Object.keys(Buttons)[i]}${Buttons[Object.keys(Buttons)[i]][j]}`).src = imagesUrl + `Tribes/${players[index].tribe}/Units/${players[index].color}/${Buttons[Object.keys(Buttons)[i]][j]}.png`;
                 }
                 else if(Folders[Object.keys(Buttons)[i]][j] == "City"){
-                    document.getElementById(`btn${Object.keys(Buttons)[i]}${Buttons[Object.keys(Buttons)[i]][j]}`).src = imagesUrl + `${tribe}/City/City7.png`;
+                    document.getElementById(`btn${Object.keys(Buttons)[i]}${Buttons[Object.keys(Buttons)[i]][j]}`).src = imagesUrl + `Tribes/${players[index].tribe}/City/City7.png`;
                 }
             }
         }
     }
 
     if (selected.menu == "Misc" && map[selected.tile].hasUnit == true) {
-        map[selected.tile].tribeUnit = selected.tribes;
+        map[selected.tile].UnitTribeIndex = selectedIndex.tribes;
+        map[selected.tile].UnitTribe = selected.tribes;
+        map[selected.tile].UnitColorIndex = selectedIndex.color;
+        map[selected.tile].UnitColor = selected.color;
+        map[selected.tile].UnitPlayer = selected.players;
         if(map[selected.tile].shipLevel != 3) {
-            map[selected.tile].attShip(map[selected.tile].shipLevel);
+            map[selected.tile].attShip(map[selected.tile].shipLevel, map[selected.tile].UnitPlayer);
         }
         else {
-            map[selected.tile].UnitSprite.imgElement.src = imagesUrl + `${selected.tribes}/${map[selected.tile].Unit}.png`;
+            map[selected.tile].UnitSprite.imgElement.src = imagesUrl + `Tribes/${selected.tribes}/Units/${selected.color}/${map[selected.tile].Unit}.png`;
         }
         attMiscMenu(false);
     }
@@ -1072,8 +1392,134 @@ function zoomWheel(event) {
     document.getElementById("mapDiv").style.transform = `scale(${zoomScale}, ${zoomScale})`;
     adjustMapPosition(document.getElementById("mapDiv").style.marginLeft.replace("px",'')|0, 
                     (document.getElementById("mapDiv").style.marginTop.replace("px",'')|0) - (window.innerHeight * 0.1));
-  }
+}
+function Settings() {
+    if(isSettingsVisible) {
+        isSettingsVisible = false;
+        document.getElementById(`settingsDiv`).style.display = 'none';
+        document.getElementById(`mapDiv`).style.display = 'inline';
+    }
+    else {
+        isSettingsVisible = true;
+        document.getElementById(`settingsDiv`).style.display = 'inline';
+        document.getElementById(`mapDiv`).style.display = 'none';
+    }
+}
 
-  function Settings() {
-      
-  }
+function updateAllTiles(index) {
+    
+}
+function updateSingleTile(index) {
+    loadTile(index);
+    map[index].attSingleRoad(getX(index), getY(index));
+}
+function saveTile(index) {
+    binaryPos = 0;
+
+    saveBits(map[index].terrainIndex, 3);
+    saveBits(map[index].terrainTribeIndex, 5);
+
+    saveBits(map[index].onterrainIndex, 5);
+
+    saveBits(map[index].hasUnit, 1);
+    saveBits(map[index].UnitIndex, 5);
+    saveBits(map[index].UnitPlayer, 5);
+    saveBits(map[index].UnitHP, 6);
+    saveBits(map[index].UnitIsVeteran, 1);
+    saveBits(map[index].UnitIsFrozen, 1);
+    saveBits(map[index].shipLevel, 2);
+
+    saveBits(map[index].buildingLevel, 4);
+    saveBits(map[index].hasCastle, 1);
+    saveBits(map[index].hasWorkshop, 1);
+    saveBits(map[index].hasWall, 1);
+
+    saveBits(map[index].territoryPlayer, 5);
+    saveBits(map[index].territoryCity, 10);
+    saveBits(map[index].borderGrow, 1);
+
+    saveBits(map[index].isColored, 1);
+    saveBits(map[index].coloredIndex, 5);
+    saveBits(map[index].hasSymbol, 1);
+    saveBits(map[index].symbolIndex, 5);
+    saveBits(map[index].symbolColor, 5);
+
+    saveBits(map[index].hasRoads, 1);
+}
+function loadTile(index) {
+    binaryPos = 0;
+
+    map[index].terrainIndex = loadBits(3);
+    map[index].terrainTribeIndex = loadBits(5);
+
+    map[index].onterrainIndex = loadBits(5);
+    map[index].updateTerrain(map[index].terrainIndex, map[index].terrainTribeIndex);
+    map[index].updateOnTerrain(map[index].onterrainIndex, map[index].terrainTribeIndex);
+
+    map[index].hasUnit = loadBits(1);
+    map[index].UnitIndex = loadBits(5);
+    map[index].UnitPlayer = loadBits(5);
+    if (map[index].hasUnit) {
+        map[index].updateUnit("Units", map[index].UnitIndex, map[index].UnitPlayer);
+    }
+    else {
+        map[index].updateUnit("", 0, map[index].UnitPlayer);
+    }
+    map[index].UnitHP = loadBits(6);
+    map[index].HPtext.innerHTML = map[index].UnitHP;
+    map[index].attVeteran(loadBits(1));
+    map[index].attFrozen(loadBits(1));
+    map[index].attShip(loadBits(2), map[index].UnitPlayer);
+
+    map[index].attBuilding(loadBits(4));
+    map[index].attCastle(loadBits(1));
+    map[index].attWorkshop(loadBits(1));
+    map[index].attWall(loadBits(1));
+
+    map[index].territoryPlayer = loadBits(5);
+    map[index].territoryCity = loadBits(10);
+    map[index].borderGrow = loadBits(1);
+
+    map[index].isColored = loadBits(1);
+    map[index].coloredIndex = loadBits(5);
+    map[index].hasSymbol = loadBits(1);
+    map[index].symbolIndex = loadBits(5);
+    map[index].symbolColor = loadBits(5);
+
+    map[index].hasRoads = loadBits(1);
+}
+function saveBits(data, size) {
+
+    if (Math.floor(binaryPos/32) != Math.floor((binaryPos + size)/32)) {
+
+        let overflow = (binaryPos + size) % 32;
+        let data1 = data >> overflow;
+        binaryTile[Math.floor(binaryPos/32)] |= data1;
+
+        data = data ^ (data1 << overflow);
+        binaryPos += size - overflow;
+        size = overflow;
+    }
+
+    binaryTile[Math.floor(binaryPos/32)] |= data << (Math.ceil(binaryPos/32) * 32 - size - binaryPos);
+    binaryPos += size;
+}
+function loadBits(size) {
+    let data = 0;
+
+    if (Math.floor(binaryPos/32) != Math.floor((binaryPos + size)/32) && (binaryPos + size) % 32 != 0) {
+        let overflow = (binaryPos + size) % 32;
+
+        let selector = 0xFFFFFFFF >>> (binaryPos % 32);
+        data |= (binaryTile[Math.floor(binaryPos/32)] & selector) << overflow;
+
+        binaryPos += size - overflow;
+        size = overflow;
+    }
+
+    let selector = 0xFFFFFFFF >>> (binaryPos % 32);
+    data |= (binaryTile[Math.floor(binaryPos/32)] & selector) >>> (Math.ceil(binaryPos/32) * 32 - size - binaryPos);
+
+    binaryPos += size;
+    return data;
+}
