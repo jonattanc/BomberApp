@@ -142,10 +142,10 @@ onload = function() {
     players = new Array(6);
     players[0] = new Player(0, 0);
     players[1] = new Player(1, 1);
-    players[2] = new Player(0, 11);
-    players[3] = new Player(1, 8);
-    players[4] = new Player(2, 2);
-    players[5] = new Player(3, 3);
+    players[2] = new Player(2, 2);
+    players[3] = new Player(3, 3);
+    players[4] = new Player(4, 4);
+    players[5] = new Player(5, 5);
 
     document.getElementById("mapDiv").style.height = `${div_height}px`;
     document.getElementById("mapDiv").style.width = `${div_width}px`;
@@ -206,19 +206,19 @@ onload = function() {
     });
 
     // Create settings menu
-    for(let i = 1; i <= 6; i++) {
+    for(let i = 0; i < 6; i++) {
         let field = document.createElement("fieldset");
         field.setAttribute("id", `settingsField${i}`);
         document.getElementById(`settingsDiv`).appendChild(field);
         let legend = document.createElement("legend");
         legend.setAttribute("id", `settingsLegend${i}`);
-        legend.innerHTML = `Player ${i}`
+        legend.innerHTML = `Player ${i+1}`
         field.appendChild(legend);
 
         let labelTribe = document.createElement("label");
         labelTribe.setAttribute("id", `labelTribe${i}`);
         labelTribe.setAttribute("for", `tribe`);
-        labelTribe.innerHTML = "Tribe: "
+        labelTribe.innerHTML = "Tribe: ";
         field.appendChild(labelTribe);
 
         let selectTribe = document.createElement("select");
@@ -226,20 +226,19 @@ onload = function() {
         selectTribe.setAttribute("name", `tribe${i}`);
         tribes.forEach(function (item, index){
             let option = document.createElement("option");
-            option.setAttribute("value", item);
-            option.innerHTML = item
+            option.setAttribute("value", index);
+            option.innerHTML = item;
             selectTribe.appendChild(option);
         });
-        selectTribe.value = tribes[i-1];
+        selectTribe.value = i;
         field.appendChild(selectTribe);
-
 
         field.appendChild(document.createElement("br"));
 
         let labelColor = document.createElement("label");
         labelColor.setAttribute("id", `labelColor${i}`);
         labelColor.setAttribute("for", `color`);
-        labelColor.innerHTML = "Color: "
+        labelColor.innerHTML = "Color: ";
         field.appendChild(labelColor);
 
         let selectColor = document.createElement("select");
@@ -247,17 +246,14 @@ onload = function() {
         selectColor.setAttribute("name", `color${i}`);
         tribes.forEach(function (item, index){
             let option = document.createElement("option");
-            option.setAttribute("value", item);
-            option.innerHTML = item
+            option.setAttribute("value", index);
+            option.innerHTML = item;
             selectColor.appendChild(option);
         });
-        selectColor.value = tribes[i-1];
+        selectColor.value = i;
         field.appendChild(selectColor);
     }
 
-
-
-    
     // Set main menu and fixed menu click events
     document.getElementById(`btnterrains`).addEventListener('click', function(){ selectMainMenu("terrains"); });
     document.getElementById(`btnonterrains`).addEventListener('click', function(){ selectMainMenu("onterrains"); });
@@ -1398,6 +1394,18 @@ function Settings() {
         isSettingsVisible = false;
         document.getElementById(`settingsDiv`).style.display = 'none';
         document.getElementById(`mapDiv`).style.display = 'inline';
+
+        for(let i = 0; i < 6; i++) {
+            if(document.getElementById(`selectTribe${i}`).value != players[i].tribeIndex){
+                players[i].tribeIndex = document.getElementById(`selectTribe${i}`).value;
+                players[i].tribe = tribes[players[i].tribeIndex];
+                document.getElementById(`btnplayers${i}`).setAttribute("src", imagesUrl + `Tribes/${players[i].tribe}/${players[i].tribe}.png`);
+            }
+            if(document.getElementById(`selectColor${i}`).value != players[i].colorIndex){
+                players[i].colorIndex = document.getElementById(`selectColor${i}`).value;
+                players[i].color = tribes[players[i].colorIndex];
+            }
+        }
     }
     else {
         isSettingsVisible = true;
