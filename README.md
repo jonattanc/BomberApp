@@ -8,4 +8,4 @@ Made specially for the competitive team Bombers at <a href="https://discord.gg/w
 
 You can access it here: https://jonattanc.github.io/BomberApp/
 
-<img src="Images/BomberLogo.png" width="200">
+<img src="frontend/assets/Images/BomberLogo.png" width="200">
