@@ -51,13 +51,15 @@ let binaryPos = 0;
 let tribes = ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion", "Cymanti"];
 let minLevel = { City: 1, CustomsHouse: 1, ForestTemple: 1, Forge: 1, IceBank: 1, IceTemple: 1, MountainTemple: 1, 
                     Sanctuary: 1, Sawmill: 1, Temple: 1, WaterTemple: 1, Windmill: 1 };
-let maxLevel = { City: 7, CustomsHouse: 5, ForestTemple: 5, Forge: 8, IceBank: 9, IceTemple: 5, MountainTemple: 5, 
+let maxLevel = { City: 7, CustomsHouse: 5, ForestTemple: 5, Forge: 8, IceBank: 10, IceTemple: 5, MountainTemple: 5, 
                     Sanctuary: 8, Sawmill: 8, Temple: 5, WaterTemple: 5, Windmill: 6 };
 let maxHP = {warrior: 10, archer: 10, rider: 10, knight: 15, defender: 15, catapult: 10, swordsman: 15, mindbender: 10, giant: 40, polytaur: 15, dragonegg: 10, 
-            mooni: 10, icearcher: 10, battlesled: 15, icefortress: 20, gaami: 30, navalon: 30, babydragon: 15, firedragon: 20, amphibian: 10, tridention: 15, crab: 40};
+            mooni: 10, icearcher: 10, battlesled: 15, icefortress: 20, gaami: 30, navalon: 30, babydragon: 15, firedragon: 20, amphibian: 10, tridention: 15, crab: 40,
+            centipedehead: 20, centipedesegment: 10, doomux: 20, exida: 10, hexapod: 5, kiton: 20, phychi: 5, raychi: 15, shaman: 10};
 let veteranPossible = {warrior: true, archer: true, rider: true, knight: true, defender: true, catapult: true, swordsman: true, mindbender: false, giant: false, 
                 polytaur: true, dragonegg: false, mooni: false, icearcher: false, battlesled: true, icefortress: true, gaami: false, navalon: false, babydragon: false, 
-                firedragon: false, amphibian: true, tridention: true, crab: false};
+                firedragon: false, amphibian: true, tridention: true, crab: false, centipedehead: false, centipedesegment: false, doomux: true, exida: true, hexapod: true, 
+                kiton: true, phychi: true, raychi: true, shaman: false};
 let Buttons = {
     terrains: ["Clouds", "DeepWater", "ShallowWater", "Ground", "Forest", "Mountain", "Ice"],
     Clouds: ["Clouds", "Rainbow"],
@@ -69,7 +71,8 @@ let Buttons = {
     Mountain: ["Mountain", "Ruin", "Metal", "Mine", "Sanctuary", "MountainTemple"],
     Ice: ["Ice", "Ruin", "Port", "Fish", "Whale", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "IceTemple", "WaterTemple"],
     Units: ["warrior", "archer", "rider", "knight", "defender", "catapult", "swordsman", "mindbender", "giant", "polytaur", "dragonegg", "mooni", 
-            "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab"],
+            "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab",
+            "centipedehead", "centipedesegment", "doomux", "exida", "hexapod", "kiton", "phychi", "raychi", "shaman"],
     FixedMenu: ["ShowMenu", "ZoomIn", "ZoomOut", "Settings"], 
     Misc: ["skull", "HPUp", "HPDown", "HP", "Veteran", "Ice", "capture", "BorderGrow", "LevelUp", "LevelDown", "Castle", "Workshop", "Wall", "ship0", "ship1", "ship2"],
     Resources: ["Chop", "Destruction", "Gather", "Destroy"]
@@ -89,7 +92,7 @@ let Folders = {
     Ice: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "player.tribe", "player.tribe", 
             "player.tribe", "player.tribe", "player.tribe", "player.tribe", "player.tribe", "Buildings", "Buildings"],
     Units: ["unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", 
-            "unit", "unit", "unit"],
+            "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit"],
     FixedMenu: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous"],
     Misc: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", 
             "Miscellaneous", "player.tribe", "Miscellaneous", "Miscellaneous", "unit", "unit", "unit"],
@@ -103,7 +106,8 @@ let OffsetX = { // Positive value moves sprite to the left
     Forest: [0, 0, -0.18, -0.35, -0.32, -0.1, -0.185], 
     Mountain: [0.08, -0.18, -0.1, -0.25, -0.1, -0.185],
     Ice: [0, -0.16, -0.05, -0.15, -0.23, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185],
-    Units: [-0.19, -0.12, -0.21, -0.2, -0.2, -0.22, -0.2, -0.17, -0.23, -0.2, -0.19, -0.21, -0.17, -0.2, -0.22, -0.2, -0.18, -0.2, -0.2, -0.21, -0.22, -0.22],
+    Units: [-0.19, -0.12, -0.21, -0.2, -0.2, -0.22, -0.2, -0.17, -0.23, -0.2, -0.19, -0.21, -0.17, -0.2, -0.22, -0.2, -0.18, -0.2, -0.2, -0.21, -0.22, -0.22,
+            0, 0, 0, 0, 0, 0, 0, 0, 0],
     WaterUnits: [-0.22, -0.2, -0.23],
     Misc: {Castle: -0.4, Workshop: -0.18, Wall: 0, Selection: 0, SelectionSup: 0, Border: -0.01}
 };
@@ -115,7 +119,8 @@ let OffsetY = { // Positive value moves sprite up // Ice increases about 0.05 fr
     Forest: [0.06, 0, 0.03, -0.15, -0.12, 0.4, 0.07], 
     Mountain: [0.2, 0.05, 0.1, -0.15, 0.4, 0.12],
     Ice: [-0.09, 0.02, -0.07, -0.07, -0.18, 0.03, 0.45, 0.08, 0.42, 0.1, 0.23, 0.18, 0.67, 0.24, 0.15, 0],
-    Units: [0.27, 0.34, 0.25, 0.25, 0.32, 0.29, 0.32, 0.29, 0.28, 0.32, 0.3, 0.22, 0.29, 0.25, 0.21, 0.2, 0.33, 0.3, 0.3, 0.35, 0.35, 0.36],
+    Units: [0.27, 0.34, 0.25, 0.25, 0.32, 0.29, 0.32, 0.29, 0.28, 0.32, 0.3, 0.22, 0.29, 0.25, 0.21, 0.2, 0.33, 0.3, 0.3, 0.35, 0.35, 0.36,
+            0, 0, 0, 0, 0, 0, 0, 0, 0],
     WaterUnits: [0.26, 0.3, 0.19],
     Misc: {Castle: -0.01, Workshop: 0, Wall: 0, Selection: -0.05, SelectionSup: -0.05, Border: 0.01}
 }
@@ -127,7 +132,7 @@ let Scales = {
     Forest: [1, 1, 0.65, 0.35, 0.5, 0.8, 0.65], 
     Mountain: [1.13, 0.65, 0.7, 0.45, 0.8, 0.65],
     Ice: [0.99, 0.65, 0.9, 0.75, 0.55, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65],
-    Units: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7],
+    Units: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.3],
     WaterUnits: [0.7, 0.7, 0.7],
     Misc: {Castle: 0.35, Workshop: 0.4, Wall: 1, Selection: 1, SelectionSup: 1, Border: 1}
 };
@@ -1407,6 +1412,7 @@ function Settings() {
                 players[i].color = tribes[players[i].colorIndex];
             }
         }
+        document.getElementById(`btnplayers${selected.players}`).click();
     }
     else {
         isSettingsVisible = true;
