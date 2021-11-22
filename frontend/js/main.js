@@ -50,9 +50,9 @@ let binaryPos = 0;
 
 let tribes = ["Bardur", "Luxidoor", "Kickoo", "Zebasi", "Imperius", "Elyrion", "Yadakk", "Hoodrick", "Polaris", "Aimo", "Oumaji", "Quetzali", "Vengir", "Xinxi", "Aquarion", "Cymanti"];
 let minLevel = { City: 1, CustomsHouse: 1, ForestTemple: 1, Forge: 1, IceBank: 1, IceTemple: 1, MountainTemple: 1, 
-                    Sanctuary: 1, Sawmill: 1, Temple: 1, WaterTemple: 1, Windmill: 1 };
+                    Sanctuary: 1, Sawmill: 1, Temple: 1, WaterTemple: 1, Windmill: 1, Fungi: 1, Mycelium: 1, Clathrus: 0 };
 let maxLevel = { City: 7, CustomsHouse: 5, ForestTemple: 5, Forge: 8, IceBank: 10, IceTemple: 5, MountainTemple: 5, 
-                    Sanctuary: 8, Sawmill: 8, Temple: 5, WaterTemple: 5, Windmill: 6 };
+                    Sanctuary: 8, Sawmill: 8, Temple: 5, WaterTemple: 5, Windmill: 6, Fungi: 3, Mycelium: 4, Clathrus: 8 };
 let maxHP = {warrior: 10, archer: 10, rider: 10, knight: 15, defender: 15, catapult: 10, swordsman: 15, mindbender: 10, giant: 40, polytaur: 15, dragonegg: 10, 
             mooni: 10, icearcher: 10, battlesled: 15, icefortress: 20, gaami: 30, navalon: 30, babydragon: 15, firedragon: 20, amphibian: 10, tridention: 15, crab: 40,
             centipedehead: 20, centipedesegment: 10, doomux: 20, exida: 10, hexapod: 5, kiton: 20, phychi: 5, raychi: 15, shaman: 10};
@@ -63,13 +63,13 @@ let veteranPossible = {warrior: true, archer: true, rider: true, knight: true, d
 let Buttons = {
     terrains: ["Clouds", "DeepWater", "ShallowWater", "Ground", "Forest", "Mountain", "Ice"],
     Clouds: ["Clouds", "Rainbow"],
-    DeepWater: ["DeepWater", "Ruin", "Whale", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "WaterTemple", "IceTemple"],
-    ShallowWater: ["ShallowWater", "Fish", "Port", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "WaterTemple", "IceTemple"],
-    Ground: ["Ground", "Roads", "Ruin", "Village", "City", "Fruit", "Crop", "Farm", "Windmill", "Sawmill", "CustomsHouse", "Sanctuary", "Forge", "IceBank", "POF", 
-            "GOP", "GB", "AOP", "ET", "TOW", "EOG", "Temple"],
-    Forest: ["Forest", "Roads", "Ruin", "Animal", "Lumber hut", "Sanctuary", "ForestTemple"],
+    DeepWater: ["DeepWater", "Ruin", "Whale", "Algae", "Clathrus", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "WaterTemple", "IceTemple"],
+    ShallowWater: ["ShallowWater", "Fish", "Port", "Algae", "Clathrus", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "WaterTemple", "IceTemple"],
+    Ground: ["Ground", "Roads", "Ruin", "Village", "City", "Fruit", "Crop", "Farm", "Windmill", "Sawmill", "CustomsHouse", "Mycelium", "Sanctuary", "Forge", "IceBank", 
+            "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "Temple"],
+    Forest: ["Forest", "Roads", "Ruin", "Animal", "Lumber hut", "Spores", "Fungi", "Mycelium", "Sanctuary", "ForestTemple"],
     Mountain: ["Mountain", "Ruin", "Metal", "Mine", "Sanctuary", "MountainTemple"],
-    Ice: ["Ice", "Ruin", "Port", "Fish", "Whale", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "IceTemple", "WaterTemple"],
+    Ice: ["Ice", "Ruin", "Port", "Fish", "Whale", "Algae", "Clathrus", "Outpost", "IceBank", "POF", "GOP", "GB", "AOP", "ET", "TOW", "EOG", "IceTemple", "WaterTemple"],
     Units: ["warrior", "archer", "rider", "knight", "defender", "catapult", "swordsman", "mindbender", "giant", "polytaur", "dragonegg", "mooni", 
             "icearcher", "battlesled", "icefortress", "gaami", "navalon", "babydragon", "firedragon", "amphibian", "tridention", "crab",
             "centipedehead", "centipedesegment", "doomux", "exida", "hexapod", "kiton", "phychi", "raychi", "shaman"],
@@ -80,17 +80,17 @@ let Buttons = {
 let Folders = {
     terrains: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "player.tribe", "player.tribe", "player.tribe", "Miscellaneous"],
     Clouds: ["Miscellaneous", "Miscellaneous"], 
-    DeepWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "player.tribe", "player.tribe", "player.tribe", "player.tribe", 
-                "player.tribe", "player.tribe", "player.tribe", "Buildings", "Buildings"], 
-    ShallowWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "player.tribe", "player.tribe", "player.tribe", "player.tribe", 
-                    "player.tribe", "player.tribe", "player.tribe", "Buildings", "Buildings"], 
+    DeepWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Miscellaneous", "Buildings", "player.tribe", "player.tribe", "player.tribe", 
+                "player.tribe", "player.tribe", "player.tribe", "player.tribe", "Buildings", "Buildings"], 
+    ShallowWater: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Miscellaneous", "Buildings", "player.tribe", "player.tribe", 
+                    "player.tribe", "player.tribe", "player.tribe", "player.tribe", "player.tribe", "Buildings", "Buildings"], 
     Ground: ["player.tribe", "Miscellaneous", "Miscellaneous", "Miscellaneous", "City", "player.tribe", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", 
-            "Buildings", "Buildings", "Buildings", "Buildings", "player.tribe", "player.tribe", "player.tribe", "player.tribe", "player.tribe", "player.tribe", 
+            "Buildings", "Buildings", "Buildings", "Buildings", "Buildings", "player.tribe", "player.tribe", "player.tribe", "player.tribe", "player.tribe", "player.tribe", 
             "player.tribe", "Buildings"], 
-    Forest: ["player.tribe", "Miscellaneous", "Miscellaneous", "player.tribe", "Miscellaneous", "Buildings", "Buildings"], 
+    Forest: ["player.tribe", "Miscellaneous", "Miscellaneous", "player.tribe", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings", "Buildings", "Buildings"], 
     Mountain: ["player.tribe", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Buildings"],
-    Ice: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "player.tribe", "player.tribe", 
-            "player.tribe", "player.tribe", "player.tribe", "player.tribe", "player.tribe", "Buildings", "Buildings"],
+    Ice: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous", "Buildings", "Miscellaneous", "Buildings", "player.tribe", 
+        "player.tribe", "player.tribe", "player.tribe", "player.tribe", "player.tribe", "player.tribe", "Buildings", "Buildings"],
     Units: ["unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", 
             "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit", "unit"],
     FixedMenu: ["Miscellaneous", "Miscellaneous", "Miscellaneous", "Miscellaneous"],
@@ -100,12 +100,12 @@ let Folders = {
 };
 let OffsetX = { // Positive value moves sprite to the left
     Clouds: [0, -0.2], 
-    DeepWater: [0.051, -0.18, -0.23, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185], 
-    ShallowWater: [0, -0.15, -0.05, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185], 
-    Ground: [0, 0, -0.18, -0.2, 0, -0.12, 0, 0, -0.1, -0.15, -0.28, -0.1, -0.26, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185], 
-    Forest: [0, 0, -0.18, -0.35, -0.32, -0.1, -0.185], 
+    DeepWater: [0.051, -0.18, -0.23, 0, 0, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185], 
+    ShallowWater: [0, -0.15, -0.05, 0, 0, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185], 
+    Ground: [0, 0, -0.18, -0.2, 0, -0.12, 0, 0, -0.1, -0.15, -0.28, 0, -0.1, -0.26, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185], 
+    Forest: [0, 0, -0.18, -0.35, -0.32, 0, 0, 0, -0.1, -0.185], 
     Mountain: [0.08, -0.18, -0.1, -0.25, -0.1, -0.185],
-    Ice: [0, -0.16, -0.05, -0.15, -0.23, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185],
+    Ice: [0, -0.16, -0.05, -0.15, -0.23, 0, 0, -0.31, -0.18, -0.1, -0.08, -0.1, -0.1, -0.08, -0.09, -0.11, -0.185, -0.185],
     Units: [-0.19, -0.12, -0.21, -0.2, -0.2, -0.22, -0.2, -0.17, -0.23, -0.2, -0.19, -0.21, -0.17, -0.2, -0.22, -0.2, -0.18, -0.2, -0.2, -0.21, -0.22, -0.22,
             0, 0, 0, 0, 0, 0, 0, 0, 0],
     WaterUnits: [-0.22, -0.2, -0.23],
@@ -113,12 +113,12 @@ let OffsetX = { // Positive value moves sprite to the left
 };
 let OffsetY = { // Positive value moves sprite up // Ice increases about 0.05 from water
     Clouds: [0, 0.1], 
-    DeepWater: [-0.06, 0, -0.18, 0.025, 0.4, 0.04, 0.38, 0.06, 0.19, 0.14, 0.63, 0.2, 0, 0.15], 
-    ShallowWater: [-0.14, -0.07, -0.12, 0.025, 0.4, 0.04, 0.38, 0.06, 0.19, 0.14, 0.63, 0.2, 0, 0.15], 
-    Ground: [-0.07, -0.05, 0.05, -0.1, 0.64, 0.1, 0, 0.03, 0, 0.05, 0.11, 0.4, 0, 0.45, 0.08, 0.42, 0.1, 0.23, 0.18, 0.67, 0.24, -0.02], 
-    Forest: [0.06, 0, 0.03, -0.15, -0.12, 0.4, 0.07], 
+    DeepWater: [-0.06, 0, -0.18, 0, 0, 0.025, 0.4, 0.04, 0.38, 0.06, 0.19, 0.14, 0.63, 0.2, 0, 0.15], 
+    ShallowWater: [-0.14, -0.07, -0.12, 0, 0, 0.025, 0.4, 0.04, 0.38, 0.06, 0.19, 0.14, 0.63, 0.2, 0, 0.15], 
+    Ground: [-0.07, -0.05, 0.05, -0.1, 0.64, 0.1, 0, 0.03, 0, 0.05, 0.11, 0, 0.4, 0, 0.45, 0.08, 0.42, 0.1, 0.23, 0.18, 0.67, 0.24, -0.02], 
+    Forest: [0.06, 0, 0.03, -0.15, -0.12, 0, 0, 0, 0.4, 0.07], 
     Mountain: [0.2, 0.05, 0.1, -0.15, 0.4, 0.12],
-    Ice: [-0.09, 0.02, -0.07, -0.07, -0.18, 0.03, 0.45, 0.08, 0.42, 0.1, 0.23, 0.18, 0.67, 0.24, 0.15, 0],
+    Ice: [-0.09, 0.02, -0.07, -0.07, -0.18, 0, 0, 0.03, 0.45, 0.08, 0.42, 0.1, 0.23, 0.18, 0.67, 0.24, 0.15, 0],
     Units: [0.27, 0.34, 0.25, 0.25, 0.32, 0.29, 0.32, 0.29, 0.28, 0.32, 0.3, 0.22, 0.29, 0.25, 0.21, 0.2, 0.33, 0.3, 0.3, 0.35, 0.35, 0.36,
             0, 0, 0, 0, 0, 0, 0, 0, 0],
     WaterUnits: [0.26, 0.3, 0.19],
@@ -126,12 +126,12 @@ let OffsetY = { // Positive value moves sprite up // Ice increases about 0.05 fr
 }
 let Scales = {
     Clouds: [1, 0.6], 
-    DeepWater: [1.1, 0.65, 0.55, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65], 
-    ShallowWater: [1, 0.75, 0.9, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65], 
-    Ground: [1, 1, 0.65, 0.6, 1, 0.8, 1, 1, 0.8, 0.7, 0.45, 0.8, 0.5, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65], 
-    Forest: [1, 1, 0.65, 0.35, 0.5, 0.8, 0.65], 
+    DeepWater: [1.1, 0.65, 0.55, 1, 1, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65], 
+    ShallowWater: [1, 0.75, 0.9, 1, 1, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65], 
+    Ground: [1, 1, 0.65, 0.6, 1, 0.8, 1, 1, 0.8, 0.7, 0.45, 1, 0.8, 0.5, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65], 
+    Forest: [1, 1, 0.65, 0.35, 0.5, 1, 1, 1, 0.8, 0.65], 
     Mountain: [1.13, 0.65, 0.7, 0.45, 0.8, 0.65],
-    Ice: [0.99, 0.65, 0.9, 0.75, 0.55, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65],
+    Ice: [0.99, 0.65, 0.9, 0.75, 0.55, 1, 1, 0.37, 0.65, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.65, 0.65],
     Units: [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.3],
     WaterUnits: [0.7, 0.7, 0.7],
     Misc: {Castle: 0.35, Workshop: 0.4, Wall: 1, Selection: 1, SelectionSup: 1, Border: 1}
@@ -469,7 +469,12 @@ function createButton(menu, item, index){
         img.setAttribute("src", imagesUrl + `Tribes/${players[0].tribe}/Units/${players[0].color}/${item}.png`);
     }
     else if(Folders[menu][index] == "Buildings"){
-        img.setAttribute("src", imagesUrl + `Buildings/${item}/${item}5.png`);
+        if(item == "Fungi" || "Mycelium") {
+            img.setAttribute("src", imagesUrl + `Buildings/${item}/${item}3.png`);
+        }
+        else {
+            img.setAttribute("src", imagesUrl + `Buildings/${item}/${item}5.png`);
+        }
     }
     else if(Folders[menu][index] == "City"){
         img.setAttribute("src", imagesUrl + `Tribes/${players[0].tribe}/City/City7.png`);
@@ -1049,6 +1054,9 @@ function attSelectedTile(){
                 map[selected.tile].attRoads(false);
             }
             else if(selected.Resources == "Gather") {
+                if(map[selected.tile].onterrain == "Spores") {
+                    map[selected.tile].updateOnTerrain(6, map[selected.tile].terrainTribeIndex); // Fungi
+                }
                 if(map[selected.tile].onterrain == "Crop") {
                     map[selected.tile].updateOnTerrain(7, map[selected.tile].terrainTribeIndex); // Farm
                 }
@@ -1071,6 +1079,9 @@ function attSelectedTile(){
                 if(map[selected.tile].onterrain == "Farm") {
                     map[selected.tile].updateOnTerrain(6, map[selected.tile].terrainTribeIndex); // Crop
                 }
+                else if(map[selected.tile].onterrain == "Fungi") {
+                    map[selected.tile].updateOnTerrain(5, map[selected.tile].terrainTribeIndex); // Spores
+                }
                 else if(map[selected.tile].onterrain == "Outpost" ||
                         map[selected.tile].onterrain == "IceBank" ||
                         map[selected.tile].onterrain == "POF" ||
@@ -1092,7 +1103,10 @@ function attSelectedTile(){
                         map[selected.tile].onterrain == "Lumber hut" ||
                         map[selected.tile].onterrain == "ForestTemple" ||
                         map[selected.tile].onterrain == "Mine" ||
-                        map[selected.tile].onterrain == "MountainTemple" ) {
+                        map[selected.tile].onterrain == "MountainTemple" ||
+                        map[selected.tile].onterrain == "Mycelium" ||
+                        map[selected.tile].onterrain == "Algae" ||
+                        map[selected.tile].onterrain == "Clathrus" ) {
                     map[selected.tile].updateOnTerrain(0, map[selected.tile].terrainTribeIndex);
                 }
             }
